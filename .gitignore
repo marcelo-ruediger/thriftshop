@@ -1,3 +1,10 @@
 *.pdf
-*.env
+*.png
+# für Umgebungsvariablen
+*.env 
 *.db
+# Python virtuelle Umgebung
+/venv
+# Nur für die Erstellung von PDF-Dateien
+thriftshop_projektantrag.html
+

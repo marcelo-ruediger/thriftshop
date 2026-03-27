@@ -1,0 +1,94 @@
+```plantuml
+@startuml thriftshop_klassendiagramm
+!theme plain
+skinparam classAttributeIconSize 0
+
+class Benutzer {
+    + {static} **user_id: UUID <<PK>>**
+    - vorname: str
+    - nachname: str
+    - email: str
+    - passwort_hash: str
+    - berechtigung: Benutzerrolle
+    ---
+    + authentifizieren(passwort: str): Boolean
+    + bestellen(warenkorb: list): Bestellung
+    + bestellung_entfernen(bestellung_id: UUID): None
+}
+
+class Administrator {
+    - letzter_login: datetime
+    - letzte_aenderung: datetime
+    ---
+    + login_registrieren(): None
+    + aenderung_protokollieren(): None
+    + produkt_anlegen(daten: Produkt): None
+    + produkt_bearbeiten(produkt_id: UUID, daten: ProduktUpdate): None
+    + produkt_loeschen(produkt_id: UUID): None 
+    + produkt_aktiv_toggle(produkt_id: UUID): Boolean
+}
+
+class Produkt {
+    + {static} **produkt_id: UUID <<PK>>**
+    - produktsnummer: String
+    - erstellungs_datum: datetime
+    - //zustand_id: UUID | None <<FK>>//
+    - //kategorie_id: UUID | None <<FK>>//
+    - bezeichnung: str
+    - preis: Decimal 
+    - produkt_rabatt: Decimal | None
+    - produkt_aktiv: Boolean
+}
+
+class Kategorie {
+    + {static} **kategorie_id: UUID <<PK>>**
+    - bezeichnung: str
+    - kategorie_rabatt: Decimal | None
+}
+
+class Zustand {
+    + {static} **zustand_id: UUID <<PK>>**
+    - bezeichnung: str
+    - beschreibung: str
+}
+
+class Bestellung {
+    + {static} **bestellung_id: UUID <<PK>>**
+    - bestellungsnummer: String
+    - bestellung_datum: datetime
+    - status: BestellStatus
+}
+
+class BestellPosition {
+    + {static} **bestellposition_id: UUID <<PK>>**
+    - //bestellung_id: UUID <<FK>>//
+    - //produkt_id: UUID <<FK>>//
+    - menge: int
+    - positionspreis: Decimal
+}
+
+enum BestellStatus {
+    OFFEN
+    IN_BEARBEITUNG
+    ABGESCHLOSSEN
+    STONIERT
+}
+
+enum Benutzerrolle {
+    ADMIN
+    GAST
+}
+
+Administrator --|> Benutzer
+Benutzer "1" --> "*" Bestellung
+'Eine Bestellung hat viele Positionen/ eine Position gehört eine Bestellung (Komposition: ohne Bestellung keine Position)
+Bestellung "1" *-- "1..*" BestellPosition
+'Eine Position gehört zu genau einem Produkt/ ein Produkt gehört zu mehreren Positionen (Assoziation: Ohne Produkt )
+Produkt "1" --> "0..*" BestellPosition
+Produkt "*" --> "1" Kategorie
+Produkt "*" --> "1" Zustand
+Bestellung "*" --> "1" BestellStatus
+Benutzer "*" --> "1" Benutzerrolle
+
+@enduml
+```
