@@ -1,0 +1,32 @@
+```plantuml 
+@startuml architekturdiagramm
+!theme plain
+title Architekturdiagramm der Anwendung
+skinparam componentStyle rectangle
+
+package "Client (Frontend)" {
+    [Flutter App (iOS/Android)] as App
+    [Flutter Web (Admin Dashboard)] as Web
+}
+
+package "Server (Backend - Railway)" {
+    [FastAPI (REST API)] as API
+    [Authentication/Rollen Logik] as Auth
+    API --> Auth
+}
+
+database "Datenbank (Supabase)" {
+    [PostgreSQL] as DB
+}
+
+cloud "Externe Dienste" {
+    [Resend (SMTP Mailer)] as Mail
+}
+
+App <--> API : HTTPS / REST JSON
+Web <--> API : HTTPS / REST JSON
+
+API <--> DB : Lesen / Schreiben
+API --> Mail : API Call (Bestätigungsmail)
+@enduml
+```

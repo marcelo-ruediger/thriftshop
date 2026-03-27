@@ -1,6 +1,7 @@
 
-@startuml
-title Thrift Shop Köln 
+@startuml thriftshop
+!theme plain
+title Thrift Shop Köln
 
 actor Benutzer #LightBlue
 actor Admin #LightGreen
