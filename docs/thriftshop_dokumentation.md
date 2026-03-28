@@ -73,39 +73,144 @@ Test-Daten: Für die Entwicklung und die Tests wurden realitätsnahe Beispieldat
 ### 2.1 Projektphasen
 
 **1. Definition (Gesamtzeit: 14 h)**
-1.1 Ist-Analyse (Problemanalyse) (2 h)
-1.2 Wirtschaftlichkeitsbetrachtung (2 h)
-1.3 Anforderungen analysieren (2 h)
-1.4 Use-Case Analyse (2 h)
-1.5 Lasten- und Pflichtenheft erstellen (6 h)
 
-**2. Planung (Gesamtzeit: 14 h)**
-2.1 Arbeitspakete erstellen (Projektstrukturplan) (3 h)
-2.2 Kostenplan und Zeitplan erstellen (Netzplan) (4 h)
-2.3 Datenbankmodellierung inkl. ER-Modell (3 h)
-2.4 Entwurf der Systemarchitektur mit Klassendiagramm (3 h)
-2.5 Erstellung der UI-Mockups (1 h)
+- 1.1 Ist-Analyse (Problemanalyse) – 2 h
+- 1.2 Wirtschaftlichkeitsbetrachtung – 2 h
+- 1.3 Anforderungen analysieren – 2 h
+- 1.4 Use-Case-Analyse – 2 h
+- 1.5 Lasten- und Pflichtenheft erstellen – 6 h
 
-**3. Realisierung (Gesamtzeit: 40 h + 2 h Puffer)**
-3.1 Einrichtung der Entwicklungsumgebung und Datenbankstruktur (2 h)
-3.2 Implementierung der Datenbankzugriffe (CRUD-Operationen) (4 h)
-3.3 Entwicklung der Benutzeroberfläche (6 h)
-3.4 Implementierung des Bestellsystems mit Validierung und E-Mail-Bestätigung (6 h)
-3.5 Implementierung des Login-Systems mit Benutzerauthentifizierung und Rollenverwaltung (5 h)
-3.6 Implementierung der Such- und Filterfunktion (4 h)
-3.7 Unit-Test (3 h)
-3.8 Projektdokumentation (10 h)
-3.9 Zeitpuffer: ein potenziell erhöhter Realisierungsaufwand (2 h) 
+**2. Planung (Gesamtzeit: 12 h)**
 
-**4. Abschluss (Gesamtzeit: 10 h)**
-4.1 System- und Integrationstest (3 h)
-4.2 Code-Review (2 h)
-4.3 Erstellung des Soll-Ist-Vergleichs (2 h)
-4.4 Abnahme durch den Auftraggeber (2 h)
-4.5 Schulung des Anwenders (1 h)
+- 2.1 Arbeitspakete erstellen (Projektstrukturplan) – 2 h
+- 2.2 Kosten- und Zeitplan erstellen – 2 h
+- 2.3 Datenbankmodellierung inkl. ER-Modell – 3 h
+- 2.4 Entwurf der Systemarchitektur mit Klassendiagramm – 3 h
+- 2.5 Erstellung der UI-Mockups – 2 h
+
+**3. Realisierung (Gesamtzeit: 36 h)**
+
+- 3.1 Einrichtung der Entwicklungsumgebung und Datenbankstruktur – 2 h
+- 3.2 Implementierung der Datenbankzugriffe (CRUD-Operationen) – 4 h
+- 3.3 Implementierung des Login-Systems mit Benutzerauthentifizierung und Rollenverwaltung – 7 h
+- 3.4 Entwicklung der Benutzeroberfläche – 8 h
+- 3.5 Implementierung des Bestellsystems mit Validierung und E-Mail-Bestätigung – 6 h
+- 3.6 Implementierung der Such- und Filterfunktion – 4 h
+- 3.7 Unit-Tests – 3 h
+- 3.8 Zeitpuffer (erhöhter Realisierungsaufwand) – 2 h
+
+**4. Abschluss (Gesamtzeit: 18 h)**
+
+- 4.1 System- und Integrationstest – 3 h
+- 4.2 Code-Review – 2 h
+- 4.3 Projektdokumentation – 10 h
+- 4.4 Erstellung des Soll-Ist-Vergleichs – 1 h
+- 4.5 Abnahme durch den Auftraggeber – 1 h
+- 4.6 Schulung des Anwenders – 1 h
 
 **Gesamtzeit des Projektes: 80 h**
 
+```plantuml
+@startgantt thriftshop
+!theme toy
+projectscale daily zoom 1
+hide footbox
+
+title Webshop Thriftshop Köln
+
+-- 1. Definition (14 Std) --
+[1.1 Ist-Analyse] lasts 2 days and is colored in LightBlue
+[1.1 Ist-Analyse] -> [1.2 Wirtschaftlichkeitsbetrachtung]
+[1.2 Wirtschaftlichkeitsbetrachtung] lasts 2 days and is colored in LightBlue
+[1.2 Wirtschaftlichkeitsbetrachtung] -> [1.3 Anforderungen analysieren]
+[1.3 Anforderungen analysieren] lasts 2 days and is colored in LightBlue
+[1.3 Anforderungen analysieren] -> [1.4 Use-Case Analyse]
+[1.4 Use-Case Analyse] lasts 2 days and is colored in LightBlue
+[1.4 Use-Case Analyse] -> [1.5 Lasten- und Pflichtenheft]
+[1.5 Lasten- und Pflichtenheft] lasts 6 days and is colored in LightBlue
+
+-- 2. Planung (12 Std) --
+[1.5 Lasten- und Pflichtenheft] -> [2.1 Arbeitspakete erstellen]
+[2.1 Arbeitspakete erstellen] lasts 2 days and is colored in LightCoral
+[2.1 Arbeitspakete erstellen] -> [2.2 Kosten- und Zeitplan]
+[2.2 Kosten- und Zeitplan] lasts 2 days and is colored in LightCoral
+[2.2 Kosten- und Zeitplan] -> [2.3 Datenmodellierung]
+[2.3 Datenmodellierung] lasts 3 days and is colored in LightCoral
+[2.3 Datenmodellierung] -> [2.4 Entwurf der Systemarchitektur]
+[2.4 Entwurf der Systemarchitektur] lasts 3 days and is colored in LightCoral
+[2.4 Entwurf der Systemarchitektur] -> [2.5 Erstellung der UI-Mockups]
+[2.5 Erstellung der UI-Mockups] lasts 2 days and is colored in LightCoral
+
+-- 3. Realisierung (36 Std) --
+[2.5 Erstellung der UI-Mockups] -> [3.1 Einrichtung der Entwicklungsumgebung]
+[3.1 Einrichtung der Entwicklungsumgebung] lasts 2 days and is colored in LightGreen
+[3.1 Einrichtung der Entwicklungsumgebung] -> [3.2 Implementierung der Datenbankzugriffe]
+[3.2 Implementierung der Datenbankzugriffe] lasts 4 days and is colored in LightGreen
+[3.2 Implementierung der Datenbankzugriffe] -> [3.3 Implementierung des Login-Systems]
+[3.3 Implementierung des Login-Systems] lasts 7 days and is colored in LightGreen
+[3.3 Implementierung des Login-Systems] -> [3.4 Entwicklung der Benutzeroberfläche]
+[3.4 Entwicklung der Benutzeroberfläche] lasts 8 days and is colored in LightGreen
+[3.4 Entwicklung der Benutzeroberfläche] -> [3.5 Implementierung des Bestellsystems mit Validierung]
+[3.5 Implementierung des Bestellsystems mit Validierung] lasts 6 days and is colored in LightGreen
+[3.5 Implementierung des Bestellsystems mit Validierung] -> [3.6 Implementierung der Suchfunktion]
+[3.6 Implementierung der Suchfunktion] lasts 4 days and is colored in LightGreen
+[3.6 Implementierung der Suchfunktion] -> [3.7 Unit-Tests]
+[3.7 Unit-Tests] lasts 3 days and is colored in LightGreen
+[3.7 Unit-Tests] -> [3.8 Zeitpuffer]
+[3.8 Zeitpuffer] lasts 2 days and is colored in LightGreen
+
+-- 4. Abschluss (18 Std) --
+[3.8 Zeitpuffer] -> [4.1 System- und Integrationstest]
+[4.1 System- und Integrationstest] lasts 3 days and is colored in LightPink
+[4.1 System- und Integrationstest] -> [4.2 Code-Review]
+[4.2 Code-Review] lasts 2 days and is colored in LightPink
+[4.2 Code-Review] -> [4.3 Projektdokumentation]
+[4.3 Projektdokumentation] lasts 10 days and is colored in LightPink
+[4.3 Projektdokumentation] -> [4.4 Erstellung des Soll-Ist-Vergleichs]
+[4.4 Erstellung des Soll-Ist-Vergleichs] lasts 1 day and is colored in LightPink
+[4.4 Erstellung des Soll-Ist-Vergleichs] -> [4.5 Abnahme durch den Auftraggeber]
+[4.5 Abnahme durch den Auftraggeber] lasts 1 day and is colored in LightPink
+[4.5 Abnahme durch den Auftraggeber] -> [4.6 Schulung des Anwenders]
+[4.6 Schulung des Anwenders] lasts 1 day and is colored in LightPink
+@endgantt
+```
+
+```plantuml
+@startwbs thriftshop_psp
+!theme toy
+title Projektstrukturplan – Webshop Thriftshop Köln
+
+*[#White] Webshop Thriftshop Köln
+**[#LightBlue] 1. Definition (14 h)
+***[#LightBlue] 1.1 Ist-Analyse (2 h)
+***[#LightBlue] 1.2 Wirtschaftlichkeitsbetrachtung (2 h)
+***[#LightBlue] 1.3 Anforderungen analysieren (2 h)
+***[#LightBlue] 1.4 Use-Case-Analyse (2 h)
+***[#LightBlue] 1.5 Lasten- und Pflichtenheft (6 h)
+**[#LightCoral] 2. Planung (12 h)
+***[#LightCoral] 2.1 Arbeitspakete erstellen (2 h)
+***[#LightCoral] 2.2 Kosten- und Zeitplan (2 h)
+***[#LightCoral] 2.3 Datenbankmodellierung (3 h)
+***[#LightCoral] 2.4 Systemarchitektur (3 h)
+***[#LightCoral] 2.5 UI-Mockups (2 h)
+**[#LightGreen] 3. Realisierung (36 h)
+***[#LightGreen] 3.1 Entwicklungsumgebung (2 h)
+***[#LightGreen] 3.2 Datenbankzugriffe (4 h)
+***[#LightGreen] 3.3 Login-System (7 h)
+***[#LightGreen] 3.4 Benutzeroberfläche (8 h)
+***[#LightGreen] 3.5 Bestellsystem (6 h)
+***[#LightGreen] 3.6 Suchfunktion (4 h)
+***[#LightGreen] 3.7 Unit-Tests (3 h)
+***[#LightGreen] 3.8 Zeitpuffer (2 h)
+**[#LightPink] 4. Abschluss (18 h)
+***[#LightPink] 4.1 Integrationstest (3 h)
+***[#LightPink] 4.2 Code-Review (2 h)
+***[#LightPink] 4.3 Projektdokumentation (10 h)
+***[#LightPink] 4.4 Soll-Ist-Vergleich (1 h)
+***[#LightPink] 4.5 Abnahme (1 h)
+***[#LightPink] 4.6 Schulung (1 h)
+@endwbs
+```
 
 ### 2.2 Ressourcenplanung
 
@@ -185,6 +290,42 @@ Es handelt sich um einen Webshop, der den gesamten Verkaufs- und Verwaltungsproz
 - Der Webshop beinhaltet **keine** direkte Zahlungsfunktion (Abwicklung erfolgt auf Rechnung oder vor Ort).
 - Es ist **kein** Liefer- oder Versandprozess integriert (Vereinbarungen manuell via Nachricht/Telefon).
 
+```plantuml
+@startuml thriftshop_usecase
+!theme plain
+title Thrift Shop Köln
+
+actor Benutzer #LightBlue
+actor Admin #LightGreen
+
+rectangle "Webshop" {
+    (Konto erstellen/ löschen/ bearbeiten) .> (Per Email bestätigen) : <<includes>>
+    (Konto erstellen/ löschen/ bearbeiten).> (Einloggen) : <<includes>>
+    (Produkte suchen)
+    (Bestellen) .> (Einloggen) : <<includes>>
+    (Bestellen) .> (Per Email bestätigen) : <<includes>>
+    (Bestellung stornieren) .> (Bestellen) : <<extends>>
+    (Produkte auflisten/ löschen/ bearbeiten) .> (Einloggen) : <<includes>>
+    (Bestellung stornieren) .> (Per Email bestätigen) : <<includes>> 
+}
+
+Benutzer --> (Konto erstellen/ löschen/ bearbeiten)
+Benutzer --> (Produkte suchen)
+Benutzer --> (Bestellen)
+
+Admin --> (Produkte auflisten/ löschen/ bearbeiten)
+
+Admin --|> Benutzer
+
+' --- Styling ------
+(Bestellen) -[hidden]-> (Per Email bestätigen)
+(Bestellen) -[hidden]-> (Einloggen)
+(Per Email bestätigen) -[hidden]-> (Bestellung stornieren)
+' ------------------
+
+@enduml
+```
+
 ---
 
 ## 4 Entwurfsphase
@@ -211,7 +352,8 @@ Das System folgt einer klassischen Client-Server-Architektur, die sich physisch 
 ### 4.3 Datenmodell
 Das objektorientierte Datenmodell der Anwendung umfasst sieben Klassen und zwei Enumerationen, welche die Struktur der gespeicherten Daten repräsentieren.
 
-**Erklärung des Klassendiagramms:**
+Das nachfolgende Klassendiagramm bildet die Grundlage für die Implementierung der Geschäftslogik. Im Folgenden werden die wesentlichen Designentscheidungen erläutert:
+
 - **Benutzer:** Repräsentiert einen registrierten Kunden. Speichert persönliche Daten wie Name, E-Mail und einen gehashten Passwort. Die Eigenschaft `berechtigung` referenziert die Enumeration `Benutzerrolle` (ADMIN oder GAST) und legt die Zugriffsrechte fest. Ein Benutzer kann keine oder beliebig viele (`0..*`) Bestellungen aufgeben.
 - **Administrator:** Erbt von `Benutzer`. Erweitert den Benutzer um Protokollierungsattribute (`letzter_login`, `letzte_aenderung`) und Methoden zur Verwaltung des Sortiments, z.B. `produkt_anlegen()`, `produkt_bearbeiten()`, `produkt_loeschen()` und `produkt_aktiv_toggle()`. Letztere invertiert den Aktivstatus eines Produkts und gibt den neuen Wert zurück. Dient für die Kontrolle von Produkte die im Sortiment angezeigt sind oder nicht, da Produkte die in eine Bestellposition vorhanden sind, dürfen nicht direkt gelöscht oder bearbeitet werden. 
 - **Produkt:** Bildet einen Artikel des Thriftshops ab. Jedes Produkt besitzt eine eindeutige `produktsnummer`, einen `preis`, einen optionalen `produkt_rabatt` und das Flag `produkt_aktiv` (standardmäßig `True`). Ein Produkt ist genau einer `Kategorie` und genau einem `Zustand` zugeordnet. Es kann in keiner oder mehreren `BestellPosition`en vorkommen (`0..*`).
@@ -221,6 +363,99 @@ Das objektorientierte Datenmodell der Anwendung umfasst sieben Klassen und zwei 
 - **BestellPosition:** Löst die m:n-Beziehung zwischen `Bestellung` und `Produkt` auf. Sie speichert die `menge` und den `positionspreis` – also den Preis des Produkts zum Zeitpunkt der Bestellung. Dadurch bleibt der Bestellwert korrekt, auch wenn sich der Produktpreis später ändert.
 - **BestellStatus (Enum):** Definiert die möglichen Zustände einer Bestellung: `OFFEN`, `IN_BEARBEITUNG`, `ABGESCHLOSSEN` und `STORNIERT`.
 - **Benutzerrolle (Enum):** Definiert die Rollen im System: `ADMIN` und `GAST`.
+
+```plantuml
+@startuml thriftshop_klassendiagramm
+!theme plain
+skinparam classAttributeIconSize 0
+
+class Benutzer {
+    + {static} **user_id: UUID <<PK>>**
+    - vorname: str
+    - nachname: str
+    - email: str
+    - passwort_hash: str
+    - berechtigung: Benutzerrolle
+    ---
+    + authentifizieren(passwort: str): Boolean
+    + bestellen(warenkorb: list): Bestellung
+    + bestellung_entfernen(bestellung_id: UUID): None
+}
+
+class Administrator {
+    - letzter_login: datetime
+    - letzte_aenderung: datetime
+    ---
+    + login_registrieren(): None
+    + aenderung_protokollieren(): None
+    + produkt_anlegen(daten: Produkt): None
+    + produkt_bearbeiten(produkt_id: UUID, daten: ProduktUpdate): None
+    + produkt_loeschen(produkt_id: UUID): None 
+    + produkt_aktiv_toggle(produkt_id: UUID): Boolean
+}
+
+class Produkt {
+    + {static} **produkt_id: UUID <<PK>>**
+    - produktsnummer: String
+    - erstellungs_datum: datetime
+    - //zustand_id: UUID | None <<FK>>//
+    - //kategorie_id: UUID | None <<FK>>//
+    - bezeichnung: str
+    - preis: Decimal 
+    - produkt_rabatt: Decimal | None
+    - produkt_aktiv: Boolean
+}
+
+class Kategorie {
+    + {static} **kategorie_id: UUID <<PK>>**
+    - bezeichnung: str
+    - kategorie_rabatt: Decimal | None
+}
+
+class Zustand {
+    + {static} **zustand_id: UUID <<PK>>**
+    - bezeichnung: str
+    - beschreibung: str
+}
+
+class Bestellung {
+    + {static} **bestellung_id: UUID <<PK>>**
+    - bestellungsnummer: String
+    - bestellung_datum: datetime
+    - status: BestellStatus
+}
+
+class BestellPosition {
+    + {static} **bestellposition_id: UUID <<PK>>**
+    - //bestellung_id: UUID <<FK>>//
+    - //produkt_id: UUID <<FK>>//
+    - menge: int
+    - positionspreis: Decimal
+}
+
+enum BestellStatus {
+    OFFEN
+    IN_BEARBEITUNG
+    ABGESCHLOSSEN
+    STONIERT
+}
+
+enum Benutzerrolle {
+    ADMIN
+    GAST
+}
+
+Administrator --|> Benutzer
+Benutzer "1" --> "*" Bestellung
+Bestellung "1" *-- "1..*" BestellPosition
+Produkt "1" --> "0..*" BestellPosition
+Produkt "*" --> "1" Kategorie
+Produkt "*" --> "1" Zustand
+Bestellung "*" --> "1" BestellStatus
+Benutzer "*" --> "1" Benutzerrolle
+
+@enduml
+```
 
 ### 4.4 Test-Konzept
 Zur Gewährleistung der Softwarequalität werden verschiedene Teststufen definiert:
@@ -268,5 +503,11 @@ Das Pflichtenheft beschreibt detailliert die technische und gestalterische Umset
 ---
 
 ## 10 Anhang
+
+### 10.1 Anhang
+
+
+### 10.2 Anhang
+
 
 ---
