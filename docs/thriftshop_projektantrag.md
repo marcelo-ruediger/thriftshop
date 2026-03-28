@@ -52,36 +52,40 @@ Der bisherige Verkaufsprozess ist rein stationär und wird größtenteils manuel
 ### 5. Projektphasen mit Zeitplanung
 
 **1. Definition (Gesamtzeit: 14 h)**
-1.1 Ist-Analyse (Problemanalyse) (2 h)
-1.2 Wirtschaftlichkeitsbetrachtung (2 h)
-1.3 Anforderungen analysieren (2 h)
-1.4 Use-Case Analyse (2 h)
-1.5 Lasten- und Pflichtenheft erstellen (6 h)
 
-**2. Planung (Gesamtzeit: 14 h)**
-2.1 Arbeitspakete erstellen (Projektstrukturplan) (3 h)
-2.2 Kostenplan und Zeitplan erstellen (Netzplan) (4 h)
-2.3 Datenbankmodellierung inkl. ER-Modell (3 h)
-2.4 Entwurf der Systemarchitektur mit Klassendiagramm (3 h)
-2.5 Erstellung der UI-Mockups (1 h)
+- 1.1 Ist-Analyse (Problemanalyse) – 2 h
+- 1.2 Wirtschaftlichkeitsbetrachtung – 2 h
+- 1.3 Anforderungen analysieren – 2 h
+- 1.4 Use-Case-Analyse – 2 h
+- 1.5 Lasten- und Pflichtenheft erstellen – 6 h
 
-**3. Realisierung (Gesamtzeit: 40 h + 2 h Puffer)**
-3.1 Einrichtung der Entwicklungsumgebung und Datenbankstruktur (2 h)
-3.2 Implementierung der Datenbankzugriffe (CRUD-Operationen) (4 h)
-3.3 Entwicklung der Benutzeroberfläche (6 h)
-3.4 Implementierung des Bestellsystems mit Validierung und E-Mail-Bestätigung (6 h)
-3.5 Implementierung des Login-Systems mit Benutzerauthentifizierung und Rollenverwaltung (5 h)
-3.6 Implementierung der Such- und Filterfunktion (4 h)
-3.7 Unit-Test (3 h)
-3.8 Projektdokumentation (10 h)
-3.9 Zeitpuffer: ein potenziell erhöhter Realisierungsaufwand (2 h) 
+**2. Planung (Gesamtzeit: 12 h)**
 
-**4. Abschluss (Gesamtzeit: 10 h)**
-4.1 System- und Integrationstest (3 h)
-4.2 Code-Review (2 h)
-4.3 Erstellung des Soll-Ist-Vergleichs (2 h)
-4.4 Abnahme durch den Auftraggeber (2 h)
-4.5 Schulungs des Anwenders (1 h)
+- 2.1 Arbeitspakete erstellen (Projektstrukturplan) – 2 h
+- 2.2 Kosten- und Zeitplan erstellen – 2 h
+- 2.3 Datenbankmodellierung inkl. ER-Modell – 3 h
+- 2.4 Entwurf der Systemarchitektur mit Klassendiagramm – 3 h
+- 2.5 Erstellung der UI-Mockups – 2 h
+
+**3. Realisierung (Gesamtzeit: 36 h)**
+
+- 3.1 Einrichtung der Entwicklungsumgebung und Datenbankstruktur – 2 h
+- 3.2 Implementierung der Datenbankzugriffe (CRUD-Operationen) – 4 h
+- 3.3 Implementierung des Login-Systems mit Benutzerauthentifizierung und Rollenverwaltung – 7 h
+- 3.4 Entwicklung der Benutzeroberfläche – 8 h
+- 3.5 Implementierung des Bestellsystems mit Validierung und E-Mail-Bestätigung – 6 h
+- 3.6 Implementierung der Such- und Filterfunktion – 4 h
+- 3.7 Unit-Tests – 3 h
+- 3.8 Zeitpuffer (erhöhter Realisierungsaufwand) – 2 h
+
+**4. Abschluss (Gesamtzeit: 18 h)**
+
+- 4.1 System- und Integrationstest – 3 h
+- 4.2 Code-Review – 2 h
+- 4.3 Projektdokumentation – 10 h
+- 4.4 Erstellung des Soll-Ist-Vergleichs – 1 h
+- 4.5 Abnahme durch den Auftraggeber – 1 h
+- 4.6 Schulung des Anwenders – 1 h
 
 **Gesamtzeit des Projektes: 80 h**
 
