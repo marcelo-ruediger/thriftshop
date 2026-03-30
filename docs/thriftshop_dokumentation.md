@@ -1,7 +1,5 @@
 # Projektdokumentation
 
-#focus 
-
 ## 1 Einleitung
 
 ### 1.1 Projektumfeld
@@ -266,7 +264,10 @@ Die Kosten des Projekts entstehen hauptsächlich durch den internen Personalaufw
 - **Fremdkosten (App Stores - Optional):** Falls die App später in die Stores soll: Apple Developer (99 $/Jahr), Google Play (25 $ einmalig).
 
 #### 3.2.3 Amortisationsdauer
-Da die laufenden Betriebskosten faktisch entfallen, bemisst sich die Amortisation der anfänglichen (fiktiven) Entwicklungskosten (1.900 €) an der eingesparten Arbeitszeit. Spart die digitale Verwaltung pro Woche ca. 3 Arbeitsstunden (à 20 €) ein, so werden 60 € pro Woche gespart. Die Gesamtentwicklungskosten von 1.900 € haben sich somit nach ca. 32 Wochen (rund 8 Monaten) amortisiert.
+Da die laufenden Betriebskosten faktisch entfallen, bemisst sich die Amortisation der Entwicklungskosten (1.900 €) an der eingesparten Arbeitszeit. Spart die digitale Verwaltung pro Woche ca. 3 Arbeitsstunden (à 20 €) ein, so werden 60 € pro Woche gespart. Die Gesamtentwicklungskosten von 1.900 € haben sich somit nach ca. 32 Wochen (rund 8 Monaten) amortisiert.
+
+**Amortisationsverlauf**
+![[thriftshop_amortisationsverlauf.svg]]
 
 ### 3.3 Lastenheft/ Fachkonzept
 Bei diesem Projekt wurde vom Auftraggeber kein klassisches Lastenheft vorgegeben. Das Problem, die gewünschten Lösungen, das Budget und die Ressourcen wurden stattdessen in einem Fachgespräch ermittelt und festgehalten. 
@@ -348,6 +349,38 @@ Das System folgt einer klassischen Client-Server-Architektur, die sich physisch 
 3. **Datenhaltungsschicht (Datenbank):** 
    Das FastAPI-Backend kommuniziert sicher mit einer PostgreSQL-Datenbank, die von Supabase in der Cloud gehostet wird. Für die Entwicklung und Testing wird erstmal eine MySQL Datenbank verwendet. Hier werden alle persistenten Daten, wie Benutzerprofile, das Produktinventar und die Bestellungen, zentral verwaltet. Ein direkter Zugriff des Frontends auf die Datenbank ist aus Sicherheitsgründen technisch ausgeschlossen; die API dient als verbindlicher "Türsteher".
 
+```plantuml 
+@startuml architekturdiagramm
+!theme plain
+title Architekturdiagramm der Anwendung
+skinparam componentStyle rectangle
+
+package "Client (Frontend)" {
+    [Flutter App (iOS/Android)] as App
+    [Flutter Web (Admin Dashboard)] as Web
+}
+
+package "Server (Backend - Railway)" {
+    [FastAPI (REST API)] as API
+    [Authentication/Rollen Logik] as Auth
+    API --> Auth
+}
+
+database "Datenbank (Supabase)" {
+    [PostgreSQL] as DB
+}
+
+cloud "Externe Dienste" {
+    [Resend (SMTP Mailer)] as Mail
+}
+
+App <--> API : HTTPS / REST JSON
+Web <--> API : HTTPS / REST JSON
+
+API <--> DB : Lesen / Schreiben
+API --> Mail : API Call (Bestätigungsmail)
+@enduml
+```
 
 ### 4.3 Datenmodell
 Das objektorientierte Datenmodell der Anwendung umfasst sieben Klassen und zwei Enumerationen, welche die Struktur der gespeicherten Daten repräsentieren.
@@ -396,20 +429,21 @@ class Administrator {
 
 class Produkt {
     + {static} **produkt_id: UUID <<PK>>**
-    - produktsnummer: String
+    - produktsnummer: str
     - erstellungs_datum: datetime
-    - //zustand_id: UUID | None <<FK>>//
-    - //kategorie_id: UUID | None <<FK>>//
     - bezeichnung: str
+    - produkt_info: str
     - preis: Decimal 
-    - produkt_rabatt: Decimal | None
+    - produkt_rabatt: Decimal 
     - produkt_aktiv: Boolean
+    - //zustand_id: UUID <<FK>>//
+    - //kategorie_id: UUID <<FK>>//
 }
 
 class Kategorie {
     + {static} **kategorie_id: UUID <<PK>>**
     - bezeichnung: str
-    - kategorie_rabatt: Decimal | None
+    - kategorie_rabatt: Decimal 
 }
 
 class Zustand {
@@ -420,17 +454,17 @@ class Zustand {
 
 class Bestellung {
     + {static} **bestellung_id: UUID <<PK>>**
-    - bestellungsnummer: String
+    - bestellungsnummer: str
     - bestellung_datum: datetime
     - status: BestellStatus
 }
 
 class BestellPosition {
     + {static} **bestellposition_id: UUID <<PK>>**
-    - //bestellung_id: UUID <<FK>>//
-    - //produkt_id: UUID <<FK>>//
     - menge: int
     - positionspreis: Decimal
+    - //bestellung_id: UUID <<FK>>//
+    - //produkt_id: UUID <<FK>>//
 }
 
 enum BestellStatus {
@@ -438,10 +472,12 @@ enum BestellStatus {
     IN_BEARBEITUNG
     ABGESCHLOSSEN
     STONIERT
+    ERSTATTET
 }
 
 enum Benutzerrolle {
     ADMIN
+    MITARBEITER
     GAST
 }
 
@@ -464,11 +500,89 @@ Zur Gewährleistung der Softwarequalität werden verschiedene Teststufen definie
 - **Manuelle Systemtests (Frontend):** Auf physischen Testgeräten (Android/iPhone) werden die UI/UX und Nutzerführungen (Registrierung -> Artikel in Warenkorb -> Bestellung) manuell durchgespielt.
 
 ### 4.5 Pflichtenheft
-Das Pflichtenheft beschreibt detailliert die technische und gestalterische Umsetzung des im Fachkonzept (siehe 3.3) geforderten Lastenhefts durch den Entwickler. Es enthält unter anderem die konkreten Endpunkte der REST-API, das finale Datenbankschema (ERD), das detaillierte UI-Mockup (z.B. in Figma) und die Zielplattform-Dokumentation.
+
+Das Pflichtenheft beschreibt, wie die im Fachkonzept (3.3) gestellten Kundenanforderungen technisch umgesetzt werden.
+
+#### Anforderung 1: Digitalisierung des Sortiments
+
+- **Sortiment jederzeit online einsehbar**  
+  Die Flutter-App ruft beim Start die Produktliste über den Endpunkt `GET /produkte` vom FastAPI-Backend ab. Dieser Endpunkt ist öffentlich zugänglich und erfordert keinen Login, sodass Kunden das Sortiment jederzeit und von überall einsehen können. Die Produkte werden in einem `GridView` dargestellt.
+
+- **Such- und Filterfunktion**  
+  Im Frontend stehen ein Suchfeld (`TextField`) und Kategorie-Filter (`FilterChip`) zur Verfügung. Jede Eingabe sendet eine neue Anfrage an das Backend (`GET /produkte?search=jacke&kategorie=Kleidung`). Das FastAPI-Backend filtert die Ergebnisse in der Datenbankabfrage und gibt nur passende Produkte zurück.
+
+#### Anforderung 2: Digitale Bestellabwicklung
+
+- **Online-Bestellungen aufgeben**  
+  Der Kunde legt Artikel in den Warenkorb, dessen Inhalt lokal im App-State (via `Provider`) gespeichert wird. Auf dem Checkout-Screen sieht der Kunde eine Übersicht und bestätigt die Bestellung. Die App sendet daraufhin einen `POST /bestellungen`-Request mit den Artikeln und der Kunden-ID an das Backend, welches die Bestellung in der Datenbank anlegt.
+
+- **Automatische E-Mail-Bestätigung bei Bestellung**  
+  Nach erfolgreichem Anlegen der Bestellung in der Datenbank ruft das FastAPI-Backend den externen E-Mail-Dienst Resend per SMTP auf. Dieser versendet automatisch eine Bestätigungsmail mit der Bestellnummer und den bestellten Artikeln an die hinterlegte Kunden-E-Mail-Adresse.
+
+- **E-Mail bei Registrierung und Kontoänderung**  
+  Bei der Registrierung versendet Supabase Auth automatisch eine Bestätigungsmail. Bei späteren Kontoänderungen (Daten bearbeiten, Konto löschen) triggert das FastAPI-Backend nach der Datenbankoperation jeweils einen eigenen Resend-Aufruf, um den Kunden per E-Mail zu informieren.
+
+#### Anforderung 3: Verwaltung und Datensicherheit
+
+- **Login-System mit Rollenverwaltung**  
+  Die Authentifizierung erfolgt über Supabase Auth, das nach erfolgreichem Login einen signierten JWT-Token ausstellt. Die Benutzerrolle (`ADMIN` oder `GAST`) ist im Token hinterlegt. Die Flutter-App speichert den Token lokal (`shared_preferences`) und sendet ihn bei jedem API-Request im Authorization-Header mit. Das FastAPI-Backend prüft bei jedem Request die Gültigkeit und Rolle des Tokens.
+
+- **Geschützter Admin-Bereich**  
+  Alle schreibenden Endpunkte der Produktverwaltung (`POST`, `PUT`, `DELETE /produkte`) sowie die Statusänderung von Bestellungen (`PATCH /bestellungen/{id}/status`) sind im Backend per Dependency-Injection-Middleware geschützt. Anfragen ohne gültigen Admin-Token werden mit HTTP `403 Forbidden` abgewiesen. Im Frontend wird die Admin-Navigation nur angezeigt, wenn die Rolle im Token `ADMIN` ist.
+
+- **Zentrale relationale Datenbank**  
+  Alle persistenten Daten werden in einer PostgreSQL-Datenbank auf Supabase gespeichert. Die Tabellen entsprechen dem Klassendiagramm (Abschnitt 4.3): `benutzer`, `produkt`, `kategorie`, `zustand`, `bestellung`, `bestellposition`. Ein direkter Zugriff vom Frontend auf die Datenbank ist technisch ausgeschlossen; alle Anfragen laufen ausschließlich über das FastAPI-Backend.
+
+- **DSGVO und Passwortverschlüsselung**  
+  Passwörter werden ausschließlich als bcrypt-Hash gespeichert (`passlib`-Bibliothek). Es wird kein Klartext-Passwort in der Datenbank abgelegt oder über das Netzwerk übertragen. Es werden nur die für die Bestellung notwendigen Pflichtdaten erhoben (Vorname, Nachname, E-Mail).
+
+#### Abgrenzung (Nicht-Ziele, unverändert)
+
+- Keine Zahlungsfunktion – Rechnung wird per E-Mail versendet oder Zahlung erfolgt vor Ort.
+- Kein Versandprozess – Absprache erfolgt manuell per Telefon oder Nachricht.
 
 ---
 
 ## 5 Implementierungsphase
+TODO: 
+1. Entwicklungsumgebung einrichten
+[x] Flutter SDK, Python, VS Code, MySQL lokal installieren 
+[x] GitHub-Repository anlegen 
+2. Datenbank aufsetzen
+[x] MySQL-Schema lokal erstellen (Tabellen laut Klassendiagramm: benutzer, produkt, kategorie, zustand, bestellung, bestellposition)
+3. FastAPI-Backend – Grundstruktur
+[] Projektstruktur anlegen, Datenbankverbindung herstellen
+[] CRUD-Endpunkte für Produkte (GET, POST, PUT, DELETE /produkte)
+4. Authentifizierung & Rollen
+[] Supabase Auth einbinden, JWT-Token-Validierung im Backend
+[] Middleware für Rollenprüfung (ADMIN / GAST)
+[] Endpunkte für Registrierung und Login
+5. Bestellsystem im Backend
+[] Endpunkte für Bestellungen (POST /bestellungen, PATCH /bestellungen/{id}/status)
+[] Stornierung, Statusübergänge
+[] Resend-Integration für E-Mail-Bestätigungen
+6. Flutter-Frontend – Grundstruktur
+[] Projektstruktur anlegen, Navigation (go_router), BottomNavigationBar
+[] HTTP-Service für API-Kommunikation, Token-Speicherung (shared_preferences)
+7. Flutter – Kundenseiten
+[] Screen 1: Login / Registrierung
+[] Screen 2: Produktliste (Suche, Filter)
+[] Screen 3: Produktdetail + Warenkorb-Logik (Provider)
+[] Screen 4: Warenkorb → Checkout → Bestätigung
+[] Screen 5: Meine Bestellungen + Stornieren
+[] Screen 6: Profil (Bearbeiten, Löschen, Abmelden)
+8. Flutter – Admin-Seiten
+[] Screen 7: Produktverwaltung (Liste, Toggle, Formular)
+[] Screen 8: Bestellverwaltung (Filter, Statusänderung)
+9. Migration auf Supabase/PostgreSQL
+[] Lokale MySQL-DB auf Supabase PostgreSQL migrieren
+[] Backend-Verbindung umstellen, Railway-Deployment
+10. Testen
+[] Unit-Tests (pytest für FastAPI-Endpunkte)
+[] Manuelle Tests der Flutter-App auf Testgerät
+11. Deployment
+[] Backend auf Railway deployen
+[] Flutter Web-Build auf GitHub Pages deployen
 
 ### 5.1 Erstellen der Projektstruktur
 ### 5.2 Implementierung der Datenstruktur
@@ -504,10 +618,9 @@ Das Pflichtenheft beschreibt detailliert die technische und gestalterische Umset
 
 ## 10 Anhang
 
-### 10.1 Anhang
+### 10.1 UI Wireframes
 
-
-### 10.2 Anhang
+![[thriftshop_screens_wireframe.svg]]
 
 
 ---

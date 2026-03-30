@@ -1,5 +1,4 @@
-*.pdf
-*.png
+/docs/img/ 
 # für Umgebungsvariablen
 *.env 
 *.db
