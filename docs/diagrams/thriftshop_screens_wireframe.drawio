@@ -1,0 +1,752 @@
+<mxfile host="65bd71144e">
+    <diagram id="YsbiM91bl1VUxNyZW4M7" name="Page-1">
+        <mxGraphModel dx="1524" dy="561" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1400" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="82" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26amp%3Bnbsp%3B%20%26amp%3Bnbsp%3BPasswort%20eingeben...%22%20style%3D%22rounded%3D1%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3Balign%3Dleft%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22320%22%20y%3D%22570%22%20width%3D%22230%22%20height%3D%2230%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="50" width="320" height="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Thriftshop Köln&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="132.5" y="70" width="165" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="150" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="85" value="Email eingeben..." style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="150" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="86" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="210" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="Passwort eingeben.." style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="210" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="88" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Einloggen&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="155" y="270" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="Noch kein Konto?" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="350" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="95" value="Screen 1 - Login" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="20" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="&amp;nbsp; &amp;nbsp;Vorname eingeben..." style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="390" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="&amp;nbsp; &amp;nbsp;Nachname eingeben..." style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="430" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="&amp;nbsp; &amp;nbsp;Email eingeben..." style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="470" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="99" value="&amp;nbsp; &amp;nbsp;Passwort eingeben..." style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="510" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="100" value="&amp;nbsp; &amp;nbsp;Passwort bestätigen..." style="rounded=1;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="550" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="101" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="50" width="320" height="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="102" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Thriftshop Köln&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="60" width="155" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="103" value="&amp;nbsp; &amp;nbsp;Suchen" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="120" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="104" value="Screen 2 - Produktliste (Home)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="475" y="20" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="105" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;🛒&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="700" y="55" width="47.5" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="106" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Alle&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="160" width="35" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="107" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Kleidung&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="530" y="160" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="108" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Eletronik&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="590" y="160" width="50" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Deko&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="650" y="160" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="110" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Home&lt;/font&gt;&lt;/b&gt; | Warenkorb | Bestellungen | Konto" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="580" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="111" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="210" width="90" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="112" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="210" width="90" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="113" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="330" width="90" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="114" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="330" width="90" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="115" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="450" width="90" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="116" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="450" width="90" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="117" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;📻&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="515" y="220" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="118" value="Vintage Radio" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="260" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="119" value="99,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="280" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="120" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;🕶️&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="635" y="220" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="121" value="Sunnenbrille" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="260" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="122" value="24,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="280" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="123" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;👖&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="515" y="340" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="124" value="Jeans" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="380" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="125" value="39,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="400" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="126" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;🧦&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="635" y="340" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="127" value="4,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="400" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="128" value="Socken" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="380" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="129" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;👜&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="515" y="460" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="130" value="Handtasche" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="500" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="131" value="54,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="520" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="132" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;🎮&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="635" y="460" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="133" value="Xbox Kontroller" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="500" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="134" value="29,99" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="520" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="135" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="670" width="320" height="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="136" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Minimalistische Berge – Wandbild&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="110" y="680" width="260" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="137" value="Screen 3 - Produktdetail" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="85" y="640" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="138" value="Home | Warenkorb | Bestellungen | Konto" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="1200" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="139" value="&lt;font style=&quot;font-size: 72px;&quot;&gt;🖼️&lt;/font&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="740" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="140" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Zustand&lt;/b&gt;&lt;/font&gt;: Neuwertig" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="940" width="187.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="141" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Kategorie&lt;/b&gt;&lt;/span&gt;: Dekoration" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="970" width="187.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="142" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Preis&lt;/b&gt;&lt;/span&gt;: 34,99 €" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="1000" width="187.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="143" value="&lt;sup&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;🔙&lt;/font&gt;&lt;/sup&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="680" width="75" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="144" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="50" y="720" as="sourcePoint"/>
+                        <mxPoint x="370" y="720" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="145" value="&lt;span style=&quot;color: rgb(192, 192, 192); font-size: 14px;&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;Minimalistische Berge – Wandbild&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="910" width="237.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="146" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Beschreibung&lt;/b&gt;&lt;/span&gt;:&amp;nbsp;„Minimalistische Berge – Wandbild“ bringt mit klaren Linien und ruhigen Farben eine moderne, harmonische Berglandschaft in deinen Raum und sorgt für eine stilvolle, dezente Atmosphäre." style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="1030" width="267.5" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="147" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;In den Warenkorb 🛒&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="146.25" y="1130" width="143.75" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="148" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="680" width="320" height="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="149" value="Screen 5 - Meine Bestellungen" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="640" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="150" value="Home | Warenkorb | &lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Bestellungen&lt;/b&gt;&lt;/font&gt; | Konto" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="1070" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="151" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Meine Bestellungen&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="670" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="152" value="&lt;div&gt;Bestell-Nr.:&amp;nbsp;&lt;div&gt;Datum:&amp;nbsp;&lt;/div&gt;&lt;div&gt;Betrag:&lt;/div&gt;&lt;div&gt;Status:&amp;nbsp;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="740" width="90" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="153" value="&lt;div&gt;TS-2026-047&lt;/div&gt;&lt;div&gt;29.03.2026 um 20:39 Uhr&lt;/div&gt;&lt;div&gt;144,96 €&lt;/div&gt;&lt;div&gt;OFFEN&lt;/div&gt;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="760" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="154" value="&lt;div&gt;Bestell-Nr.:&amp;nbsp;&lt;div&gt;Datum:&amp;nbsp;&lt;/div&gt;&lt;div&gt;Betrag:&lt;/div&gt;&lt;div&gt;Status:&amp;nbsp;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="870" width="90" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="155" value="&lt;div&gt;TS-2026-035&lt;/div&gt;&lt;div&gt;09.03.2026 um 14:09 Uhr&lt;/div&gt;&lt;div&gt;44,99 €&lt;/div&gt;&lt;div&gt;ABGESCHLOSSEN&lt;/div&gt;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="890" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="156" value="&lt;div&gt;Bestell-Nr.:&amp;nbsp;&lt;div&gt;Datum:&amp;nbsp;&lt;/div&gt;&lt;div&gt;Betrag:&lt;/div&gt;&lt;div&gt;Status:&amp;nbsp;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="980" width="90" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="157" value="&lt;div&gt;TS-2025-132&lt;/div&gt;&lt;div&gt;24.06.2025 um 17:39 Uhr&lt;/div&gt;&lt;div&gt;204,74 €&lt;/div&gt;&lt;div&gt;ABGESCHLOSSEN&lt;/div&gt;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="580" y="1000" width="140" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="158" value="Stornieren" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="810" width="215" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="159" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="500" y="860" as="sourcePoint"/>
+                        <mxPoint x="720" y="860" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="160" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="502.5" y="960" as="sourcePoint"/>
+                        <mxPoint x="722.5" y="960" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="161" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="1300" width="320" height="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="162" value="Screen 4 - Warenkorb &amp;amp; Checkout" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="292.5" y="1260" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="163" value="Home | &lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Warenkorb&lt;/b&gt;&lt;/font&gt; | Bestellungen | Konto" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="1690" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="164" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Warenkorb 🛒&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="1300" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="165" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;🖼️&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="107.5" y="1380" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="166" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;📻&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="107.5" y="1440" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="167" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;🧦&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="107.5" y="1500" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="168" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Minimalistische Berge – Wandbild&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="152.5" y="1370" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="169" value="34,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="152.5" y="1390" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="170" value="➖ 1 ➕" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="220" y="1390" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="171" value="🗑️" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="297.5" y="1390" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="172" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Vintage Radio&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="152.5" y="1430" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="173" value="99,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="152.5" y="1450" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="174" value="➖ 1 ➕" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="220" y="1450" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="175" value="🗑️" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="297.5" y="1450" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="176" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Socken&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="152.5" y="1490" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="177" value="4,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="152.5" y="1510" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="178" value="➖ 2 ➕" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="220" y="1510" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="179" value="🗑️" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="297.5" y="1510" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="180" value="&lt;font style=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold; font-size: 14px;&quot;&gt;Gesamt: &lt;/span&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;&lt;b&gt;144,96 €&lt;/b&gt;&lt;/font&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="107.5" y="1580" width="145" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="181" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="112.5" y="1560" as="sourcePoint"/>
+                        <mxPoint x="332.5" y="1560" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="182" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Zur Bestellung&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="171.25" y="1630" width="122.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="183" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="437.5" y="1305" width="320" height="390" as="geometry"/>
+                </mxCell>
+                <mxCell id="184" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Checkout&amp;nbsp;&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="437.5" y="1305" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="185" value="&lt;ol&gt;&lt;li&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Minimalistische Berge - Wandbild&amp;nbsp;&lt;/font&gt;&lt;/li&gt;&lt;li&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Vintage Radio&amp;nbsp;&lt;/font&gt;&lt;/li&gt;&lt;li&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Socken&lt;/font&gt;&lt;/li&gt;&lt;/ol&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="427.5" y="1385" width="310" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="186" value="x1 = 34,99 €&amp;nbsp;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="667.5" y="1365" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="187" value="x1 = 99&lt;span style=&quot;font-family: monospace; font-size: 0px; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22x1%20%3D%2034%2C99%20%E2%82%AC%26amp%3Bnbsp%3B%22%20style%3D%22text%3Bhtml%3D1%3Balign%3Dcenter%3BverticalAlign%3Dmiddle%3BwhiteSpace%3Dwrap%3Brounded%3D0%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22520%22%20y%3D%22630%22%20width%3D%2280%22%20height%3D%2230%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;,99 €&amp;nbsp;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="667.5" y="1385" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="188" value="x2 = 9&lt;span style=&quot;font-family: monospace; font-size: 0px; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22x1%20%3D%2034%2C99%20%E2%82%AC%26amp%3Bnbsp%3B%22%20style%3D%22text%3Bhtml%3D1%3Balign%3Dcenter%3BverticalAlign%3Dmiddle%3BwhiteSpace%3Dwrap%3Brounded%3D0%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22520%22%20y%3D%22630%22%20width%3D%2280%22%20height%3D%2230%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;,98 €&amp;nbsp;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="667.5" y="1405" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="189" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="457.5" y="1445" as="sourcePoint"/>
+                        <mxPoint x="747.5" y="1445" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="190" value="&lt;font style=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold; font-size: 14px;&quot;&gt;Gesamt:&amp;nbsp;&lt;/span&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="457.5" y="1455" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="191" value="&lt;b style=&quot;color: rgb(192, 192, 192); scrollbar-color: rgb(75, 75, 75) rgb(27, 29, 30);&quot;&gt;&lt;font face=&quot;Helvetica&quot;&gt;144,96 €&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="672.5" y="1455" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="192" value="❗Zahlung per Rechnung oder vor Ort möglich" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="445.5" y="1535" width="255" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="193" value="&lt;font style=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold; font-size: 14px;&quot;&gt;Zahlungsmethode Auswählen:&amp;nbsp;&lt;/span&gt;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="451.25" y="1505" width="221.25" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="194" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Rechnung per Email&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="457.5" y="1575" width="127.5" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="195" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Vor Ort&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="606.25" y="1575" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="196" value="&lt;font size=&quot;3&quot;&gt;Abbrechen&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="458.13" y="1635" width="278.75" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="197" value="&lt;sup&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;🔙&lt;/font&gt;&lt;/sup&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="432.5" y="1310" width="75" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="198" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="1750" width="320" height="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="199" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;Bestellung aufgegeben!&amp;nbsp;&lt;span style=&quot;color: rgb(255, 255, 255);&quot;&gt;✅&lt;/span&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="117.5" y="1820" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="200" value="&lt;sup&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;🔙&lt;/font&gt;&lt;/sup&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="72.5" y="1760" width="75" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="201" value="Bestellnummer: &lt;b&gt;TS-2026-045&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="127.5" y="1890" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="202" value="Du erhältst eine Bestätigung per Email." style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="127.5" y="1920" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="203" value="&lt;font size=&quot;3&quot;&gt;Zu meinen Bestellungen&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="98.12" y="2000" width="278.75" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="204" value="&lt;font size=&quot;3&quot;&gt;Weiter shoppen&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="98.12" y="2050" width="278.75" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="205" value="4.1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="192.5" y="1270" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="206" value="4.2" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="582.5" y="1275" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="207" value="4.3" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="197.5" y="1720" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="208" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="445.5" y="1760" width="320" height="350" as="geometry"/>
+                </mxCell>
+                <mxCell id="209" value="Screen 6 - Profil" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="480.5" y="1720" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="210" value="Home | Warenkorb | Bestellungen | &lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Konto&lt;/b&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="445.5" y="2080" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="211" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Mein Konto&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="445.5" y="1750" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="212" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;👤 Max Mustermann&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot;&gt;max@gmail.com&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="465.5" y="1820" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="213" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Daten bearbeiten&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="485.5" y="1890" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="214" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Abmelden&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="485.5" y="1950" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="215" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Konto löschen&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="485.5" y="2010" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="216" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="670.5" y="1890" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="217" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="670.5" y="1950" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="218" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="670.5" y="2010" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="219" value="" style="endArrow=none;html=1;entryX=1;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" target="213">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="485.5" y="1920" as="sourcePoint"/>
+                        <mxPoint x="535.5" y="1870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="220" value="" style="endArrow=none;html=1;entryX=1;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="485.5" y="1980" as="sourcePoint"/>
+                        <mxPoint x="605.5" y="1980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="221" value="" style="endArrow=none;html=1;entryX=1;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="485.5" y="2039" as="sourcePoint"/>
+                        <mxPoint x="605.5" y="2039" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="222" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="2170" width="320" height="390" as="geometry"/>
+                </mxCell>
+                <mxCell id="223" value="Screen 7 - Admin Produktverwaltung" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="305" y="2140" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="224" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Produkte &lt;/b&gt;&lt;/font&gt;| Orders" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="2540" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="225" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Produkte&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="2170" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="226" value="&amp;nbsp; &amp;nbsp;Suchen" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="95" y="2230" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="227" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;➕&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="310" y="2175" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="228" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;🖼️&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="85" y="2290" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="229" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;📻&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="85" y="2350" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="230" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;🧦&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="85" y="2410" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="231" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Minimalistische Berge...&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2280" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="232" value="34,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2300" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="233" value="✅ Aktiv" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="197.5" y="2300" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="234" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Vintage Radio&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2340" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="235" value="99,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2360" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="236" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Socken&amp;nbsp;&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2400" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="237" value="4,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2420" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="238" value="❌ Inaktiv" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="197.5" y="2420" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="239" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;👖&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="85" y="2480" width="35" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="240" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Jeans&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2470" width="195" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="241" value="39,99 €" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="2490" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="242" value="✅ Aktiv" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="197.5" y="2360" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="243" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Deaktivieren&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="272.5" y="2307.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="244" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Deaktivieren&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="275" y="2367.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="245" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Aktivieren&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="275" y="2427.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="246" value="❌ Inaktiv" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="197.5" y="2490" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="247" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Aktivieren&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="275" y="2497.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="248" value="&lt;font style=&quot;font-size: 10px; font-weight: normal;&quot;&gt;Bearbeiten&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="275" y="2477.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="249" value="&lt;font style=&quot;font-size: 10px; font-weight: normal;&quot;&gt;Bearbeiten&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="275" y="2407.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="250" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="251">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="450" y="2340" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="251" value="&lt;font style=&quot;font-size: 10px; font-weight: normal;&quot;&gt;Bearbeiten&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="275" y="2347.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="252" value="&lt;font style=&quot;font-size: 10px; font-weight: normal;&quot;&gt;Bearbeiten&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontStyle=1" vertex="1" parent="1">
+                    <mxGeometry x="272.5" y="2287.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="253" value="&lt;br&gt;&lt;div style=&quot;color: rgb(187, 190, 191); background-color: rgb(18, 19, 20); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-weight: normal; font-size: 13px; line-height: 18px; white-space: pre;&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="2170" width="320" height="450" as="geometry"/>
+                </mxCell>
+                <mxCell id="254" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Produkt bearbeiten&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="2170" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="255" value="&lt;sup&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;🔙&lt;/font&gt;&lt;/sup&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="2175" width="75" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="256" value="Vintage Radio" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="2220" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="257" value="99,99 €" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="2260" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="258" value="0 % (Rabatt)" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="2300" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="259" value="Kategorie:" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="2340" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="260" value="Kleidung&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="2345" width="110" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="261" value="&#xa;&lt;p&gt;▼&lt;/p&gt;&#xa;&#xa;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="690" y="2338.75" width="50" height="52.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="262" value="Zustand:" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="2360" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="263" value="Neuwertig" style="rounded=1;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="620" y="2370" width="110" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="264" value="&#xa;&lt;p&gt;▼&lt;/p&gt;&#xa;&#xa;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="690" y="2370" width="50" height="37.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="265" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Bearbeiten&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="670" y="2220" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="266" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Bearbeiten&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="670" y="2260" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="267" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Bearbeiten&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="670" y="2300" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="268" value="Bild Hochladen" style="rounded=1;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="2400" width="235" height="27.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="269" value="🖼️" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="577.5" y="2440" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="270" value="Status: &lt;b&gt;Aktiv&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="2520" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="271" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Deaktivieren&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="671.25" y="2527.5" width="65" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="272" value="Speichern" style="rounded=1;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="2550" width="230" height="27.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="273" value="Löschen" style="rounded=1;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="2577.5" width="230" height="27.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="274" value="7.1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="175" y="2145" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="275" value="7.2" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="603.75" y="2145" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="276" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="2730" width="320" height="490" as="geometry"/>
+                </mxCell>
+                <mxCell id="277" value="Screen 8 - Admin Bestellverwaltung" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="315" y="2660" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="278" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Produkte &lt;/font&gt;| &lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Orders&lt;/b&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="3190" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="279" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;Bestellungen&lt;/font&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="2690" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="280" value="&lt;div&gt;&lt;b&gt;ID: TS-2026-047&lt;/b&gt;&lt;/div&gt;&lt;div&gt;29.03.2026 um 20:39 Uhr&lt;/div&gt;&lt;div&gt;144,96 € |&amp;nbsp;&lt;span style=&quot;color: rgb(192, 192, 192); background-color: transparent;&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;OFFEN&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="2795" width="215" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="281" value="&lt;div&gt;&lt;b&gt;ID: TS-2026-046&lt;/b&gt;&lt;/div&gt;&lt;div&gt;28.03.2026 um 14:09 Uhr&lt;/div&gt;&lt;div&gt;44,99 € |&amp;nbsp;&lt;span style=&quot;color: rgb(192, 192, 192); background-color: transparent;&quot;&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;IN OFFEN&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="2860" width="225" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="282" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="100" y="2840" as="sourcePoint"/>
+                        <mxPoint x="320" y="2840" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="283" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="100" y="2910" as="sourcePoint"/>
+                        <mxPoint x="320" y="2910" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="284" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="285">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="465" y="2810.4285714285716" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="285" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="295" y="2795" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="286" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="295" y="2860" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="287" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="295" y="3000" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="288" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Filter:&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="105" y="2750" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="289" value="ALLE" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="155" y="2755" width="120" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="290" value="&#xa;&lt;p&gt;▼&lt;/p&gt;&#xa;&#xa;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="235" y="2755" width="50" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="291" value="&lt;div&gt;&lt;b&gt;ID: TS-2026-045&lt;/b&gt;&lt;/div&gt;&lt;div&gt;28.03.2026 um 19:19 Uhr&lt;/div&gt;&lt;div&gt;63,45 € | IN BEARBEITUNG&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="2930" width="225" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="292" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="295" y="2930" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="293" value="&lt;div&gt;&lt;b&gt;ID: TS-2026-044&lt;/b&gt;&lt;/div&gt;&lt;div&gt;27.03.2026 um 12:19 Uhr&lt;/div&gt;&lt;div&gt;233,80 € | IN BEARBEITUNG&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="3000" width="225" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="294" value="&lt;div&gt;&lt;b&gt;ID: TS-2026-043&lt;/b&gt;&lt;/div&gt;&lt;div&gt;26.03.2026 um 15:33 Uhr&lt;/div&gt;&lt;div&gt;27,87 € | IN BEARBEITUNG&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="3070" width="225" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="295" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="97.5" y="2980" as="sourcePoint"/>
+                        <mxPoint x="317.5" y="2980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="296" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="97.5" y="3050" as="sourcePoint"/>
+                        <mxPoint x="317.5" y="3050" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="297" value="" style="endArrow=none;html=1;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="97.5" y="3120" as="sourcePoint"/>
+                        <mxPoint x="317.5" y="3120" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="298" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="295" y="3070" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="299" value="&lt;div&gt;&lt;b&gt;ID: TS-2026-042&lt;/b&gt;&lt;/div&gt;&lt;div&gt;24.03.2026 um 10:56 Uhr&lt;/div&gt;&lt;div&gt;154,31 € | ABGESCHLOSSEN&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="3140" width="225" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="300" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;&amp;gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="295" y="3140" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="301" value="&lt;span style=&quot;font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%26lt%3Bfont%20style%3D%26quot%3Bfont-size%3A%2010px%3B%26quot%3B%26gt%3BAlle%26lt%3B%2Ffont%26gt%3B%22%20style%3D%22rounded%3D0%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%22335%22%20y%3D%22220%22%20width%3D%2235%22%20height%3D%2220%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="2730" width="320" height="450" as="geometry"/>
+                </mxCell>
+                <mxCell id="302" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;nbsp; &amp;nbsp;Bestellung&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;b style=&quot;background-color: transparent; scrollbar-color: rgb(75, 75, 75) rgb(27, 29, 30); color: rgb(192, 192, 192);&quot;&gt;&amp;nbsp;&lt;font style=&quot;font-size: 18px;&quot;&gt;TS-2026-047&lt;/font&gt;&lt;/b&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="2690" width="320" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="303" value="&lt;sup&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;🔙&lt;/font&gt;&lt;/sup&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="475" y="2695" width="75" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="304" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Max Mustermann&lt;/font&gt;&lt;div&gt;&lt;font size=&quot;3&quot; style=&quot;&quot;&gt;max@gmail.com&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot; style=&quot;&quot;&gt;29.03.2026 um 20:39 Uhr&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot; style=&quot;&quot;&gt;Status: OFFEN&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="2765" width="185" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="305" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;--------------- Artikel ---------------&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="2860" width="265" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="306" value="&lt;ol&gt;&lt;li&gt;&lt;span style=&quot;color: rgb(192, 192, 192); text-align: left;&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Minimalistische Berge – Wandbild&lt;/font&gt;&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Vintage Radio&amp;nbsp;&lt;/font&gt;&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Socken x 2&lt;/font&gt;&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="462.5" y="2910" width="270" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="307" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;font style=&quot;&quot;&gt;34,99 &lt;/font&gt;€&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;99,99 €&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font size=&quot;3&quot; style=&quot;&quot;&gt;9,98 €&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="715" y="2880" width="80" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="308" value="" style="endArrow=none;html=1;entryX=0.551;entryY=0.063;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="505" y="2974.3" as="sourcePoint"/>
+                        <mxPoint x="784.8400000000001" y="2974.29" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="309" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Gesamt:&amp;nbsp;&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="2980" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="310" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;144,96 €&lt;/font&gt;" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="2980" width="70" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="311" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;IN BEARBEITUNG&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="3060" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="312" value="&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Status verändern:&lt;/font&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="3020" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="313" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;STORNIERT&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="655" y="3060" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="314" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;ABGESCHLOSSEN&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="3100" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="315" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;ERSTATTET&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="655" y="3100" width="130" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="316" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Produkte &lt;/font&gt;| &lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;Orders&lt;/b&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="3150" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="317" value="8.1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="185" y="2665" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="318" value="8.2" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="625" y="2665" width="60" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
