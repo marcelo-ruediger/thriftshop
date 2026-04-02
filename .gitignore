@@ -1,9 +1,11 @@
-/docs/img/ 
+# einzelne Dateien
+thriftshop_projektantrag_v2026-03-27.pdf
+thriftshop_projektdokumentation_v2026-03-27.pdf
 # für Umgebungsvariablen
 *.env 
 *.db
 # Python virtuelle Umgebung
 /venv
 # Nur für die Erstellung von PDF-Dateien
-thriftshop_projektantrag.html
+*.html
 
