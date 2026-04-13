@@ -1,6 +1,9 @@
 # einzelne Dateien
 thriftshop_projektantrag_v2026-03-27.pdf
 thriftshop_projektdokumentation_v2026-03-27.pdf
+thriftshop_projektantrag.md
+copilot-instructions.md
+marcelo_ruediger_projektdokumentation_final.pdf
 # für Umgebungsvariablen
 *.env 
 *.db
