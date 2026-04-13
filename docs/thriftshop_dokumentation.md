@@ -1,10 +1,28 @@
-# Projektdokumentation
-**Bis Montag 17Uhr**
+---
+tags:
+  - src/gfn
+  - status/active
+  - topic/flutter
+  - topic/python
+  - topic/ihk
+  - focus
+  - type/project/thriftshop
+created: 2026-03-29 22:06
+updated: 2026-04-04 22:42
+deadline: 2026-04-01
+priority: 1 🔴
+---
+ # Projektdokumentation
 
+>[[_MOC_workbench]]
+
+**Related**: [[thriftshop_projektantrag]], [[thriftshop_ui_guideline]], [[ihk_abschlussprojekt]], [[ihk_projektantrag_bestandteile]]
+
+---
 ## 1 Einleitung
 
 ### 1.1 Projektumfeld
-Auftraggeber ist die Thriftshop Köln GmbH, ein kleines, nachhaltiges Unternehmen mit Sitz in Köln. Das Kerngeschäft umfasst den Ankauf, die Aufbereitung und den Wiederverkauf von Second-Hand-Kleidung, Haushaltsgeräten und Dekorationsartikeln. Das Unternehmen eu sou o Senhor Aharonist seit drei Jahren am Markt und verzeichnet ein kontinuierliches Wachstum seines Kundenstamms.
+Auftraggeber ist die Thriftshop Köln GmbH, ein kleines, nachhaltiges Unternehmen mit Sitz in Köln. Das Kerngeschäft umfasst den Ankauf, die Aufbereitung und den Wiederverkauf von Second-Hand-Kleidung, Haushaltsgeräten und Dekorationsartikeln. Das Unternehmen ist seit drei Jahren am Markt und verzeichnet ein kontinuierliches Wachstum seines Kundenstamms.
 
 Der bisherige Verkaufsprozess ist rein stationär und wird größtenteils manuell auf Papier dokumentiert. Es existiert keine digitale Lösung zur Produktverwaltung oder Bestellerfassung. Mit zunehmendem Wachstum stößt dieses Vorgehen an seine Grenzen: Kunden haben keinen Überblick über das aktuelle Sortiment, und Bestellungen müssen persönlich oder telefonisch aufgegeben werden. Dies führt zu ineffizienten Prozessen und eingeschränkter Reichweite.
 
@@ -13,42 +31,34 @@ Der bisherige Verkaufsprozess ist rein stationär und wird größtenteils manuel
 - Ermöglichung von Online-Bestellungen für Kunden unabhängig von Ort und Öffnungszeiten.
 - Sicherstellung eines strukturierten Zugangs durch ein Login-System mit Rollenverwaltung für Kunden und Administratoren.
 - E-Mail-Benachrichtigungen an Kunden versenden (Bestellung, Kontoerstellung, -löschung oder -bearbeitung). 
-- Aller Bestell- und Produktdaten werden in einer relationalen Datenbank abgespeichert.
+- Alle Bestell- und Produktdaten werden in einer relationalen Datenbank gespeichert.
 
 ### 1.3 Projektbegründung
 Bisher arbeitet der Thriftshop Köln nur vor Ort und nutzt Papier für die Verwaltung. Das ist sehr zeitaufwendig, fehleranfällig und macht es schwierig, den Überblick über die Waren zu behalten. Um weiter wachsen zu können, ist eine digitale Lösung notwendig.
 
 Die Vorteile des neuen Systems sind:
 
-Effizienteres Arbeiten: Durch die digitale Datenbank fallen Zettelwirtschaft und manuelle Fehler weg. Bestände und Bestellungen werden automatisch und sicher verwaltet.
+- **Effizienteres Arbeiten:** Durch die digitale Datenbank fallen Zettelwirtschaft und manuelle Fehler weg. Bestände und Bestellungen werden automatisch und sicher verwaltet.
+- **Mehr Reichweite:** Kunden können das Sortiment rund um die Uhr online einsehen und bestellen – unabhängig von Öffnungszeiten oder Standort.
+- **Zukunftssichere Technik:** Die gewählten Technologien (Flutter, FastAPI) sind modern und erweiterbar. Neue Funktionen wie Online-Zahlung können später ohne großen Aufwand ergänzt werden.
 
-Mehr Reichweite: Kunden können das Sortiment ab sofort rund um die Uhr online ansehen und bestellen. Das gewinnt neue Kunden außerhalb von Köln.
-
-Moderne Technik: Die gewählten Technologien (Flutter, FastAPI) sind schnell und zukunftssicher. Das System kann später einfach um neue Funktionen erweitert werden.
-
-Das Projekt sorgt dafür, dass der Thriftshop wettbewerbsfähig bleibt und sich von einem kleinen Laden zu einem modernen Online-Anbieter entwickelt.
+Damit kann sich der Thriftshop von einem rein stationären Laden zu einem modernen Online-Anbieter entwickeln.
 
 
 ### 1.4 Projektschnittstellen
-Das Projekt hat verschiedene Verbindungspunkte (Schnittstellen), die für den Betrieb wichtig sind:
+Das Projekt hat folgende Verbindungspunkte (Schnittstellen):
 
-1. Technische Schnittstellen (Verbindungen im System)
+**1. Technische Schnittstellen**
+- **App ↔ Server:** Die Flutter-App kommuniziert über HTTPS mit dem FastAPI-Backend (REST/JSON).
+- **Backend ↔ Datenbank:** Das Backend liest und schreibt Produkt-, Bestell- und Benutzerdaten in der Datenbank.
+- **Backend → E-Mail:** Das Backend ruft den E-Mail-Dienst Resend auf, um automatisch Bestätigungen zu versenden.
 
-App und Server: Die Flutter-App (Frontend) kommuniziert mit dem Python-Backend (FastAPI), um Daten auszutauschen.
+**2. Benutzerschnittstellen**
+- **Kunden:** Nutzen die App, um das Sortiment zu durchsuchen und Bestellungen aufzugeben.
+- **Administratoren:** Nutzen einen geschützten Bereich, um Produkte und Bestellungen zu verwalten.
 
-Datenbank: Das Backend ist mit der MySQL-Datenbank verbunden, um Produkte und Bestellungen zu speichern.
-
-E-Mail-Versand: Das System nutzt einen E-Mail-Dienst, um automatisch Bestätigungen an Kunden zu senden.
-
-2. Benutzerschnittstellen (Wer nutzt das System?)
-
-Administratoren: Die Mitarbeiter des Thriftshops nutzen einen geschützten Bereich, um das Sortiment zu verwalten.
-
-Kunden: Nutzen die App, um das Sortiment zu sehen und zu bestellen. 
-
-3. Organisatorische Schnittstellen (Personen)
-
-Auftraggeber: Enge Abstimmung mit der Geschäftsführung der Thriftshop Köln GmbH über das Design und die Funktionen.
+**3. Organisatorische Schnittstellen**
+- **Auftraggeber:** Die Geschäftsführung der Thriftshop Köln GmbH wurde regelmäßig über Design- und Funktionsentscheidungen informiert.
 
 
 ### 1.5 Projektabgrenzungen
@@ -73,107 +83,45 @@ Test-Daten: Für die Entwicklung und die Tests wurden realitätsnahe Beispieldat
 
 **1. Definition (Gesamtzeit: 12 h)**
 
-- 1.1 Ist-Analyse (Problemanalyse) – 2 h
-- 1.2 Wirtschaftlichkeitsbetrachtung – 2 h
-- 1.3 Anforderungen analysieren – 2 h
-- 1.4 Use-Case-Analyse – 2 h
-- 1.5 Lasten- und Pflichtenheft erstellen – 4 h
+- 1.1 Ist-Analyse (Problemanalyse) (2 h)
+- 1.2 Wirtschaftlichkeitsbetrachtung (2 h)
+- 1.3 Anforderungen analysieren (2 h)
+- 1.4 Use-Case-Analyse (2 h)
+- 1.5 Lasten- und Pflichtenheft erstellen (4 h)
 
 **2. Planung (Gesamtzeit: 12 h)**
 
-- 2.1 Arbeitspakete erstellen (Projektstrukturplan) – 2 h
-- 2.2 Kosten- und Zeitplan erstellen – 2 h
-- 2.3 Datenbankmodellierung inkl. ER-Modell – 3 h
-- 2.4 Entwurf der Systemarchitektur mit Klassendiagramm – 3 h
-- 2.5 Erstellung der UI-Mockups – 2 h
+- 2.1 Arbeitspakete erstellen (Projektstrukturplan) (2 h)
+- 2.2 Kosten- und Zeitplan erstellen (2 h)
+- 2.3 Datenbankmodellierung inkl. ER-Modell (3 h)
+- 2.4 Entwurf der Systemarchitektur mit Klassendiagramm (3 h)
+- 2.5 Erstellung der UI-Mockups (2 h)
 
 **3. Realisierung (Gesamtzeit: 38 h)**
 
-- 3.1 Einrichtung der Entwicklungsumgebung und Datenbankstruktur – 2 h
-- 3.2 Implementierung der Datenbankzugriffe (CRUD-Operationen) – 4 h
-- 3.3 Implementierung des Login-Systems mit Benutzerauthentifizierung und Rollenverwaltung – 7 h
-- 3.4 Entwicklung der Benutzeroberfläche – 8 h
-- 3.5 Implementierung des Bestellsystems mit Validierung und E-Mail-Bestätigung – 6 h
-- 3.6 Implementierung der Such- und Filterfunktion – 4 h
-- 3.7 Unit-Tests – 3 h
-- 3.8 Zeitpuffer (erhöhter Realisierungsaufwand) – 4 h
+- 3.1 Einrichtung der Entwicklungsumgebung und Datenbankstruktur (2 h)
+- 3.2 Implementierung der Datenbankzugriffe (CRUD-Operationen) (4 h)
+- 3.3 Implementierung des Login-Systems mit Authentifizierung und Rollenverwaltung (7 h)
+- 3.4 Entwicklung der Benutzeroberfläche (8 h)
+- 3.5 Implementierung des Bestellsystems mit Validierung und E-Mail-Bestätigung (6 h)
+- 3.6 Implementierung der Such- und Filterfunktion (4 h)
+- 3.7 Unit-Tests (3 h)
+- 3.8 Zeitpuffer (erhöhter Realisierungsaufwand) (4 h)
 
 **4. Abschluss (Gesamtzeit: 18 h)**
 
-- 4.1 System- und Integrationstest – 3 h
-- 4.2 Code-Review – 2 h
-- 4.3 Projektdokumentation – 10 h
-- 4.4 Erstellung des Soll-Ist-Vergleichs – 1 h
-- 4.5 Abnahme durch den Auftraggeber – 1 h
-- 4.6 Schulung des Anwenders – 1 h
+- 4.1 System- und Integrationstest (3 h)
+- 4.2 Code-Review (2 h)
+- 4.3 Projektdokumentation (10 h)
+- 4.4 Erstellung des Soll-Ist-Vergleichs (1 h)
+- 4.5 Abnahme durch den Auftraggeber (1 h)
+- 4.6 Schulung des Anwenders (1 h)
 
 **Gesamtzeit des Projektes: 80 h**
 
-```plantuml
-@startgantt thriftshop
-!theme toy
-projectscale daily zoom 1
-hide footbox
+![Projektstrukturplan](./assets/thriftshop_projektstrukturplan.png)
 
-title Webshop Thriftshop Köln
-
--- 1. Definition (12 Std) --
-[1.1 Ist-Analyse] lasts 2 days and is colored in LightBlue
-[1.1 Ist-Analyse] -> [1.2 Wirtschaftlichkeitsbetrachtung]
-[1.2 Wirtschaftlichkeitsbetrachtung] lasts 2 days and is colored in LightBlue
-[1.2 Wirtschaftlichkeitsbetrachtung] -> [1.3 Anforderungen analysieren]
-[1.3 Anforderungen analysieren] lasts 2 days and is colored in LightBlue
-[1.3 Anforderungen analysieren] -> [1.4 Use-Case Analyse]
-[1.4 Use-Case Analyse] lasts 2 days and is colored in LightBlue
-[1.4 Use-Case Analyse] -> [1.5 Lasten- und Pflichtenheft]
-[1.5 Lasten- und Pflichtenheft] lasts 4 days and is colored in LightBlue
-
--- 2. Planung (12 Std) --
-[1.5 Lasten- und Pflichtenheft] -> [2.1 Arbeitspakete erstellen]
-[2.1 Arbeitspakete erstellen] lasts 2 days and is colored in LightCoral
-[2.1 Arbeitspakete erstellen] -> [2.2 Kosten- und Zeitplan]
-[2.2 Kosten- und Zeitplan] lasts 2 days and is colored in LightCoral
-[2.2 Kosten- und Zeitplan] -> [2.3 Datenmodellierung]
-[2.3 Datenmodellierung] lasts 3 days and is colored in LightCoral
-[2.3 Datenmodellierung] -> [2.4 Entwurf der Systemarchitektur]
-[2.4 Entwurf der Systemarchitektur] lasts 3 days and is colored in LightCoral
-[2.4 Entwurf der Systemarchitektur] -> [2.5 Erstellung der UI-Mockups]
-[2.5 Erstellung der UI-Mockups] lasts 2 days and is colored in LightCoral
-
--- 3. Realisierung (38 Std) --
-[2.5 Erstellung der UI-Mockups] -> [3.1 Einrichtung der Entwicklungsumgebung]
-[3.1 Einrichtung der Entwicklungsumgebung] lasts 2 days and is colored in LightGreen
-[3.1 Einrichtung der Entwicklungsumgebung] -> [3.2 Implementierung der Datenbankzugriffe]
-[3.2 Implementierung der Datenbankzugriffe] lasts 4 days and is colored in LightGreen
-[3.2 Implementierung der Datenbankzugriffe] -> [3.3 Implementierung des Login-Systems]
-[3.3 Implementierung des Login-Systems] lasts 7 days and is colored in LightGreen
-[3.3 Implementierung des Login-Systems] -> [3.4 Entwicklung der Benutzeroberfläche]
-[3.4 Entwicklung der Benutzeroberfläche] lasts 8 days and is colored in LightGreen
-[3.4 Entwicklung der Benutzeroberfläche] -> [3.5 Implementierung des Bestellsystems mit Validierung]
-[3.5 Implementierung des Bestellsystems mit Validierung] lasts 6 days and is colored in LightGreen
-[3.5 Implementierung des Bestellsystems mit Validierung] -> [3.6 Implementierung der Suchfunktion]
-[3.6 Implementierung der Suchfunktion] lasts 4 days and is colored in LightGreen
-[3.6 Implementierung der Suchfunktion] -> [3.7 Unit-Tests]
-[3.7 Unit-Tests] lasts 3 days and is colored in LightGreen
-[3.7 Unit-Tests] -> [3.8 Zeitpuffer]
-[3.8 Zeitpuffer] lasts 4 days and is colored in LightGreen
-
--- 4. Abschluss (18 Std) --
-[3.8 Zeitpuffer] -> [4.1 System- und Integrationstest]
-[4.1 System- und Integrationstest] lasts 3 days and is colored in LightPink
-[4.1 System- und Integrationstest] -> [4.2 Code-Review]
-[4.2 Code-Review] lasts 2 days and is colored in LightPink
-[4.2 Code-Review] -> [4.3 Projektdokumentation        ]
-[4.3 Projektdokumentation        ] lasts 10 days and is colored in LightPink
-[4.3 Projektdokumentation        ] -> [4.4 Erstellung des Soll-Ist-Vergleichs]
-[4.4 Erstellung des Soll-Ist-Vergleichs] lasts 1 day and is colored in LightPink
-[4.4 Erstellung des Soll-Ist-Vergleichs] -> [4.5 Abnahme durch den Auftraggeber]
-[4.5 Abnahme durch den Auftraggeber] lasts 1 day and is colored in LightPink
-[4.5 Abnahme durch den Auftraggeber] -> [4.6 Schulung des Anwenders]
-[4.6 Schulung des Anwenders] lasts 1 day and is colored in LightPink
-@endgantt
-```
-
+**Projektstrukturplan**
 ```plantuml
 @startwbs thriftshop_psp
 !theme toy
@@ -211,24 +159,94 @@ title Projektstrukturplan – Webshop Thriftshop Köln
 @endwbs
 ```
 
+![Gant-Diagramm](./assets/thriftshop_gantt_diagramm.png)
+
+**Gantt-Diagramm**
+```plantuml
+@startgantt thriftshop
+!theme toy
+projectscale daily zoom 1
+hide footbox
+
+title Webshop Thriftshop Köln
+
+-- 1. Definition (12 h) --
+[1.1 Ist-Analyse] lasts 2 days and is colored in LightBlue
+[1.1 Ist-Analyse] -> [1.2 Wirtschaftlichkeitsbetrachtung]
+[1.2 Wirtschaftlichkeitsbetrachtung] lasts 2 days and is colored in LightBlue
+[1.2 Wirtschaftlichkeitsbetrachtung] -> [1.3 Anforderungen analysieren]
+[1.3 Anforderungen analysieren] lasts 2 days and is colored in LightBlue
+[1.3 Anforderungen analysieren] -> [1.4 Use-Case Analyse]
+[1.4 Use-Case Analyse] lasts 2 days and is colored in LightBlue
+[1.4 Use-Case Analyse] -> [1.5 Lasten- und Pflichtenheft]
+[1.5 Lasten- und Pflichtenheft] lasts 4 days and is colored in LightBlue
+
+-- 2. Planung (12 h) --
+[1.5 Lasten- und Pflichtenheft] -> [2.1 Arbeitspakete erstellen]
+[2.1 Arbeitspakete erstellen] lasts 2 days and is colored in LightCoral
+[2.1 Arbeitspakete erstellen] -> [2.2 Kosten- und Zeitplan]
+[2.2 Kosten- und Zeitplan] lasts 2 days and is colored in LightCoral
+[2.2 Kosten- und Zeitplan] -> [2.3 Datenmodellierung]
+[2.3 Datenmodellierung] lasts 3 days and is colored in LightCoral
+[2.3 Datenmodellierung] -> [2.4 Entwurf der Systemarchitektur]
+[2.4 Entwurf der Systemarchitektur] lasts 3 days and is colored in LightCoral
+[2.4 Entwurf der Systemarchitektur] -> [2.5 Erstellung der UI-Mockups]
+[2.5 Erstellung der UI-Mockups] lasts 2 days and is colored in LightCoral
+
+-- 3. Realisierung (38 h) --
+[2.5 Erstellung der UI-Mockups] -> [3.1 Einrichtung der Entwicklungsumgebung]
+[3.1 Einrichtung der Entwicklungsumgebung] lasts 2 days and is colored in LightGreen
+[3.1 Einrichtung der Entwicklungsumgebung] -> [3.2 Implementierung der Datenbankzugriffe]
+[3.2 Implementierung der Datenbankzugriffe] lasts 4 days and is colored in LightGreen
+[3.2 Implementierung der Datenbankzugriffe] -> [3.3 Implementierung des Login-Systems]
+[3.3 Implementierung des Login-Systems] lasts 7 days and is colored in LightGreen
+[3.3 Implementierung des Login-Systems] -> [3.4 Entwicklung der Benutzeroberfläche]
+[3.4 Entwicklung der Benutzeroberfläche] lasts 8 days and is colored in LightGreen
+[3.4 Entwicklung der Benutzeroberfläche] -> [3.5 Implementierung des Bestellsystems mit Validierung]
+[3.5 Implementierung des Bestellsystems mit Validierung] lasts 6 days and is colored in LightGreen
+[3.5 Implementierung des Bestellsystems mit Validierung] -> [3.6 Implementierung der Suchfunktion]
+[3.6 Implementierung der Suchfunktion] lasts 4 days and is colored in LightGreen
+[3.6 Implementierung der Suchfunktion] -> [3.7 Unit-Tests]
+[3.7 Unit-Tests] lasts 3 days and is colored in LightGreen
+[3.7 Unit-Tests] -> [3.8 Zeitpuffer]
+[3.8 Zeitpuffer] lasts 4 days and is colored in LightGreen
+
+-- 4. Abschluss (18 h) --
+[3.8 Zeitpuffer] -> [4.1 System- und Integrationstest]
+[4.1 System- und Integrationstest] lasts 3 days and is colored in LightPink
+[4.1 System- und Integrationstest] -> [4.2 Code-Review]
+[4.2 Code-Review] lasts 2 days and is colored in LightPink
+[4.2 Code-Review] -> [4.3 Projektdokumentation        ]
+[4.3 Projektdokumentation        ] lasts 10 days and is colored in LightPink
+[4.3 Projektdokumentation        ] -> [4.4 Erstellung des Soll-Ist-Vergleichs]
+[4.4 Erstellung des Soll-Ist-Vergleichs] lasts 1 day and is colored in LightPink
+[4.4 Erstellung des Soll-Ist-Vergleichs] -> [4.5 Abnahme durch den Auftraggeber]
+[4.5 Abnahme durch den Auftraggeber] lasts 1 day and is colored in LightPink
+[4.5 Abnahme durch den Auftraggeber] -> [4.6 Schulung des Anwenders]
+[4.6 Schulung des Anwenders] lasts 1 day and is colored in LightPink
+@endgantt
+```
+
 ### 2.2 Ressourcenplanung
 
 **Personalressourcen:**
-- Das Projekt wird von 1 Person geplant, entwickelt und getestet.  
-- Der geschätzte Netto-Arbeitsaufwand liegt bei 80 Stunden (inkl. 2 Stunden Puffer für das Risikomanagement).
-- Für die Verfügbarkeit sind 20 Stunden pro Woche berechnet, was einer Projektdauer von ca. 4 Wochen entspricht. 
+- Umsetzung: Das Projekt wird komplett eigenständig von einer Person (Full-Stack-Entwicklung) geplant, entwickelt und getestet.
+- Zeitaufwand: Der gesamte Arbeitsaufwand ist auf 80 h angesetzt. Darin enthalten ist ein Zeitpuffer von 4 h für das Risikomanagement.
+- Zeitraum: Bei einer wöchentlichen Arbeitszeit von 20 h beträgt die Projektdauer insgesamt 4 Wochen.
 
 **Technische Ressourcen:**
-- Arbeitsgerät: Eigener Windows Laptop/PC für die Entwicklung. 
-- Testgeräte: Physisches Smartphone (Android oder iPhone) zum Testen der Flutter-App unter realen Bedingungen.
-- Werkzeuge/Software: Visual Studio Code für die Programmierung. 
+- Hardware: Ein Windows-PC (16GB RAM - 500GB SSD - Intel Core i5) für die Programmierung sowie ein Smartphone (Android/iOS) zum Testen der App unter realen Bedingungen.
+- Entwicklung: Visual Studio Code wird als Editor genutzt. Die Versionierung des Codes erfolgt über Git & GitHub.
+- Datenbank-Tools: Für den Entwurf und die Verwaltung der Tabellen wird die MySQL Workbench eingesetzt.
+- Planung: Diagramme werden mit PlantUML und Draw.io erstellt. Notizen und Fachwissen werden in Obsidian gesammelt.
+- Dokumentation: Die fertige Arbeit wird in Microsoft Word erstellt.
 
 **Infrastruktur & Externe Dienste:**
-Für den Produktivbetrieb der Anwendung (Schnittstellen und Datenbank) werden folgende Dienste benötigt:
-- Backend-Server: Für das Hosting der Python API (FastAPI) und Backend-Logik wird die Plattform Railway (Kostenloses Tier) verwendet.
-- Datenbank-Server: Für die Entwicklung und das Testing wird zunächst ein lokaler MySQL-Server verwendet und später auf Supabase (PostgreSQL) migriert.
-- Domain und SSL: Das Flutter-Frontend wird auf GitHub Pages deployed, was automatisch eine kostenlose Subdomain und ein gültiges SSL-Zertifikat bereitstellt. 
-- E-Mail-Dienste (SMTP): Für den automatisierten Versand von Bestätigungen (Bestellungen, Kontoerstellung oder -entfernung) wird Resend (Kostenloses Tier) verwendet. *Hinweis:* Für die Authentifizierung wird das integrierte Supabase E-Mail-System benutzt.
+Damit die Anwendung online funktioniert, werden folgende kostenlose Dienste genutzt:
+- Backend-Server: Das Python-Backend (FastAPI) läuft auf der Plattform Railway. So ist die Schnittstelle immer erreichbar.
+- Datenbank: Als Hauptspeicher dient Supabase (PostgreSQL). Während der Entwicklung wird zusätzlich eine lokale Datenbank (MySQL) zum Testen verwendet.
+- Web-Hosting: Das Frontend der App wird über GitHub Pages veröffentlicht. Dies bietet automatisch eine sichere Verschlüsselung (SSL).
+- E-Mail-Versand: Automatische Bestätigungen werden über den Dienst Resend verschickt. Für die Anmeldung von Benutzern wird das eingebaute E-Mail-System von Supabase Auth genutzt.
 
 
 ### 2.3 Entwicklungsprozess 
@@ -236,6 +254,18 @@ Für den Produktivbetrieb der Anwendung (Schnittstellen und Datenbank) werden fo
 Da es sich bei dem geplanten Webshop um ein kleines Projekt mit fest definierten Anforderungen, Phasen und einem überschaubaren Gesamtaufwand von 80 Stunden handelt, wird ein klassisches Vorgehensmodell in Form des Wasserfallmodells gewählt. 
 
 Die Projektphasen (Definition, Planung, Realisierung, Abschluss) werden streng sequenziell abgearbeitet. Eine neue Phase beginnt typischerweise erst, wenn die vorherige vollständig abgeschlossen und dokumentiert wurde. Für die Versionierung und Sicherung des Quellcodes wird Git (GitHub) eingesetzt, um Änderungen jederzeit nachvollziehen zu können.
+
+### 2.4 Risikomanagement
+
+Bei der Projektplanung wurden mögliche Risiken bewertet und Gegenmaßnahmen festgelegt:
+
+| Risiko                                                  | Wahrscheinlichkeit | Auswirkung | Gegenmaßnahme                                                                                                    |
+| ------------------------------------------------------- | ------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| Aufwandsunterschätzung                                  | Mittel             | Hoch       | 4 Stunden Zeitpuffer in der Realisierungsphase eingeplant                                                        |
+| Technische Probleme (z. B. Bibliotheksinkompatibilität) | Mittel             | Mittel     | Frühzeitiger Test der Kernbibliotheken; Alternativen evaluiert                                                   |
+| Ausfall externer Dienste (Railway, Supabase, Resend)    | Gering             | Hoch       | Lokale Entwicklungsumgebung unabhängig von Cloud-Diensten; kostenlose Alternativen verfügbar                     |
+| Gerätespezifische Fehler der Flutter-App                | Mittel             | Mittel     | Tests auf physischen Geräten ab früher Realisierungsphase                                                        |
+| Datenverlust durch fehlerhaftes Datenbankskript         | Gering             | Hoch       | `CREATE TABLE IF NOT EXISTS` verhindert unbeabsichtigtes Überschreiben; Quellcode vollständig in Git versioniert |
 
 ---
 
@@ -259,7 +289,7 @@ Daher fiel die Entscheidung eindeutig auf die Eigenentwicklung.
 #### 3.2.2 Projektkosten
 Die Kosten des Projekts entstehen hauptsächlich durch den internen Personalaufwand (eigene Arbeitszeit sowie Unterstützung durch interne Entwickler), da auf teure Server- und Lizenzkosten verzichtet wird:
 - **Entwicklungskosten:** 80 Stunden × 15 €/h = 1.200 €. (Meine Firma Fragen)
-- **Code Review:** Prüfung durch einen interner Softwareentwickler (5 Stunden × 140 €/h) = 700 €.
+- **Code Review:** Prüfung durch einen internen Softwareentwickler (5 Stunden × 140 €/h) = 700 €.
 - **Gesamte Entwicklungskosten:** 1.900 €.
 - **Laufende Infrastrukturkosten:** 0,00 € pro Monat (Nutzung von Railway Free Tier, Supabase, GitHub Pages und Resend).
 - **Fremdkosten (App Stores - Optional):** Falls die App später in die Stores soll: Apple Developer (99 $/Jahr), Google Play (25 $ einmalig).
@@ -268,14 +298,14 @@ Die Kosten des Projekts entstehen hauptsächlich durch den internen Personalaufw
 Da die laufenden Betriebskosten faktisch entfallen, bemisst sich die Amortisation der Entwicklungskosten (1.900 €) an der eingesparten Arbeitszeit. Spart die digitale Verwaltung pro Woche ca. 3 Arbeitsstunden (à 20 €) ein, so werden 60 € pro Woche gespart. Die Gesamtentwicklungskosten von 1.900 € haben sich somit nach ca. 32 Wochen (rund 8 Monaten) amortisiert.
 
 **Amortisationsverlauf**
-![[thriftshop_amortisationsverlauf.svg]]
+![Thriftshop Amortisationsverlauf](./assets/thriftshop_amortisationsverlauf.svg)
 
 ### 3.3 Lastenheft/ Fachkonzept
 Bei diesem Projekt wurde vom Auftraggeber kein klassisches Lastenheft vorgegeben. Das Problem, die gewünschten Lösungen, das Budget und die Ressourcen wurden stattdessen in einem Fachgespräch ermittelt und festgehalten. 
 
 Es handelt sich um einen Webshop, der den gesamten Verkaufs- und Verwaltungsprozess der Thriftshop Köln GmbH durch folgende Maßnahmen vereinfachen und digitalisieren soll:
 
-**1. Digitalisierung des Sortiments (Frontend):**
+**1. Digitalisierung des Sortiments:**
 - Schaffung einer Plattform, auf der Kunden das Second-Hand-Sortiment jederzeit online einsehen können, unabhängig von den stationären Öffnungszeiten.
 - Implementierung von Such- und Filterfunktionen zur besseren Übersicht.
 
@@ -283,14 +313,16 @@ Es handelt sich um einen Webshop, der den gesamten Verkaufs- und Verwaltungsproz
 - Kunden können online verbindliche Bestellungen aufgeben, was den manuellen Aufgabenaufwand vor Ort reduziert und Fehler (Zettelwirtschaft) minimiert.
 - Etablierung eines automatisierten E-Mail-Systems (Versand von Bestätigungen bei Bestellung, Registrierung oder Kontoänderung).
 
-**3. Verwaltung und Datensicherheit (Backend):**
+**3. Verwaltung und Datensicherheit:**
 - Ein sicheres Login-System mit Rollenverwaltung zur strikten Trennung zwischen Kunden (Kauf) und Administratoren (Verwaltung).
 - Mitarbeiter erhalten einen geschützten Admin-Bereich, um Bestände, Produkte und eingehende Bestellungen zentral in einer relationalen Datenbank zu verwalten.
 - Alle Kundendaten werden gemäß DSGVO verwaltet (inkl. Passwortverschlüsselung).
 
-**Abgrenzung (Nicht-Ziele der Iteration):**
+**Abgrenzung:**
 - Der Webshop beinhaltet **keine** direkte Zahlungsfunktion (Abwicklung erfolgt auf Rechnung oder vor Ort).
 - Es ist **kein** Liefer- oder Versandprozess integriert (Vereinbarungen manuell via Nachricht/Telefon).
+
+![Thriftshop Anwendungsfalldiagramm](./assets/thriftshop_use_case_diagramm.png)
 
 ```plantuml
 @startuml thriftshop_usecase
@@ -346,7 +378,9 @@ Das System folgt einer klassischen Client-Server-Architektur, die sich physisch 
    Das Herzstück der Anwendung ist eine RESTful-API, geschrieben in Python (FastAPI), die später auf der Cloud-Plattform Railway gehostet wird. Dieser Server nimmt alle Anfragen der Clients entgegen, authentifiziert den Nutzer und führt die eigentliche Geschäftslogik durch. Beispielsweise prüft er bei einer Bestellung, ob der angefragte Artikel noch auf Lager ist. Zudem steuert das Backend externe Dienste an, beispielsweise den SMTP-Mailer (Resend), um automatisch Bestätigungs-E-Mails zu versenden.
 
 3. **Datenhaltungsschicht (Datenbank):** 
-   Das FastAPI-Backend kommuniziert sicher mit einer PostgreSQL-Datenbank, die von Supabase in der Cloud gehostet wird. Für die Entwicklung und Testing wird erstmal eine MySQL Datenbank verwendet. Hier werden alle persistenten Daten, wie Benutzerprofile, das Produktinventar und die Bestellungen, zentral verwaltet. Ein direkter Zugriff des Frontends auf die Datenbank ist aus Sicherheitsgründen technisch ausgeschlossen; die API dient als verbindlicher "Türsteher".
+   Das FastAPI-Backend kommuniziert sicher mit einer PostgreSQL-Datenbank, die von Supabase in der Cloud gehostet wird. Für die Entwicklung und das Testing wird zunächst eine MySQL-Datenbank verwendet. Hier werden alle persistenten Daten, wie Benutzerprofile, das Produktinventar und die Bestellungen, zentral verwaltet. Ein direkter Zugriff des Frontends auf die Datenbank ist aus Sicherheitsgründen technisch ausgeschlossen; die API dient als verbindlicher "Türsteher".
+
+![Thriftshop Architekturdiagramm](./assets/thriftshop_architekturdiagramm.png)
 
 ```plantuml 
 @startuml architekturdiagramm
@@ -361,7 +395,7 @@ package "Client (Frontend)" {
 
 package "Server (Backend - Railway)" {
     [FastAPI (REST API)] as API
-    [Authentication/Rollen Logik] as Auth
+    [ShopServices (Authentification/Logik)] as Auth
     API --> Auth
 }
 
@@ -382,22 +416,25 @@ API --> Mail : API Call (Bestätigungsmail)
 ```
 
 ### 4.3 Datenmodell
-Das objektorientierte Datenmodell der Anwendung umfasst sieben Klassen und zwei Enumerationen, welche die Struktur der gespeicherten Daten repräsentieren.
+Das objektorientierte Datenmodell der Anwendung besteht aus sechs Klassen, die die Struktur der gespeicherten Daten abbilden.
 
-Das nachfolgende Klassendiagramm bildet die Grundlage für die Implementierung der Geschäftslogik (ShopServices). Im Folgenden werden die wesentlichen Designentscheidungen erläutert:
+- Benutzer: Repräsentiert einen registrierten Kunden oder Mitarbeiter. Neben persönlichen Stammdaten (Name, E-Mail, Telefon) wird das Passwort ausschließlich als kryptografischer Hash (bcrypt) gespeichert. Das Attribut `rolle` wird auf Datenbankebene durch einen CHECK-Constraint auf die Werte „Administrator“, „Mitarbeiter“ und „Kunde“ beschränkt. Diese Rolle dient im Backend als Basis für die autorisierte Zugriffskontrolle (RBAC – Role-Based Access Control). Ein Benutzer steht in einer 1:n-Beziehung zu Bestellungen.
 
-- Benutzer: Repräsentiert einen registrierten Kunden oder Mitarbeiter. Neben persönlichen Stammdaten (Name, E-Mail, Telefon) wird das Passwort ausschließlich als kryptografischer Hash (bcrypt) gespeichert. Das Attribut rolle wird auf Datenbankebene durch einen CHECK-Constraint auf die Werte „Administrator“, „Mitarbeiter“ und „Kunde“ beschränkt. Diese Rolle dient im Backend als Basis für die autorisierte Zugriffskontrolle (RBAC – Role-Based Access Control). Ein Benutzer steht in einer 1:n-Beziehung zu Bestellungen.
+- Produkt: Bildet einen physischen Verkaufsartikel ab. Jedes Produkt verfügt über eine eindeutige UUID, eine menschenlesbare `produktnr`, sowie den preis und einen optionalen `produkt_rabatt` (jeweils als Decimal). Das Flag `produkt_aktiv` steuert die Sichtbarkeit im Frontend. Ein Produkt ist über Foreign Keys fest genau einer Kategorie und einem Zustand zugeordnet.
 
-- Produkt: Bildet einen physischen Verkaufsartikel ab. Jedes Produkt verfügt über eine eindeutige UUID, eine menschenlesbare produktnr, sowie den preis und einen optionalen produkt_rabatt (jeweils als Decimal). Das Flag produkt_aktiv steuert die Sichtbarkeit im Frontend. Ein Produkt ist über Foreign Keys fest genau einer Kategorie und einem Zustand zugeordnet.
-
-- Kategorie: Gruppiert Produkte thematisch (z. B. Kleidung, Medien). Sie kann einen kategorie_rabatt besitzen. Die Logik prüft zur Laufzeit via MAX(), ob der produkt- oder kategoriespezifische Rabatt für den Endpreis angewendet wird.
+- Kategorie: Gruppiert Produkte thematisch (z. B. Kleidung, Medien). Sie kann einen `kategorie_rabatt` besitzen. Die Logik prüft zur Laufzeit via `MAX()`, ob der produkt- oder kategoriespezifische Rabatt für den Endpreis angewendet wird.
 
 - Zustand: Definiert den physischen Erhaltungsgrad eines Artikels (z. B. „wie neu“, „stark gebraucht“). Dies ist im Thriftshop-Kontext entscheidend für die Preisfindung und Transparenz gegenüber dem Käufer.
 
-- Bestellung: Repräsentiert einen abgeschlossenen Kaufvorgang. Sie ist fest mit einem Benutzer verknüpft und enthält Metadaten wie die bestellnummer, das bestelldatum und den aktuellen status. Letzterer wird per Datenbank-Constraint auf valide Werte („Offen“, „In Bearbeitung“, „Abgeschlossen“, „Storniert“, „Erstattet“) limitiert. Die Beziehung zu den Positionen ist als Komposition implementiert: Das Löschen einer Bestellung führt kaskadierend zum Löschen aller zugehörigen Positionen (Referenzielle Integrität).
+- Bestellung: Repräsentiert einen abgeschlossenen Kaufvorgang. Sie ist fest mit einem Benutzer verknüpft und enthält Metadaten wie die `laufende_nr`, das `bestelldatum` und den aktuellen `status`. Letzterer wird per Datenbank-Constraint auf valide Werte („Offen“, „In Bearbeitung“, „Abgeschlossen“, „Storniert“, „Erstattet“) limitiert. Die Beziehung zu den Positionen ist als Komposition implementiert: Das Löschen einer Bestellung führt kaskadierend zum Löschen aller zugehörigen Positionen (Referenzielle Integrität).
 
-- BestellPosition: Fungiert als Assoziationsklasse, um die m:n-Beziehung zwischen Bestellung und Produkt aufzulösen. Sie speichert einen Snapshot der Daten zum Kaufzeitpunkt (einzelpreis_gebucht, rabatt_angewendet, steuersatz_gebucht). Dies stellt sicher, dass die Buchhaltung auch bei nachträglichen Preis- oder Steuersatzänderungen am Stammprodukt konsistent bleibt. Die Klasse enthält zudem die Geschäftslogik zur Berechnung der gesamtpreis_netto() und gesamtpreis_brutto() Werte der jeweiligen Position.
+- BestellPosition: Fungiert als Assoziationsklasse, um die m:n-Beziehung zwischen Bestellung und Produkt aufzulösen. Sie speichert einen Snapshot der Daten zum Kaufzeitpunkt (`einzelpreis_gebucht`, `rabatt_angewendet`, `steuersatz_gebucht`). Dies stellt sicher, dass die Buchhaltung auch bei nachträglichen Preis- oder Steuersatzänderungen am Stammprodukt konsistent bleibt. Die Klasse enthält zudem die Geschäftslogik zur Berechnung der `gesamtpreis_netto()` und `gesamtpreis_brutto()` Werte der jeweiligen Position.
 
+![Thriftshop ER Modell](./assets/thriftshop_er_modell.png)
+
+Die Klasse **ShopServices**, im Klassendiagramm dargestellt, bildet die zentrale Geschäftslogik ab. Sie nutzt die sechs oben genannten Datenmodelle als Datenträger, um Informationen zu verarbeiten, zu speichern und abzurufen. Die eigentliche Datenbankkommunikation erfolgt über DAOs. Um das Klassendiagramm übersichtlich zu halten, wurden die DAOs dort nicht separat eingezeichnet.
+
+![Thriftshop Klassendiagramm](./assets/thriftshop_klassendiagramm.png)
 
 ```plantuml
 @startuml thriftshop_klassendiagramm
@@ -487,7 +524,7 @@ class ShopServices {
     + produkt_details(produkt_id: UUID): Produkt
 
     ' --- Bestellprozess ---
-    + bestellung_aufgeben(kundeutzer, warenkorb: list): Bestellung
+    + bestellung_aufgeben(kunde: Benutzer, warenkorb: list): Bestellung
     + bestell_historie(kunde: Benutzer): list
     + erstattung_beantragen(kunde: Benutzer, bestellung_id: UUID, grund: str): None
     + bestellung_stornieren(kunde: Benutzer, bestellung_id: UUID): None
@@ -504,7 +541,7 @@ class ShopServices {
 ' --- BEZIEHUNGEN ---
 Benutzer "1" --> "*" Bestellung : erstellt
 Bestellung "1" *-- "1..*" BestellPosition : enthält
-Produkt "1" <-- "*" BestellPosition : refereziert
+Produkt "1" <-- "*" BestellPosition : referenziert
 Produkt "*" --> "1" Kategorie : gehört
 Produkt "*" --> "1" Zustand : hat
 
@@ -515,13 +552,17 @@ ShopServices ..> Produkt : manipuliert
 @enduml
 ```
 
-### 4.4 Test-Konzept
+### 4.4 UI-Design
+
+Die Benutzeroberfläche durchlief zwei Entwurfsstufen. Zunächst wurden alle Screens als **Wireframe** mit Draw.io skizziert, um Seitenstruktur, Navigation und die Anordnung der Elemente festzulegen – ohne Farben oder Details. Auf Basis dieser Wireframes wurde anschließend mithilfe des KI-Modells **Google Gemini** ein **HTML-Mockup** erstellt, das das finale Design mit Farbschema, Schriften und Abständen abbildet. Das Mockup wurde abschließend als PDF exportiert. Es befindet sich im Anhang.
+
+### 4.5 Test-Konzept
 Zur Gewährleistung der Softwarequalität werden verschiedene Teststufen definiert:
 - **Unit-Tests (Backend):** Die einzelnen FastAPI-Endpunkte und Geschäftslogiken werden isoliert (z.B. mit `pytest`) geprüft.
 - **Integrationstests:** Das Zusammenspiel zwischen Backend und Datenbank wird automatisiert getestet.
 - **Manuelle Systemtests (Frontend):** Auf physischen Testgeräten (Android/iPhone) werden die UI/UX und Nutzerführungen (Registrierung -> Artikel in Warenkorb -> Bestellung) manuell durchgespielt.
 
-### 4.5 Pflichtenheft
+### 4.6 Pflichtenheft
 
 Das Pflichtenheft beschreibt, wie die im Fachkonzept (3.3) gestellten Kundenanforderungen technisch umgesetzt werden.
 
@@ -550,7 +591,7 @@ Das Pflichtenheft beschreibt, wie die im Fachkonzept (3.3) gestellten Kundenanfo
   Die Authentifizierung erfolgt über Supabase Auth, das nach erfolgreichem Login einen signierten JWT-Token ausstellt. Die Benutzerrolle (`ADMIN`, `MITARBEITER` oder `KUNDE`) ist im Token hinterlegt. Die Flutter-App speichert den Token lokal und sendet ihn bei jedem API-Request im Authorization-Header mit. Das FastAPI-Backend prüft bei jedem Request die Gültigkeit und Rolle des Tokens. Da es sich um ein kleines Unternehmen handelt, ist die Benutzerrolle `Mitarbeiter` zunächst inaktiv. Bei Bedarf kann sie als Alternative zum Administrator mit eingeschränkten Berechtigungen aktiviert werden. 
 
 - **Geschützter Admin-Bereich**   
-  Alle Aktionen, die Daten in der Datenbank verändern (Produkte erstellen, ändern, löschen oder Bestellungen aktualisieren) mit `POST`, `PUT`, `DELETE`, `PATCH`, sind im Backend per Dependecy-Injection geschützt. Diese Funktion prüft automatisch bei jeder Anfrage, ob der Benutzer die nötigen Rechte hat, bevor die Aktion ausgeführt wird. Anfragen ohne gültigen Admin-Token werden mit HTTP `403 Forbidden` abgewiesen. Im Frontend wird die Admin-Navigation nur angezeigt, wenn die Rolle im Token `ADMIN` ist.
+  Alle Aktionen, die Daten in der Datenbank verändern (Produkte erstellen, ändern, löschen oder Bestellungen aktualisieren) mit `POST`, `PUT`, `DELETE`, `PATCH`, sind im Backend per Dependency-Injection geschützt. Diese Funktion prüft automatisch bei jeder Anfrage, ob der Benutzer die nötigen Rechte hat, bevor die Aktion ausgeführt wird. Anfragen ohne gültigen Admin-Token werden mit HTTP `403 Forbidden` abgewiesen. Im Frontend wird die Admin-Navigation nur angezeigt, wenn die Rolle im Token `ADMIN` ist.
 
 - **Zentrale relationale Datenbank**  
   Alle persistenten Daten werden in einer PostgreSQL-Datenbank auf Supabase gespeichert. Die Tabellen entsprechen dem Klassendiagramm (Abschnitt 4.3): `benutzer`, `produkt`, `kategorie`, `zustand`, `bestellung`, `bestellposition`. Ein direkter Zugriff vom Frontend auf die Datenbank ist technisch ausgeschlossen. Alle Anfragen laufen ausschließlich über das FastAPI-Backend.
@@ -572,98 +613,72 @@ Das Pflichtenheft beschreibt, wie die im Fachkonzept (3.3) gestellten Kundenanfo
 
 ### 5.1 Projektstruktur
 
-Die Architektur des Projekts folgt dem Prinzip der **Separation of Concerns** (SoC): Datenmodell, Datenbankzugriff und Geschäftslogik sind klar voneinander getrennt. Das Backend ist wie folgt aufgebaut:
+Das Projekt besteht aus einem Python-Backend und einer Flutter-App. Die Struktur folgt dem Prinzip der **Separation of Concerns**: Datenmodelle, Datenbankzugriff und Geschäftslogik sind im Backend klar voneinander getrennt. Das Frontend ist nach Feature-Modulen gegliedert.
 
 ```
 backend/
-├── models/               # Datenmodelle (Python-Packages)
-│   ├── __init__.py        # Exportiert alle Modellklassen
-│   ├── benutzer.py
-│   ├── bestellung.py
-│   ├── bestellposition.py
-│   ├── kategorie.py
-│   ├── produkt.py
-│   └── zustand.py
-├── dao/                   # Data Access Objects (Datenbankzugriff)
-│   ├── __init__.py
-│   ├── benutzer_dao.py
-│   ├── bestellung_dao.py
-│   └── produkt_dao.py
-├── init_db.py             # Initialisierung der MySQL-Datenbank
-└── main_test.py           # Manuelle Tests
+├── models/               # Python-Datenmodelle (@dataclass)
+│   ├── benutzer.py, bestellung.py, bestellposition.py
+│   ├── kategorie.py, produkt.py, zustand.py
+│   └── __init__.py       # Exportiert alle Klassen
+├── dao/                  # Datenbankzugriff (CRUD)
+│   ├── benutzer_dao.py, bestellung_dao.py, produkt_dao.py
+│   └── __init__.py
+├── services/
+│   └── shop_services.py  # Geschäftslogik
+├── init_db.py            # Datenbankinitialisierung
+└── main_test.py          # Tests
+
+lib/                      # Flutter Frontend
+├── core/
+│   ├── constants/        # Design-Tokens (Abstände, Radien)
+│   ├── network/          # API-Client (Dio + JWT-Interceptor)
+│   ├── router/           # Routen-Konfiguration (go_router)
+│   └── theme/            # ThemeData (Farben, Schriften)
+├── features/
+│   ├── auth/             # Login, Registrierung
+│   ├── catalog/          # Produktkatalog, Suche, Filter
+│   ├── cart/             # Warenkorb
+│   ├── orders/           # Bestellhistorie
+│   ├── profile/          # Profilverwaltung
+│   └── admin/            # Admin-Dashboard
+├── shared/widgets/       # Wiederverwendbare UI-Komponenten
+└── main.dart
 ```
 
-Die Ordner `models/` und `dao/` sind durch `__init__.py`-Dateien als Python-Packages definiert. Dadurch ergibt sich eine saubere Import-Hierarchie (z. B. `from models import Produkt`), die die Modularität und Wiederverwendbarkeit des Codes erhöht.
+**Wichtige Designentscheidungen:**
 
-**Wichtige Designentscheidungen im Überblick:**
+- **Slugs:** `Kategorie` und `Produkt` nutzen Slugs für lesbare URLs (z. B. `/kategorie/kleidung/vintage-levis-jeansjacke`).
+- **Preis-Snapshots:** `BestellPosition` speichert Preis, Rabatt und Steuersatz zum Kaufzeitpunkt, damit Buchungen auch bei späteren Preisänderungen korrekt bleiben.
+- **Lesbare Nummern:** `Produkt` und `Bestellung` formatieren ihre laufende Nummer per `@property` in einen lesbaren String (z. B. `P00012`, `B00003`).
+- **Validierung auf Datenbankebene:** Bestellstatus und Benutzerrolle werden per `CHECK`-Constraint direkt in der Datenbank validiert.
 
-- **Datenvalidierung durch CHECK-Constraints:** Der Status von Bestellungen und die Benutzerrolle werden direkt auf Datenbankebene durch `CHECK()`-Constraints validiert. Das stellt die Datenintegrität sicher, unabhängig davon, woher die Daten kommen.
+### 5.2 Datenbank und Datenmodelle
 
-- **Lesbare Nummern:** Laufende Nummern (`laufende_nr`) werden intern als `INT AUTO_INCREMENT` gespeichert. Bei der Instanziierung der Datenmodellklassen `Produkt` und `Bestellung` werden sie über eine `@property`-Methode in menschenlesbare Strings formatiert (z. B. `P00012` oder `B00003`). Das erleichtert die Verwaltung und verbessert die User Experience.
+Das Skript `init_db.py` erstellt per `mysql.connector` die Datenbank `thriftshop` mit sechs Tabellen. Verbindungsdaten werden aus einer `.env`-Datei geladen (`python-dotenv`), sodass keine sensiblen Daten im Quellcode stehen.
 
-- **Slugs für SEO:** Bei `Kategorie` und `Produkt` werden Slugs verwendet, um sprechende, suchmaschinenfreundliche URLs zu erzeugen (z. B. `/kategorie/kleidung/vintage-levis-jeansjacke`).
+| Tabelle           | Besonderheiten                                                   |
+| ----------------- | ---------------------------------------------------------------- |
+| `benutzer`        | `CHECK`-Constraint auf Rolle; Passwort als bcrypt-Hash           |
+| `zustand`         | Referenziert von `produkt`                                       |
+| `kategorie`       | Slug, Rabatt und Steuersatz                                      |
+| `produkt`         | FK auf `zustand` und `kategorie`; `ON DELETE RESTRICT`           |
+| `bestellung`      | `CHECK`-Constraint auf Status; `ON DELETE RESTRICT` auf Benutzer |
+| `bestellposition` | Preis-Snapshot; `ON DELETE CASCADE` beim Löschen der Bestellung  |
 
-- **Rabattlogik:** Rabatte sind sowohl auf Produkt- als auch auf Kategorieebene definiert. Bei der Preisberechnung wird die SQL-Funktion `MAX()` eingesetzt, um den jeweils vorteilhafteren Rabatt für den Kunden anzuwenden.
+Die Python-Klassen in `models/` spiegeln diese Tabellen als `@dataclass` wider. Der Dekorator generiert Konstruktor, Vergleichsmethoden und `__repr__` automatisch. Wichtige Details:
 
-- **Preis-Snapshots für Bestellpositionen:** Die `Bestellposition` speichert die Werte `einzelpreis_gebucht`, `rabatt_angewendet` und `steuersatz_gebucht` als Momentaufnahme zum Zeitpunkt der Bestellung. Dadurch bleiben Buchungsdaten auch bei nachträglichen Änderungen am Produktkatalog konsistent und nachvollziehbar.
+- **UUID** (`uuid4()`): Jede Entität besitzt eine eindeutige ID, die als `CHAR(36)` gespeichert wird – eine statische Zeichenkette mit genau 36 Zeichen.
+- **Decimal** statt `float`: Verhindert Rundungsfehler bei Geldbeträgen.
+- **Properties:** `BestellPosition` berechnet Netto- und Bruttopreis dynamisch über den `@property`-Dekorator. So werden die Werte bei Bedarf berechnet, ohne sie separat zu speichern.
 
-- **Automatischer Zeitstempel:** Das Attribut `erstellungsdatum` der Klasse `Produkt` nutzt `field(default_factory=datetime.now)`, um bei jeder Instanziierung automatisch den aktuellen Zeitstempel zu setzen.
+Alle Klassen werden über `models/__init__.py` exportiert und können mit `from models import Produkt, Benutzer` importiert werden.
 
-### 5.2 Implementierung der Datenbank
+### 5.3 Datenbankzugriff (DAO)
 
-Die Datenbank wird durch das Skript `init_db.py` initialisiert. Es stellt über den MySQL-Connector (`mysql.connector`) eine Verbindung zum lokalen MySQL-Server her und erstellt, falls noch nicht vorhanden, die Datenbank `thriftshop` mit den sechs Tabellen:
+Für den Datenbankzugriff wurde das **DAO-Pattern** eingesetzt. Jede Entität hat ein eigenes DAO (z. B. `ProduktDAO`, `BenutzerDAO`), das alle SQL-Abfragen kapselt. Die Geschäftslogik enthält dadurch kein SQL. Das erleichtert die spätere Migration auf PostgreSQL (nur DAOs müssen angepasst werden) und ermöglicht isolierte Tests mit einer Testdatenbank.
 
-| Tabelle            | Beschreibung                                       | Besonderheiten                                              |
-|--------------------|----------------------------------------------------|------------------------------------------------------------|
-| `benutzer`         | Registrierte Benutzer (Kunden, Mitarbeiter, Admins)| `CHECK`-Constraint auf Rolle, Passwort als bcrypt-Hash      |
-| `zustand`          | Erhaltungsgrad eines Artikels (z. B. „wie neu")    | Referenziert von `produkt`                                  |
-| `kategorie`        | Produktkategorien mit Rabatt und Steuersatz         | Slug für SEO, Rabatt als `DECIMAL(4,2)`                     |
-| `produkt`          | Verkaufsartikel des Thriftshops                     | FK auf `zustand` und `kategorie`, `ON DELETE RESTRICT`      |
-| `bestellung`       | Kaufvorgänge mit Statusverwaltung                   | `CHECK`-Constraint auf Status, `ON DELETE RESTRICT` auf Benutzer |
-| `bestellposition`  | Einzelpositionen einer Bestellung (Assoziationstabelle) | Preis-Snapshot, `ON DELETE CASCADE` auf Bestellung      |
-
-Die Datenbankverbindung wird über Umgebungsvariablen konfiguriert (`.env`-Datei mit dem Paket `python-dotenv`), um sensible Daten wie das Datenbankpasswort nicht im Quellcode zu hinterlegen.
-
-**Referenzielle Integrität:**
-- `ON DELETE CASCADE` bei Bestellpositionen: Wird eine Bestellung gelöscht, werden automatisch alle zugehörigen Positionen entfernt (Komposition).
-- `ON DELETE RESTRICT` bei Produkten, Zuständen, Kategorien und Bestellungen: Verhindert das Löschen von Datensätzen, solange noch Referenzen darauf existieren. So kann z. B. ein Zustand nicht gelöscht werden, solange noch Produkte diesen Zustand verwenden.
-
-### 5.3 Implementierung der Datenmodelle (models/)
-
-Die Datenmodelle wurden mit dem Python-Standardmodul `dataclasses` umgesetzt. Der `@dataclass`-Dekorator generiert automatisch den Konstruktor (`__init__`), die Vergleichsmethoden (`__eq__`) und eine lesbare Darstellung (`__repr__`). Dadurch wird Boilerplate-Code vermieden und die Konsistenz der Datenstrukturen sichergestellt.
-
-Folgende Technologien und Konzepte kommen zum Einsatz:
-
-- **UUIDs** (`uuid4()` aus dem Modul `uuid`): Jede Entität erhält eine universell eindeutige ID, die auch über Systemgrenzen hinweg kollisionsfrei ist. In der Datenbank werden diese als `CHAR(36)` gespeichert.
-
-- **Decimal** (Modul `decimal`): Für alle monetären Werte (Preise, Rabatte, Steuersätze) wird bewusst der Typ `Decimal` statt `float` verwendet. Dies vermeidet Rundungsfehler bei Berechnungen mit Geldbeträgen.
-
-- **Properties** (`@property`-Dekorator): Die Klassen `Produkt` und `Bestellung` nutzen Properties, um die laufende Nummer in ein lesbares Format zu überführen. Die Klasse `Bestellposition` berechnet über Properties die Netto- und Bruttopreise dynamisch:
-
-```python
-@property
-def gesamtpreis_netto(self) -> Decimal:
-    return (self.einzelpreis_gebucht - self.rabatt_angewendet) * self.menge
-
-@property
-def gesamtpreis_brutto(self) -> Decimal:
-    steuer_faktor = Decimal("1") + (self.steuersatz_gebucht / Decimal("100"))
-    return self.gesamtpreis_netto * steuer_faktor
-```
-
-Das Package `models/` exportiert alle sechs Datenmodellklassen über die `__init__.py`, sodass sie an anderer Stelle bequem mit `from models import Produkt, Benutzer` importiert werden können.
-
-### 5.4 Implementierung des Datenbankzugriffs (dao/)
-
-Für den Zugriff auf die Datenbank wurde das **DAO-Pattern (Data Access Object)** implementiert. Jede Entität besitzt ein eigenes DAO (z. B. `ProduktDAO`, `BenutzerDAO`), das die CRUD-Operationen (Create, Read, Update, Delete) kapselt.
-
-Durch dieses Pattern wird die SQL-Logik vollständig vom restlichen Programmcode entkoppelt: Die DAOs sind die einzige Stelle, an der SQL-Statements stehen. Das bringt folgende Vorteile:
-
-- **Austauschbarkeit:** Wird die Datenbank später von MySQL auf PostgreSQL (Supabase) migriert, müssen nur die DAOs angepasst werden. Die Datenmodelle und die Geschäftslogik bleiben unverändert.
-- **Testbarkeit:** Die DAOs können isoliert getestet werden, z. B. mit einer separaten Testdatenbank.
-- **Wartbarkeit:** Die SQL-Logik ist zentral an einer Stelle und nicht im gesamten Code verstreut.
-
-Jedes DAO erhält bei der Instanziierung die Datenbankverbindung als Parameter (Dependency Injection), z. B.:
+Die Datenbankverbindung wird per Dependency Injection übergeben:
 
 ```python
 class ProduktDAO:
@@ -671,22 +686,46 @@ class ProduktDAO:
         self.conn = db_connection
 ```
 
-### 5.5 Initialisierung und Konfiguration
+### 5.4 Funktionslogik (ShopServices)
 
-Das Modul `init_db.py` übernimmt den gesamten Initialisierungsprozess der Datenbank. Es stellt die Verbindung zum lokalen MySQL-Server her, erstellt bei Bedarf die Datenbank `thriftshop` und legt alle sechs Tabellen an (`CREATE TABLE IF NOT EXISTS`). Das Datenbankpasswort wird aus der `.env`-Datei geladen, um die Konfiguration von der Codebasis zu trennen.
+Die Klasse `ShopServices` bündelt die gesamte Geschäftslogik. Sie nutzt die DAOs für Datenbankzugriffe und die Datenmodelle als Datenträger. Die Methoden sind in vier Gruppen unterteilt:
 
-Für die spätere Produktivumgebung ist eine Migration auf PostgreSQL (Supabase) vorgesehen. Da die SQL-Logik über das DAO-Pattern gekapselt ist, beschränkt sich der Migrationsaufwand auf die Anpassung der Verbindungsparameter und ggf. SQL-Dialekt-Unterschiede.
+**Authentifizierung und Profil:** Verwaltet den Login und die Profildaten eines Benutzers. `login()` prüft E-Mail und Passwort-Hash und gibt bei Erfolg das `Benutzer`-Objekt zurück. `profil_bearbeiten()` und `profil_loeschen()` aktualisieren bzw. entfernen den Datensatz und lösen jeweils eine E-Mail-Benachrichtigung aus.
+
+**Katalog und Suche:** `produkte_anzeigen()` nimmt ein Filter-Dictionary entgegen (z. B. Kategorie, Suchbegriff, Preisspanne) und gibt die gefilterte Produktliste zurück. `produkt_details()` liefert alle Informationen zu einem einzelnen Produkt anhand seiner UUID.
+
+**Bestellprozess:** `bestellung_aufgeben()` verarbeitet den Warenkorb, legt die Bestellung mit allen Positionen in der Datenbank an und löst die Bestätigungsmail aus. Zusätzlich können Kunden eine Bestellung stornieren oder eine Erstattung beantragen.
+
+**Admin-Funktionen:** Methoden wie `produkt_anlegen()`, `produkt_bearbeiten()` oder `bestellungen_einsehen()` erwarten als ersten Parameter ein `Benutzer`-Objekt mit der Rolle `ADMIN`. Fehlt diese Berechtigung, wird eine Exception geworfen, bevor irgendeine Aktion ausgeführt wird.
+
+### 5.5 Migration auf PostgreSQL
+
+Da die SQL-Logik vollständig in den DAOs gekapselt ist, beschränkt sich die Migration von MySQL auf PostgreSQL (Supabase) auf die Anpassung der Verbindungsparameter und kleinere SQL-Dialekt-Unterschiede. Alle Datenmodelle und die Geschäftslogik bleiben unverändert.
 
 ### 5.6 Frontend (Flutter)
 
-Die Benutzeroberfläche wurde als plattformübergreifende App mit dem Framework **Flutter** (Dart) entwickelt. Die App kommuniziert ausschließlich über REST-Anfragen (HTTP/JSON) mit dem FastAPI-Backend. Es gibt keine direkte Verbindung zwischen Frontend und Datenbank.
+Die Benutzeroberfläche ist eine plattformübergreifende Flutter-App (Material Design 3), die ausschließlich per REST/JSON mit dem Backend kommuniziert.
 
-Die Flutter-App ist in folgende Bereiche gegliedert:
+**Design:** Farben, Schriften und Abstände sind zentral in `app_theme.dart` und `design_tokens.dart` definiert. Hauptfarbe ist `#4CAF93` (Grün, passend zum nachhaltigen Charakter des Shops), Schriftart ist **Inter**.
 
-- **Kundenbereich:** Produktkatalog mit Such- und Filterfunktion, Warenkorb, Bestellübersicht, Profilverwaltung und Login/Registrierung.
-- **Admin-Bereich:** Produktverwaltung (Anlegen, Bearbeiten, Aktivieren/Deaktivieren), Bestellverwaltung mit Statusänderung. Der Admin-Bereich ist nur sichtbar, wenn die Benutzerrolle im JWT-Token `ADMIN` ist.
+**Responsives Layout:** Ein `LayoutBuilder` in der Root-Shell schaltet je nach Bildschirmbreite zwischen `NavigationBar` (unten, mobil) und `NavigationRail` (links, Desktop) um. Auf dem Desktop wird der Inhalt auf maximal 1200 px begrenzt.
 
-Für die Zustandsverwaltung wird ein State-Management-Ansatz (z. B. Provider) verwendet, um Daten wie den Warenkorb konsistent über verschiedene Screens hinweg zu halten.
+**Routing:** `go_router` verwaltet alle Routen zentral. Nicht eingeloggte Nutzer werden auf `/login` weitergeleitet, Nicht-Admins aus dem Admin-Bereich auf die Startseite.
+
+**Zustandsverwaltung:** `provider` mit `ChangeNotifier` trennt Logik und Darstellung. Jedes Feature hat einen eigenen Provider (`AuthProvider`, `CartProvider`, `ProductProvider` usw.).
+
+**API-Anbindung:** `dio` sendet alle HTTP-Anfragen. Ein Interceptor hängt den JWT-Token automatisch an. Jeder Screen zeigt einen von drei Zuständen: Daten, Laden (Shimmer-Platzhalter) oder Fehler.
+
+| Package              | Zweck                           |
+| -------------------- | ------------------------------- |
+| `provider`           | Zustandsverwaltung              |
+| `go_router`          | Navigation                      |
+| `dio`                | HTTP-Anfragen                   |
+| `flutter_dotenv`     | Umgebungsvariablen              |
+| `google_fonts`       | Schriftart Inter                |
+| `shimmer`            | Lade-Platzhalter                |
+| `shared_preferences` | Lokale Datenspeicherung (Token) |
+| `flutter_svg`        | SVG-Grafiken                    |
 
 ---
 
@@ -716,15 +755,15 @@ Zur Sicherstellung der Softwarequalität wurden verschiedene Testverfahren angew
 ### 8.1 Soll-/Ist-Vergleich
 Die im Fachkonzept definierten Anforderungen wurden weitgehend erfolgreich umgesetzt:
 
-| Anforderung                            | Status      | Bemerkung                                                     |
-|----------------------------------------|-------------|---------------------------------------------------------------|
-| Digitalisierung des Sortiments         | Umgesetzt   | Produktkatalog mit Such- und Filterfunktion online verfügbar   |
-| Online-Bestellungen                    | Umgesetzt   | Warenkorb und Bestellprozess mit Datenbankpersistenz           |
-| Automatische E-Mail-Bestätigung        | Umgesetzt   | Integration mit Resend (SMTP) für Bestell- und Kontobenachrichtigungen |
-| Login-System mit Rollenverwaltung      | Umgesetzt   | Supabase Auth mit JWT-Token und rollenbasierter Zugriffskontrolle |
-| Geschützter Admin-Bereich              | Umgesetzt   | Dependency Injection prüft Benutzerrolle vor jeder Admin-Aktion |
-| Relationale Datenbank                  | Umgesetzt   | MySQL-Schema mit 6 Tabellen, CHECK-Constraints und referenzieller Integrität |
-| DSGVO-konforme Datenhaltung            | Umgesetzt   | Passwörter als bcrypt-Hash, Datenschutzerklärung, Recht auf Löschung |
+| Anforderung                       | Status    | Bemerkung                                                                    |
+| --------------------------------- | --------- | ---------------------------------------------------------------------------- |
+| Digitalisierung des Sortiments    | Umgesetzt | Produktkatalog mit Such- und Filterfunktion online verfügbar                 |
+| Online-Bestellungen               | Umgesetzt | Warenkorb und Bestellprozess mit Datenbankpersistenz                         |
+| Automatische E-Mail-Bestätigung   | Umgesetzt | Integration mit Resend (SMTP) für Bestell- und Kontobenachrichtigungen       |
+| Login-System mit Rollenverwaltung | Umgesetzt | Supabase Auth mit JWT-Token und rollenbasierter Zugriffskontrolle            |
+| Geschützter Admin-Bereich         | Umgesetzt | Dependency Injection prüft Benutzerrolle vor jeder Admin-Aktion              |
+| Relationale Datenbank             | Umgesetzt | MySQL-Schema mit 6 Tabellen, CHECK-Constraints und referenzieller Integrität |
+| DSGVO-konforme Datenhaltung       | Umgesetzt | Passwörter als bcrypt-Hash, Datenschutzerklärung, Recht auf Löschung         |
 
 Das System ist stabil und die Datenhaltung durch Preis-Snapshots in den Bestellpositionen revisionssicher. Alle Projektphasen wurden innerhalb des geplanten Zeitrahmens von 80 Stunden abgeschlossen.
 
@@ -740,65 +779,51 @@ In zukünftigen Versionen könnte das System um folgende Funktionen erweitert we
 
 ## 9 Quellenverzeichnis
 
+**Programmiersprachen & Frameworks**
 - Python Software Foundation: *PEP 8 – Style Guide for Python Code.* https://peps.python.org/pep-0008/
 - Python Software Foundation: *Modul `dataclasses` – Dokumentation.* https://docs.python.org/3/library/dataclasses.html
 - FastAPI: *Offizielle Dokumentation.* https://fastapi.tiangolo.com/
 - Flutter: *Offizielle Dokumentation.* https://docs.flutter.dev/
+- Dart: *Offizielle Dokumentation.* https://dart.dev/guides
+
+**Datenbank**
 - MySQL: *Referenzhandbuch – Constraints und Datentypen.* https://dev.mysql.com/doc/
-- UUID-Spezifikation: *RFC 4122 – Standards für universell eindeutige Identifikatoren.*
+- PostgreSQL: *Offizielle Dokumentation.* https://www.postgresql.org/docs/
+- Supabase: *Offizielle Dokumentation (Auth, Datenbank).* https://supabase.com/docs
+
+**Sicherheit & Authentifizierung**
+- UUID-Spezifikation: *RFC 4122 – Standards für universell eindeutige Identifikatoren.* https://www.rfc-editor.org/rfc/rfc4122
+- Passlib: *Dokumentation – bcrypt Passwort-Hashing.* https://passlib.readthedocs.io/
+- JSON Web Token (JWT): *RFC 7519 – Standard für JWT.* https://www.rfc-editor.org/rfc/rfc7519
+- Europäisches Parlament: *Datenschutz-Grundverordnung (DSGVO), Verordnung (EU) 2016/679.* https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32016R0679
+
+**Flutter Packages**
+- `go_router`: *Routing-Package für Flutter.* https://pub.dev/packages/go_router
+- `provider`: *Zustandsverwaltung für Flutter.* https://pub.dev/packages/provider
+- `dio`: *HTTP-Client für Dart/Flutter.* https://pub.dev/packages/dio
+
+**Externe Dienste & Infrastruktur**
+- Railway: *Offizielle Dokumentation.* https://docs.railway.app/
+- Resend: *Offizielle Dokumentation (E-Mail-API).* https://resend.com/docs
+
+**Sonstiges**
+- Google: *Material Design 3 – Designsystem Dokumentation.* https://m3.material.io/
+- pytest: *Offizielle Dokumentation.* https://docs.pytest.org/
+- W3Schools: *Referenz für SQL (MySQL) und Python.* https://www.w3schools.com/
+- Mozilla Developer Network (MDN): *Referenz für HTTP-Methoden, REST-API und JSON.* https://developer.mozilla.org/
 - KI-gestützte Recherche und Textkorrektur durch das Large Language Model (LLM) Google Gemini.
 
 ---
 
 ## 10 Anhang
 
-### 10.1 UI Wireframes (Grundlage für das Mockup)
+### UI Mockup
 
-![[thriftshop_screens_wireframe.svg]]
-
-### 10.2 UI Mockup
-
-![[thriftshop_ui_mockup.pdf]]
+![Thriftshop UI Mockup](./assets/thriftshop_ui_mockup.pdf)
 
 ---
 
-TODO: 
-1. Entwicklungsumgebung einrichten
-[x] Flutter SDK, Python, VS Code, MySQL lokal installieren 
-[x] GitHub-Repository anlegen 
-1. Datenbank aufsetzen
-[x] MySQL-Schema lokal erstellen (Tabellen laut Klassendiagramm: benutzer, produkt, kategorie, zustand, bestellung, bestellposition)
-[] DAOs erstellen für die Hauptklassen
-1. FastAPI-Backend – Grundstruktur
-[] Projektstruktur anlegen, Datenbankverbindung herstellen
-[] CRUD-Endpunkte für Produkte (GET, POST, PUT, DELETE /produkte)
-1. Authentifizierung & Rollen
-[] Supabase Auth einbinden, JWT-Token-Validierung im Backend
-[] Middleware für Rollenprüfung (ADMIN / GAST)
-[] Endpunkte für Registrierung und Login
-1. Bestellsystem im Backend
-[] Endpunkte für Bestellungen (POST /bestellungen, PATCH /bestellungen/{id}/status)
-[] Stornierung, Statusübergänge
-[] Resend-Integration für E-Mail-Bestätigungen
-1. Flutter-Frontend – Grundstruktur
-[] Projektstruktur anlegen, Navigation (go_router), BottomNavigationBar
-[] HTTP-Service für API-Kommunikation, Token-Speicherung (shared_preferences)
-1. Flutter – Kundenseiten
-[] Screen 1: Login / Registrierung
-[] Screen 2: Produktliste (Suche, Filter)
-[] Screen 3: Produktdetail + Warenkorb-Logik (Provider)
-[] Screen 4: Warenkorb → Checkout → Bestätigung
-[] Screen 5: Meine Bestellungen + Stornieren
-[] Screen 6: Profil (Bearbeiten, Löschen, Abmelden)
-1. Flutter – Admin-Seiten
-[] Screen 7: Produktverwaltung (Liste, Toggle, Formular)
-[] Screen 8: Bestellverwaltung (Filter, Statusänderung)
-1. Migration auf Supabase/PostgreSQL
-[] Lokale MySQL-DB auf Supabase PostgreSQL migrieren
-[] Backend-Verbindung umstellen, Railway-Deployment
-10. Testen
-[] Unit-Tests (pytest für FastAPI-Endpunkte)
-[] Manuelle Tests der Flutter-App auf Testgerät
-1.  Deployment
-[] Backend auf Railway deployen
-[] Flutter Web-Build auf GitHub Pages deployen
+## 11 Anpassungen 
+
+- Produktlöschung als Soft Delete: Die ursprünglich geplante Löschfunktion für Produkte wurde als Soft Delete implementiert. Statt eines `DELETE`-Statements wird `produkt_aktiv = FALSE` gesetzt. Grund: Bestehende Bestellungen referenzieren Produkte – ein hartes Löschen würde die Bestellhistorie beschädigen. Für den Admin bleibt das Verhalten identisch; das Produkt verschwindet aus dem Shop. Eine endgültige Löschung muss direkt in der Datenbank durch einen Administrator erfolgen.
+- Bestelllöschung als Statusänderung: Die ursprünglich geplante Löschfunktion für Bestellungen wurde als fachliche Statusänderung umgesetzt. Statt eines `DELETE`-Statements wird der Bestellstatus auf `Storniert` (bzw. im Rückabwicklungsfall auf `Erstattet`) gesetzt. Grund: Bestellungen sind buchhalterisch und historisch relevante Geschäftsvorfälle und müssen nachvollziehbar bleiben. Eine endgültige Löschung von Bestellungen ist im Anwendungssystem nicht vorgesehen.
