@@ -28,7 +28,7 @@ TODO:
 [x] GitHub-Repository anlegen 
 1. Datenbank aufsetzen
 [x] MySQL-Schema lokal erstellen (Tabellen laut Klassendiagramm: benutzer, produkt, kategorie, zustand, bestellung, bestellposition)
-[] DAOs erstellen für die Hauptklassen
+[x] DAOs erstellen für die Hauptklassen
 1. FastAPI-Backend – Grundstruktur
 [] Projektstruktur anlegen, Datenbankverbindung herstellen
 [] CRUD-Endpunkte für Produkte (GET, POST, PUT, DELETE /produkte)

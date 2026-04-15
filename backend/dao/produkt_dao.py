@@ -30,10 +30,10 @@ class ProduktDAO:
         
 
     def get_nach_id(self, produkt_id:UUID) -> Produkt | None:
-        """"Sucht ein Produkt anhand der UUID."""
+        """Sucht ein Produkt anhand der UUID."""
         try:
             with self.db.cursor(dictionary=True) as cursor:
-                cursor.execute("SELECT * FROM produkt WHERE id = %s", (str(produkt_id),)) # str() weil manche Datenbanktreiber nicht automatisch mit UUID-Objekten umgehen können
+                cursor.execute("SELECT * FROM produkt WHERE produkt_id = %s", (str(produkt_id),)) # str() weil manche Datenbanktreiber nicht automatisch mit UUID-Objekten umgehen können
                 row = cursor.fetchone()
                 return Produkt(**row) if row else None
         except mysql.connector.Error as err:
@@ -54,7 +54,7 @@ class ProduktDAO:
         try:
             with self.db.cursor(dictionary=True) as cursor:
                 cursor.execute(
-                    "SELECT * FROM produkt WHERE kategorie = %s AND produkt_aktiv = TRUE ORDER BY laufende_nr DESC",
+                    "SELECT * FROM produkt WHERE kategorie_id = %s AND produkt_aktiv = TRUE ORDER BY laufende_nr DESC",
                     (str(kategorie),)
                 )
                 return [Produkt(**row) for row in cursor.fetchall()]
@@ -66,7 +66,7 @@ class ProduktDAO:
         try:
             with self.db.cursor(dictionary=True) as cursor:
                 cursor.execute(
-                    "SELECT * FROM produkt WHERE kategorie = %s ORDER BY laufende_nr DESC",
+                    "SELECT * FROM produkt WHERE kategorie_id = %s ORDER BY laufende_nr DESC",
                     (str(kategorie),)
                 )
                 return [Produkt(**row) for row in cursor.fetchall()]
@@ -137,6 +137,8 @@ class ProduktDAO:
                         str(produkt.produkt_id),
                     )
                 )
+                if cursor.rowcount == 0:
+                    raise RuntimeError(f"Kein Produkt mit der ID {produkt.produkt_id} gefunden")
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
@@ -150,6 +152,8 @@ class ProduktDAO:
                     "UPDATE produkt SET produkt_aktiv = FALSE WHERE produkt_id = %s",
                     (str(produkt_id),)
                 )
+                if cursor.rowcount == 0:
+                    raise RuntimeError(f"Kein Produkt mit der ID {produkt_id} gefunden")
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()

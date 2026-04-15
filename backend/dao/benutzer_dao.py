@@ -103,6 +103,8 @@ class BenutzerDAO:
                         str(benutzer.benutzer_id),
                     ),
                 )
+                if cursor.rowcount == 0:
+                    raise RuntimeError(f"Kein Benutzer mit der ID {benutzer.benutzer_id} gefunden")
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
@@ -121,6 +123,8 @@ class BenutzerDAO:
                     """,
                     (neues_passwort_hash, str(benutzer_id)),
                 )
+                if cursor.rowcount == 0:
+                    raise RuntimeError(f"Kein Benutzer mit der ID {benutzer_id} gefunden")
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
@@ -134,6 +138,8 @@ class BenutzerDAO:
                     "UPDATE benutzer SET letzter_login = NOW() WHERE benutzer_id = %s",
                     (str(benutzer_id),),
                 )
+                if cursor.rowcount == 0:
+                    raise RuntimeError(f"Kein Benutzer mit der ID {benutzer_id} gefunden")
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
