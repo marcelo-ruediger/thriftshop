@@ -26,39 +26,39 @@ TODO:
 1. Entwicklungsumgebung einrichten
 [x] Flutter SDK, Python, VS Code, MySQL lokal installieren 
 [x] GitHub-Repository anlegen 
-1. Datenbank aufsetzen
+2. Datenbank aufsetzen
 [x] MySQL-Schema lokal erstellen (Tabellen laut Klassendiagramm: benutzer, produkt, kategorie, zustand, bestellung, bestellposition)
 [x] DAOs erstellen für die Hauptklassen
-1. FastAPI-Backend – Grundstruktur
-[] Projektstruktur anlegen, Datenbankverbindung herstellen
-[] CRUD-Endpunkte für Produkte (GET, POST, PUT, DELETE /produkte)
-1. Authentifizierung & Rollen
+3. FastAPI-Backend – Grundstruktur
+[x] Projektstruktur anlegen, Datenbankverbindung herstellen
+[x] CRUD-Endpunkte für Produkte (GET, POST, PUT, DELETE /produkte)
+4. Authentifizierung & Rollen
 [] Supabase Auth einbinden, JWT-Token-Validierung im Backend
 [] Middleware für Rollenprüfung (ADMIN / GAST)
 [] Endpunkte für Registrierung und Login
-1. Bestellsystem im Backend
+5. Bestellsystem im Backend
 [] Endpunkte für Bestellungen (POST /bestellungen, PATCH /bestellungen/{id}/status)
 [] Stornierung, Statusübergänge
 [] Resend-Integration für E-Mail-Bestätigungen
-1. Flutter-Frontend – Grundstruktur
+6. Flutter-Frontend – Grundstruktur
 [] Projektstruktur anlegen, Navigation (go_router), BottomNavigationBar
 [] HTTP-Service für API-Kommunikation, Token-Speicherung (shared_preferences)
-1. Flutter – Kundenseiten
+7. Flutter – Kundenseiten
 [] Screen 1: Login / Registrierung
 [] Screen 2: Produktliste (Suche, Filter)
 [] Screen 3: Produktdetail + Warenkorb-Logik (Provider)
 [] Screen 4: Warenkorb → Checkout → Bestätigung
 [] Screen 5: Meine Bestellungen + Stornieren
 [] Screen 6: Profil (Bearbeiten, Löschen, Abmelden)
-1. Flutter – Admin-Seiten
+8. Flutter – Admin-Seiten
 [] Screen 7: Produktverwaltung (Liste, Toggle, Formular)
 [] Screen 8: Bestellverwaltung (Filter, Statusänderung)
-1. Migration auf Supabase/PostgreSQL
+9. Migration auf Supabase/PostgreSQL
 [] Lokale MySQL-DB auf Supabase PostgreSQL migrieren
 [] Backend-Verbindung umstellen, Railway-Deployment
-1.  Testen
+10.  Testen
 [] Unit-Tests (pytest für FastAPI-Endpunkte)
 [] Manuelle Tests der Flutter-App auf Testgerät
-1.  Deployment
+11.  Deployment
 [] Backend auf Railway deployen
 [] Flutter Web-Build auf GitHub Pages deployen

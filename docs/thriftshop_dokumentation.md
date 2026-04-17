@@ -823,7 +823,16 @@ In zukünftigen Versionen könnte das System um folgende Funktionen erweitert we
 
 ---
 
-## 11 Anpassungen 
+## 11 Anpassungen und Anmerkungen
 
 - Produktlöschung als Soft Delete: Die ursprünglich geplante Löschfunktion für Produkte wurde als Soft Delete implementiert. Statt eines `DELETE`-Statements wird `produkt_aktiv = FALSE` gesetzt. Grund: Bestehende Bestellungen referenzieren Produkte – ein hartes Löschen würde die Bestellhistorie beschädigen. Für den Admin bleibt das Verhalten identisch; das Produkt verschwindet aus dem Shop. Eine endgültige Löschung muss direkt in der Datenbank durch einen Administrator erfolgen.
 - Bestelllöschung als Statusänderung: Die ursprünglich geplante Löschfunktion für Bestellungen wurde als fachliche Statusänderung umgesetzt. Statt eines `DELETE`-Statements wird der Bestellstatus auf `Storniert` (bzw. im Rückabwicklungsfall auf `Erstattet`) gesetzt. Grund: Bestellungen sind buchhalterisch und historisch relevante Geschäftsvorfälle und müssen nachvollziehbar bleiben. Eine endgültige Löschung von Bestellungen ist im Anwendungssystem nicht vorgesehen.
+
+- Routen für die benutzer `benutzer.py`:
+1. `get_nach_email` – wird nicht als eigene Route exposiert, sondern spaeter intern beim Login genutzt (JWT-Authentifizierung).
+2. `letzter_login_setzen` – wird ebenfalls intern beim Login aufgerufen, nicht direkt vom Frontend.
+
+- Routen für die bestellposition `bestellposition.py`:
+1. Kein POST – Positionen werden nur über POST /bestellungen/ erstellt
+2. Kein PUT/DELETE – Snapshot-Daten sind unveraenderlich (historische Bestellungen)
+3. Kein GET / (alle) – zu unspezifisch, fachlich nicht sinnvoll
