@@ -1,3 +1,7 @@
+"""
+API-Routen für Benutzer - CRUD und Passwortverwaltung unter /benutzer.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.datenbank import get_db
 from dao.benutzer_dao import BenutzerDAO

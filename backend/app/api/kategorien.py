@@ -1,3 +1,7 @@
+"""
+API-Routen für Kategorien - CRUD-Endpunkte unter /kategorien.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.datenbank import get_db
 from dao.kategorie_dao import KategorieDAO

@@ -1,3 +1,7 @@
+"""
+API-Routen für Bestellungen - CRUD und Statusverwaltung unter /bestellungen.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.datenbank import get_db
 from dao.bestellung_dao import BestellungDAO

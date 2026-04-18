@@ -1,3 +1,7 @@
+"""
+Startpunkt der FastAPI-Anwendung - registriert alle Router.
+"""
+
 from fastapi import FastAPI
 from app.api import produkte
 from app.api import benutzer

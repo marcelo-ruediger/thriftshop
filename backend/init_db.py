@@ -1,3 +1,8 @@
+"""
+Datenbankinitialisierung - erstellt alle Tabellen anhand des definierten Schemas.
+Ausführen mit: python backend/init_db.py
+"""
+
 import mysql.connector
 import os
 from dotenv import load_dotenv

@@ -1,3 +1,8 @@
+"""
+Smoke-Tests - prüft Modelle und DAO-Grundfunktionen manuell ohne Test-Framework.
+Ausführen mit: python backend/main_test.py
+"""
+
 from models import Produkt
 from decimal import Decimal
 from uuid import uuid4
