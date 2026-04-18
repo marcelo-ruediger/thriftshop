@@ -57,7 +57,9 @@ TODO:
 [] Screen 8: Bestellverwaltung (Filter, Statusänderung)
 9. Migration auf Supabase/PostgreSQL
 [] Lokale MySQL-DB auf Supabase PostgreSQL migrieren
+[] @dataclass Modelle auf Pydantic BaseModel migrieren (ersetzt @dataclass direkt, kein Vererben)
 [] Backend-Verbindung umstellen, Railway-Deployment
+[] (Dann) Supabase Auth einbinden
 10.  Testen
 [] Unit-Tests (pytest für FastAPI-Endpunkte)
 [] Manuelle Tests der Flutter-App auf Testgerät

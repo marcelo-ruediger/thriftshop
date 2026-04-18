@@ -1,3 +1,7 @@
+"""
+API-Routen für Produkte - CRUD-Endpunkte unter /produkte.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.datenbank import get_db
 from dao.produkt_dao import ProduktDAO

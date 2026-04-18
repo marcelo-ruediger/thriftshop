@@ -1,3 +1,7 @@
+"""
+Datezugriff für die Tabelle 'bestellung' - SQL-Abfragen und -Mutationen.
+"""
+
 import mysql.connector
 from uuid import UUID
 from models import Bestellung

@@ -1,3 +1,7 @@
+"""
+API-Routen für Bestellpositionen - schreibgeschützte Abfragen unter /bestellpositionen.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.datenbank import get_db
 from dao.bestellposition_dao import BestellpositionDAO

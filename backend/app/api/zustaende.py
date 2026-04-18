@@ -1,3 +1,7 @@
+"""
+API-Routen für Zustände - CRUD-Endpunkte unter /zustaende.
+"""
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.datenbank import get_db
 from dao.zustand_dao import ZustandDAO

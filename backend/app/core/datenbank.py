@@ -1,3 +1,7 @@
+"""
+Datenbankverbindung - lädt .env-Variablen und stellt get_db() als FastAPI-Dependency bereit.
+"""
+
 import mysql.connector
 import os
 from dotenv import load_dotenv

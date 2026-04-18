@@ -838,3 +838,15 @@ In zukünftigen Versionen könnte das System um folgende Funktionen erweitert we
 3. Kein GET / (alle) – zu unspezifisch, fachlich nicht sinnvoll
 
 - `Ruff`-Erweiterung für bessere Lesbarkeit und Python-Konventionsformatierung.
+  
+- Abhängigkeiten dokumentieren & installieren
+  > Nach jedem `pip install` die `requirements.txt` aktualisieren. `Venv` muss aktiv sein und der Befehl im Projektroot (thriftshop/) ausgeführt werden:
+  `pip freeze > requirements.txt`
+  Ein anderes System kann das Projekt dann so einrichten:
+  ```python
+  python -m venv venv
+  venv\Scripts\activate        # Windows
+  pip install -r requirements.txt
+  ```
+
+- Modul-Docstrings für alle Dateien hinzugefügt.
