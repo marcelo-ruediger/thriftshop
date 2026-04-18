@@ -836,3 +836,5 @@ In zukünftigen Versionen könnte das System um folgende Funktionen erweitert we
 1. Kein POST – Positionen werden nur über POST /bestellungen/ erstellt
 2. Kein PUT/DELETE – Snapshot-Daten sind unveraenderlich (historische Bestellungen)
 3. Kein GET / (alle) – zu unspezifisch, fachlich nicht sinnvoll
+
+- `Ruff`-Erweiterung für bessere Lesbarkeit und Python-Konventionsformatierung.

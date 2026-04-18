@@ -33,9 +33,11 @@ TODO:
 [x] Projektstruktur anlegen, Datenbankverbindung herstellen
 [x] CRUD-Endpunkte für Produkte (GET, POST, PUT, DELETE /produkte)
 4. Authentifizierung & Rollen
-[] Supabase Auth einbinden, JWT-Token-Validierung im Backend
-[] Middleware für Rollenprüfung (ADMIN / GAST)
-[] Endpunkte für Registrierung und Login
+[] POST /auth/registrieren – Benutzer anlegen, Passwort mit bcrypt hashen
+[] POST /auth/login – E-Mail + Passwort prüfen, JWT zurückgeben
+[] Depends(aktueller_benutzer) – Token aus Header lesen & validieren
+[] Middleware für Rollenprüfung (Administrator / Mitarbeiter / Kunde)
+[] (Später bei Schritt 9) Supabase Auth einbinden
 5. Bestellsystem im Backend
 [] Endpunkte für Bestellungen (POST /bestellungen, PATCH /bestellungen/{id}/status)
 [] Stornierung, Statusübergänge
