@@ -23,7 +23,9 @@ class KategorieDAO:
                 )
                 return [Kategorie(**row) for row in cursor.fetchall()]
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Datenbankfehler beim Laden der Kategorien: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Laden der Kategorien: {err}"
+            ) from err
 
     def get_nach_id(self, kategorie_id: UUID) -> Kategorie | None:
         """Lädt eine Kategorie anhand der UUID."""
@@ -36,7 +38,9 @@ class KategorieDAO:
                 row = cursor.fetchone()
                 return Kategorie(**row) if row else None
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Datenbankfehler beim Laden der Kategorie: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Laden der Kategorie: {err}"
+            ) from err
 
     def get_nach_slug(self, slug: str) -> Kategorie | None:
         """Lädt eine Kategorie anhand des Slugs."""
@@ -46,7 +50,9 @@ class KategorieDAO:
                 row = cursor.fetchone()
                 return Kategorie(**row) if row else None
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Datenbankfehler beim Laden der Kategorie: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Laden der Kategorie: {err}"
+            ) from err
 
     # Schreiben ---
     def erstellen(self, kategorie: Kategorie) -> None:
@@ -70,7 +76,9 @@ class KategorieDAO:
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Erstellen der Kategorie: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Erstellen der Kategorie: {err}"
+            ) from err
 
     def aktualisieren(self, kategorie: Kategorie) -> None:
         """Aktualisiert eine bestehende Kategorie."""
@@ -94,20 +102,31 @@ class KategorieDAO:
                     ),
                 )
                 if cursor.rowcount == 0:
-                    raise RuntimeError(f"Keine Kategorie mit der ID {kategorie.kategorie_id} gefunden")
+                    raise RuntimeError(
+                        f"Keine Kategorie mit der ID {kategorie.kategorie_id} gefunden"
+                    )
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Aktualisieren der Kategorie: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Aktualisieren der Kategorie: {err}"
+            ) from err
 
     def loeschen(self, kategorie_id: UUID) -> None:
         """Löscht eine Kategorie, falls keine Produkte darauf verweisen."""
         try:
             with self.db.cursor() as cursor:
-                cursor.execute("DELETE FROM kategorie WHERE kategorie_id = %s", (str(kategorie_id),))
+                cursor.execute(
+                    "DELETE FROM kategorie WHERE kategorie_id = %s",
+                    (str(kategorie_id),),
+                )
                 if cursor.rowcount == 0:
-                    raise RuntimeError(f"Keine Kategorie mit der ID {kategorie_id} gefunden")
+                    raise RuntimeError(
+                        f"Keine Kategorie mit der ID {kategorie_id} gefunden"
+                    )
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Löschen der Kategorie: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Löschen der Kategorie: {err}"
+            ) from err

@@ -11,8 +11,8 @@ test_produkt = Produkt(
     preis=Decimal("49.99"),
     produkt_rabatt=Decimal("5.00"),
     lagerbestand=1,
-    zustand_id=uuid4(),    # Platzhalter für echte Zustand-UUID
-    kategorie_id=uuid4()   # Platzhalter für echte Kategorie-UUID
+    zustand_id=uuid4(),  # Platzhalter für echte Zustand-UUID
+    kategorie_id=uuid4(),  # Platzhalter für echte Kategorie-UUID
 )
 
 print(test_produkt.erstellungsdatum)

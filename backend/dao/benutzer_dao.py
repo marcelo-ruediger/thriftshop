@@ -23,7 +23,9 @@ class BenutzerDAO:
                 )
                 return [Benutzer(**row) for row in cursor.fetchall()]
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Datenbankfehler beim Laden der Benutzer: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Laden der Benutzer: {err}"
+            ) from err
 
     def get_nach_id(self, benutzer_id: UUID) -> Benutzer | None:
         """Lädt einen Benutzer anhand der UUID."""
@@ -36,7 +38,9 @@ class BenutzerDAO:
                 row = cursor.fetchone()
                 return Benutzer(**row) if row else None
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Datenbankfehler beim Laden des Benutzers: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Laden des Benutzers: {err}"
+            ) from err
 
     def get_nach_email(self, email: str) -> Benutzer | None:
         """Lädt einen Benutzer anhand der E-Mail (für Login)."""
@@ -46,7 +50,9 @@ class BenutzerDAO:
                 row = cursor.fetchone()
                 return Benutzer(**row) if row else None
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Datenbankfehler beim Laden des Benutzers: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Laden des Benutzers: {err}"
+            ) from err
 
     # Schreiben
     def erstellen(self, benutzer: Benutzer) -> None:
@@ -76,7 +82,9 @@ class BenutzerDAO:
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Erstellen des Benutzers: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Erstellen des Benutzers: {err}"
+            ) from err
 
     def aktualisieren_stammdaten(self, benutzer: Benutzer) -> None:
         """Aktualisiert Name, Kontakt, Rolle und letzte_aenderung."""
@@ -104,11 +112,15 @@ class BenutzerDAO:
                     ),
                 )
                 if cursor.rowcount == 0:
-                    raise RuntimeError(f"Kein Benutzer mit der ID {benutzer.benutzer_id} gefunden")
+                    raise RuntimeError(
+                        f"Kein Benutzer mit der ID {benutzer.benutzer_id} gefunden"
+                    )
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Aktualisieren des Benutzers: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Aktualisieren des Benutzers: {err}"
+            ) from err
 
     def passwort_setzen(self, benutzer_id: UUID, neues_passwort_hash: str) -> None:
         """Setzt einen neuen Passwort-Hash."""
@@ -124,11 +136,15 @@ class BenutzerDAO:
                     (neues_passwort_hash, str(benutzer_id)),
                 )
                 if cursor.rowcount == 0:
-                    raise RuntimeError(f"Kein Benutzer mit der ID {benutzer_id} gefunden")
+                    raise RuntimeError(
+                        f"Kein Benutzer mit der ID {benutzer_id} gefunden"
+                    )
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Aktualisieren des Passworts: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Aktualisieren des Passworts: {err}"
+            ) from err
 
     def letzter_login_setzen(self, benutzer_id: UUID) -> None:
         """Aktualisiert den Zeitpunkt des letzten Logins."""
@@ -139,20 +155,30 @@ class BenutzerDAO:
                     (str(benutzer_id),),
                 )
                 if cursor.rowcount == 0:
-                    raise RuntimeError(f"Kein Benutzer mit der ID {benutzer_id} gefunden")
+                    raise RuntimeError(
+                        f"Kein Benutzer mit der ID {benutzer_id} gefunden"
+                    )
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Aktualisieren des letzten Logins: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Aktualisieren des letzten Logins: {err}"
+            ) from err
 
     def loeschen(self, benutzer_id: UUID) -> None:
         """Löscht einen Benutzer (hartes Löschen, falls FK-Regeln es zulassen)."""
         try:
             with self.db.cursor() as cursor:
-                cursor.execute("DELETE FROM benutzer WHERE benutzer_id = %s", (str(benutzer_id),))
+                cursor.execute(
+                    "DELETE FROM benutzer WHERE benutzer_id = %s", (str(benutzer_id),)
+                )
                 if cursor.rowcount == 0:
-                    raise RuntimeError(f"Kein Benutzer mit der ID {benutzer_id} gefunden")
+                    raise RuntimeError(
+                        f"Kein Benutzer mit der ID {benutzer_id} gefunden"
+                    )
             self.db.commit()
         except mysql.connector.Error as err:
             self.db.rollback()
-            raise RuntimeError(f"Datenbankfehler beim Löschen des Benutzers: {err}") from err
+            raise RuntimeError(
+                f"Datenbankfehler beim Löschen des Benutzers: {err}"
+            ) from err

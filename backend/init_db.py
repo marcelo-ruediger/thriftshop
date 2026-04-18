@@ -5,16 +5,17 @@ from dotenv import load_dotenv
 DB_PATH = "thriftshop.db"
 load_dotenv()
 
+
 def init_db():
     """Erstellt die Datenbank-Schema"""
     conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password=os.getenv("DB_PASSWORD")
+        host="localhost", user="root", password=os.getenv("DB_PASSWORD")
     )
     cursor = conn.cursor()
 
-    cursor.execute("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'thriftshop'")
+    cursor.execute(
+        "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'thriftshop'"
+    )
     db_exists = cursor.fetchone() is not None
 
     cursor.execute("CREATE DATABASE IF NOT EXISTS thriftshop")
@@ -38,8 +39,7 @@ def init_db():
         )
     """)
 
-
-      # Zustand-Tabelle
+    # Zustand-Tabelle
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS zustand (
             zustand_id CHAR(36) PRIMARY KEY,
@@ -60,7 +60,7 @@ def init_db():
     """)
 
     # Bestellungstabelle -----------------------------
-    # ON DELETE RESTRICT für Archivierung 
+    # ON DELETE RESTRICT für Archivierung
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS bestellung (
             bestellung_id CHAR(36) PRIMARY KEY,   
@@ -79,7 +79,7 @@ def init_db():
     """)
 
     # Produkttabelle -----------------------------------
-    # produkt_rabatt DEFAULT 0.00 -> Vereinfacht Backend Rechenlogik, SQL-Abfragen und vermeidet "NullPointerExceptions" 
+    # produkt_rabatt DEFAULT 0.00 -> Vereinfacht Backend Rechenlogik, SQL-Abfragen und vermeidet "NullPointerExceptions"
     # ON DELETE RESTRICT -> Verhindert das Löschen von zustand_id und kategorie_id, solange noch Produkte darauf verweisen
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS produkt (
@@ -130,7 +130,7 @@ def init_db():
             ON DELETE RESTRICT
         )                  
     """)
-    
+
     if db_exists:
         print("Datenbank existierte bereits!")
     else:
@@ -139,6 +139,6 @@ def init_db():
     cursor.close()
     conn.close()
 
+
 if __name__ == "__main__":
     init_db()
-
