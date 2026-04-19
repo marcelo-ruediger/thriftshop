@@ -850,3 +850,5 @@ In zukünftigen Versionen könnte das System um folgende Funktionen erweitert we
   ```
 
 - Modul-Docstrings für alle Dateien hinzugefügt.
+
+- Automatisierte Tests unter `/backend/tests/`
