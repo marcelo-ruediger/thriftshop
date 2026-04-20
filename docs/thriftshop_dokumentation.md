@@ -813,13 +813,25 @@ Fehlerfall Login: Bei falschem Passwort oder unbekannter E-Mail antwortet die Ro
 | Methode | Endpunkt | Beschreibung | Erfolgscode |
 |---|---|---|---|
 | `GET` | `/bestellungen/` | Alle Bestellungen paginiert (Admin-Dashboard); Parameter: `limit`, `offset` | 200 |
+| `GET` | `/bestellungen/meine-bestellungen` | Alle Bestellungen des eingeloggten Kunden | 200 |
 | `GET` | `/bestellungen/benutzer/{benutzer_id}` | Bestellhistorie eines Kunden | 200 |
 | `GET` | `/bestellungen/status/{status}` | Alle Bestellungen mit einem bestimmten Status (z. B. `Offen`, `Abgeschlossen`) | 200 |
 | `GET` | `/bestellungen/{bestellung_id}` | Einzelne Bestellung per UUID | 200 / 404 |
 | `POST` | `/bestellungen/` | Neue Bestellung **mit Positionen** anlegen (atomar: erst Bestellung, dann alle Positionen); Body: `bestellung` + `positionen` (Liste) | 201 |
-| `PATCH` | `/bestellungen/{bestellung_id}/status` | Status einer Bestellung ändern; Parameter: `neuer_status` (Query) | 200 |
+| `PATCH` | `/bestellungen/{bestellung_id}/status` | Status einer Bestellung ändern (Admin/Mitarbeiter); Parameter: `neuer_status` (Query) | 200 |
+| `PATCH` | `/bestellungen/{bestellung_id}/stornieren` | Kunde storniert seine eigene Bestellung; nur möglich wenn Status `Offen` | 200 |
 
 Erlaubte Statuswerte (DB-Constraint): `Offen`, `In Bearbeitung`, `Abgeschlossen`, `Storniert`, `Erstattet`.
+
+**Erlaubte Statusübergänge** (validiert in `ERLAUBTE_UEBERGAENGE`)::
+
+| Von | Nach |
+|---|---|
+| `Offen` | `In Bearbeitung`, `Storniert` |
+| `In Bearbeitung` | `Abgeschlossen`, `Storniert` |
+| `Abgeschlossen` | *(kein Übergang möglich)* |
+| `Storniert` | `Erstattet` |
+| `Erstattet` | *(kein Übergang möglich)* |
 
 ---
 
@@ -903,7 +915,8 @@ Gemeinsame Testdaten werden einmal pro Testsitzung durch Fixtures in `conftest.p
 | `kategorie_id` | `session` | `POST /kategorien/` | Testkategorie; wird am Ende gelöscht |
 | `benutzer_id` | `session` | `POST /auth/registrieren` | Testbenutzer (Rolle: Kunde); wird am Ende gelöscht |
 | `produkt_id` | `session` | `POST /produkte/` | Testprodukt (hängt von `zustand_id` + `kategorie_id` ab); stellt sicher, dass FK-Referenzen für die „loeschen schlägt fehl"-Tests bestehen; wird am Ende deaktiviert |
-| `auth_token` | `session` | `POST /auth/login` | Legt einen eigenen Login-Benutzer an und gibt dessen JWT zurück |
+| `auth_token` | `session` | `POST /auth/login` | Legt einen eigenen Login-Benutzer (Rolle: `Kunde`) an und gibt dessen JWT zurück |
+| `admin_token` | `session` | `POST /auth/login` | Legt einen eigenen Login-Benutzer (Rolle: `Administrator`) an und gibt dessen JWT zurück |
 
 ### 6.3 Unit-Tests (`test_sicherheit.py`)
 
@@ -983,16 +996,20 @@ Testet alle Routen unter `/benutzer/`.
 
 ### 6.9 Integrationstests – Bestellungen (`test_bestellungen.py`)
 
-| Testklasse | Testfall | Erwartet |
-|---|---|---|
-| `TestBestellungenAbrufen` | `test_alle_bestellungen_abrufen` | `200` + JSON-Liste |
-| | `test_bestellung_nicht_gefunden` | `404` |
-| | `test_bestellungen_nach_benutzer` | `200` + JSON-Liste (Fixture-Benutzer) |
-| | `test_bestellungen_nach_status` | `200` + JSON-Liste (Status `Offen`) |
-| `TestBestellungenSchreiben` | `test_bestellungen_erstellen_mit_position` | `201`; legt zuerst ein Produkt an, dann eine Bestellung mit einer Position (inkl. Preis-Snapshot `steuersatz_gebucht`) |
-| | `test_bestellstatus_aktualisieren` | `200` + `{"bestellung_id": ..., "status": "In Bearbeitung"}` |
+Alle Bestellungs-Endpunkte sind per `Depends()` geschützt. Tests übergeben daher den JWT im `Authorization: Bearer`-Header. Admin-Routen erhalten `admin_token`, Kunden-Routen `auth_token`.
+
+| Testklasse | Testfall | Token | Erwartet |
+|---|---|---|---|
+| `TestBestellungenAbrufen` | `test_alle_bestellungen_abrufen` | `admin_token` | `200` + JSON-Liste |
+| | `test_bestellung_nicht_gefunden` | `auth_token` | `404` |
+| | `test_bestellungen_nach_benutzer` | `admin_token` | `200` + JSON-Liste |
+| | `test_bestellungen_nach_status` | `admin_token` | `200` + JSON-Liste (Status `Offen`) |
+| `TestBestellungenSchreiben` | `test_bestellungen_erstellen_mit_position` | `auth_token` | `201`; legt zuerst ein Produkt an, dann eine Bestellung mit einer Position (inkl. Preis-Snapshot `steuersatz_gebucht`) |
+| | `test_bestellstatus_aktualisieren` | `admin_token` | `200` + `{"bestellung_id": ..., "status": "In Bearbeitung"}` |
 
 ### 6.10 Designentscheidungen im Testaufbau
+
+**Token-basierte Authentifizierung in Tests:** Geschützte Endpunkte erfordern einen gültigen JWT im `Authorization: Bearer`-Header. Die Fixtures `auth_token` (Rolle: `Kunde`) und `admin_token` (Rolle: `Administrator`) stellen diese Token bereit. Admin-Routen (z. B. alle Bestellungen abrufen, Status ändern) erhalten `admin_token`; Kunden-Routen (z. B. eigene Bestellung erstellen) erhalten `auth_token`. Damit wird sichergestellt, dass die Rollenprüfung (`erfordert_rolle()`) im Testlauf korrekt validiert wird.
 
 **Eindeutige Testdaten:** Alle Hilfsfunktionen (`_neue_*daten()`) erzeugen Bezeichnungen und E-Mail-Adressen mit einem UUID-Präfix. Dadurch können Tests beliebig oft wiederholt werden, ohne gegen `UNIQUE`-Constraints der Datenbank zu verstoßen.
 

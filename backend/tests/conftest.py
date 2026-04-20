@@ -141,3 +141,29 @@ def auth_token(benutzer_id: str) -> Iterator[str]:
 
     # Teardown: Login-Benutzer nach dem Testlauf löschen
     client.delete(f"/benutzer/{eindeutige_id}")
+
+
+@pytest.fixture(scope="session")
+def admin_token() -> Iterator[str]:
+    """Legt einen Test-Administrator an, loggt ihn ein und gibt den JWT-Token zurück."""
+    eindeutige_id = str(uuid.uuid4())
+    email = f"admin_{eindeutige_id[:8]}@test.de"
+    passwort = "adminPasswort123"
+    daten = {
+        "benutzer_id": eindeutige_id,
+        "vorname": "Admin",
+        "nachname": "Test",
+        "email": email,
+        "telefon": f"0{eindeutige_id[:10].replace('-', '')}",
+        "passwort_hash": passwort,
+        "rolle": "Administrator",
+    }
+    client.post("/auth/registrieren", json=daten)
+
+    antwort = client.post("/auth/login", params={"email": email, "passwort": passwort})
+    assert antwort.status_code == 200, f"Admin-Login fehlgeschlagen: {antwort.text}"
+
+    yield antwort.json()["access_token"]
+
+    # Teardown: Admin-Benutzer nach dem Testlauf löschen
+    client.delete(f"/benutzer/{eindeutige_id}")
