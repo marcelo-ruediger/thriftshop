@@ -1,14 +1,22 @@
-# einzelne Dateien
-thriftshop_projektantrag_v2026-03-27.pdf
-thriftshop_projektdokumentation_v2026-03-27.pdf
-thriftshop_projektantrag.md
-copilot-instructions.md
-marcelo_ruediger_projektdokumentation_final.pdf
-# für Umgebungsvariablen
-*.env 
-*.db
-# Python virtuelle Umgebung
-/venv
-# Nur für die Erstellung von PDF-Dateien
-*.html
+# Python =======================================================================
+__pycache__/
+*.pyc
 
+# Virtuelle Umgebung ===========================================================
+/.venv/
+
+# Umgebungsvariablen & Secrets =================================================
+.env
+.env.*
+*.db
+
+# Test-Tools ===================================================================
+.pytest_cache/
+.mypy_cache/
+
+# Projektspezifische Dateien ===================================================
+*.pdf
+*.html
+copilot-instructions.md
+thriftshop_projektantrag.md
+openapi.json

@@ -21,6 +21,34 @@ def meine_bestellungen(benutzer=Depends(aktueller_benutzer), db=Depends(get_db))
     return dao.get_nach_benutzer(benutzer.benutzer_id)
 
 
+@router.patch("/{bestellung_id}/stornieren")
+def bestellung_stornieren(
+    bestellung_id: UUID,
+    benutzer=Depends(aktueller_benutzer),
+    db=Depends(get_db),
+):
+    """Kunde storniert seine eigene Bestellung - nur wenn Status 'Offen'."""
+    dao = BestellungDAO(db)
+    bestellung = dao.get_nach_id(bestellung_id)
+
+    if not bestellung:
+        raise HTTPException(status_code=404, detail="Bestellung nicht gefunden")
+
+    # Sicherheitsprüfung: Bestellung gehört dem eingeloggten Benutzer?
+    if bestellung.benutzer_id != benutzer.benutzer_id:
+        raise HTTPException(status_code=403, detail="Keine Berechtigung")
+
+    # Nur "Offen" kann storniert werden
+    if bestellung.status != "Offen":
+        raise HTTPException(
+            status_code=422,
+            detail=f"Bestellung mit Status '{bestellung.status}' kann nicht storniert werden",
+        )
+
+    dao.status_aktualisieren(bestellung_id, "Storniert")
+    return {"bestellung_id": str(bestellung_id), "status": "Storniert"}
+
+
 @router.get("/")
 def alle_bestellungen_abrufen(
     limit: int = 50,

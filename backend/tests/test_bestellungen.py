@@ -58,22 +58,34 @@ def _neue_produktdaten(zustand_id: str, kategorie_id: str) -> dict:
 class TestBestellungenAbrufen:
     """Tests für GET /bestellungen"""
 
-    def test_alle_bestellungen_abrufen(self) -> None:
-        antwort = client.get("/bestellungen/")
+    def test_alle_bestellungen_abrufen(self, admin_token: str) -> None:
+        antwort = client.get(
+            "/bestellungen/",
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
         assert antwort.status_code == 200
         assert isinstance(antwort.json(), list)
 
-    def test_bestellung_nicht_gefunden(self) -> None:
-        antwort = client.get(f"/bestellungen/{uuid.uuid4()}")
+    def test_bestellung_nicht_gefunden(self, auth_token: str) -> None:
+        antwort = client.get(
+            f"/bestellungen/{uuid.uuid4()}",
+            headers={"Authorization": f"Bearer {auth_token}"},
+        )
         assert antwort.status_code == 404
 
-    def test_bestellungen_nach_benutzer(self, benutzer_id: str) -> None:
-        antwort = client.get(f"/bestellungen/benutzer/{benutzer_id}")
+    def test_bestellungen_nach_benutzer(self, admin_token: str) -> None:
+        antwort = client.get(
+            f"/bestellungen/benutzer/{uuid.uuid4()}",
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
         assert antwort.status_code == 200
         assert isinstance(antwort.json(), list)
 
-    def test_bestellungen_nach_status(self) -> None:
-        antwort = client.get("/bestellungen/status/Offen")
+    def test_bestellungen_nach_status(self, admin_token: str) -> None:
+        antwort = client.get(
+            "/bestellungen/status/Offen",
+            headers={"Authorization": f"Bearer {admin_token}"},
+        )
         assert antwort.status_code == 200
         assert isinstance(antwort.json(), list)
 
@@ -82,7 +94,7 @@ class TestBestellungenSchreiben:
     """Tests für POST und PATCH /bestellungen."""
 
     def test_bestellungen_erstellen_mit_position(
-        self, benutzer_id: str, zustand_id: str, kategorie_id: str
+        self, auth_token: str, benutzer_id: str, zustand_id: str, kategorie_id: str
     ) -> None:
         # 1) Produkt für die Position anlegen
         produkt = _neue_produktdaten(zustand_id, kategorie_id)
@@ -98,22 +110,26 @@ class TestBestellungenSchreiben:
         antwort = client.post(
             "/bestellungen/",
             json={"bestellung": bestellung, "positionen": [position]},
+            headers={"Authorization": f"Bearer {auth_token}"},
         )
         assert antwort.status_code == 201
         assert antwort.json()["bestellung_id"] == bestellung["bestellung_id"]
 
-    def test_bestellstatus_aktualisieren(self, benutzer_id: str) -> None:
+    def test_bestellstatus_aktualisieren(
+        self, auth_token: str, admin_token: str, benutzer_id: str
+    ) -> None:
         # Für den Status-Test reichen leere Positionen
         bestellung = _neue_bestelldaten(benutzer_id)
-        erstellen = client.post(
+        client.post(
             "/bestellungen/",
             json={"bestellung": bestellung, "positionen": []},
+            headers={"Authorization": f"Bearer {auth_token}"},
         )
-        assert erstellen.status_code == 201
 
         antwort = client.patch(
             f"/bestellungen/{bestellung['bestellung_id']}/status",
             params={"neuer_status": "In Bearbeitung"},
+            headers={"Authorization": f"Bearer {admin_token}"},
         )
         assert antwort.status_code == 200
         assert antwort.json() == {
