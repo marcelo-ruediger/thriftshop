@@ -66,7 +66,7 @@ class TestZustaendeSchreiben:
         """Zustand anlegen und dann aktualisieren - erwartet HTTP 200."""
         daten = _neue_zustandsdaten()
         client.post("/zustaende/", json=daten)
-        daten["bezeichnung"] = "Aktualisierter Zustand"
+        daten["bezeichnung"] = f"Aktualisierter Zustand {str(uuid.uuid4())[:8]}"
         antwort = client.put(f"/zustaende/{daten['zustand_id']}", json=daten)
         assert antwort.status_code == 200
 
@@ -78,7 +78,9 @@ class TestZustaendeSchreiben:
         antwort = client.delete(f"/zustaende/{daten['zustand_id']}")
         assert antwort.status_code == 204
 
-    def test_zustand_loeschen_mit_produkt_schlaegt_fehl(self, zustand_id: str):
+    def test_zustand_loeschen_mit_produkt_schlaegt_fehl(
+        self, zustand_id: str, produkt_id: str
+    ):
         """Zustand mit zugeordneten Produkten kann nicht gelöscht werden.
         Die conftest-Zustand wird von Produkt-Tests verwendet - erwartet HTTP 500."""
         antwort = client.delete(f"/zustaende/{zustand_id}")

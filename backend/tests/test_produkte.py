@@ -66,7 +66,7 @@ class TestProdukteSchreiben:
         """Produkt anlegen und dann aktualisieren - erwartet HTTP 200."""
         daten = _neue_produktdaten(zustand_id, kategorie_id)
         client.post("/produkte/", json=daten)
-        daten["bezeichnung"] = "Aktualisierter Name"
+        daten["bezeichnung"] = f"Aktualisierter Name {str(uuid.uuid4())[:8]}"
         antwort = client.put(f"/produkte/{daten['produkt_id']}", json=daten)
         assert antwort.status_code == 200
 

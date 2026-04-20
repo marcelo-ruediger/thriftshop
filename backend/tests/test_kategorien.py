@@ -69,7 +69,7 @@ class TestKategorienSchreiben:
         """Kategorie anlegen und dann aktualisieren - erwartet HTTP 200."""
         daten = _neue_kategoriedaten()
         client.post("/kategorien/", json=daten)
-        daten["bezeichnung"] = "Aktualisierte Kategorie"
+        daten["bezeichnung"] = f"Aktualisierte Kategorie {str(uuid.uuid4())[:8]}"
         antwort = client.put(f"/kategorien/{daten['kategorie_id']}", json=daten)
         assert antwort.status_code == 200
 
@@ -81,7 +81,9 @@ class TestKategorienSchreiben:
         antwort = client.delete(f"/kategorien/{daten['kategorie_id']}")
         assert antwort.status_code == 204
 
-    def test_kategorie_loeschen_mit_produkt_schlaegt_fehl(self, kategorie_id: str):
+    def test_kategorie_loeschen_mit_produkt_schlaegt_fehl(
+        self, kategorie_id: str, produkt_id: str
+    ):
         """Kategorie mit zugeordneten Produkten kann nicht gelöscht werden.
         Die konftest-Kategorie wird von Produkt-Tests verwendet - erwartet HTTP 500."""
         antwort = client.delete(f"/kategorien/{kategorie_id}")

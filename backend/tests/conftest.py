@@ -84,6 +84,37 @@ def benutzer_id() -> Iterator[str]:
 
 
 @pytest.fixture(scope="session")
+def produkt_id(zustand_id: str, kategorie_id: str) -> Iterator[str]:
+    """Legt ein Testprodukt an und gibt dessen UUID zurück.
+    Stellt sicher, dass zustand_id und kategorie_id im Testlauf referenziert sind,
+    damit die 'loeschen_schlaegt_fehl'-Tests korrekt mit HTTP 500 scheitern.
+    Wird am Ende des Testlaufs deaktiviert (Soft-Delete)."""
+    eindeutige_id = str(uuid.uuid4())
+    daten = {
+        "produkt_id": eindeutige_id,
+        "laufende_nr": uuid.uuid4().int % 100000,
+        "bezeichnung": f"Testprodukt {eindeutige_id[:8]}",
+        "slug": f"testprodukt-{eindeutige_id[:8]}",
+        "produkt_info": "Automatisch angelegtes Produkt für Fixture-Tests.",
+        "preis": "9.99",
+        "produkt_rabatt": "0.00",
+        "lagerbestand": 5,
+        "zustand_id": zustand_id,
+        "kategorie_id": kategorie_id,
+        "produkt_aktiv": True,
+    }
+    antwort = client.post("/produkte", json=daten)
+    assert antwort.status_code == 201, (
+        f"Produkt konnte nicht angelegt werden: {antwort.text}"
+    )
+
+    yield eindeutige_id
+
+    # Teardown: Produkt deaktivieren (Soft-Delete, Zeile bleibt für FK-Integrität)
+    client.delete(f"/produkte/{eindeutige_id}")
+
+
+@pytest.fixture(scope="session")
 def auth_token(benutzer_id: str) -> Iterator[str]:
     """Loggt den Testbenutzer ein und gibt den JWT-Token zurück.
     Hängt von der benutzer_id-Fixture ab."""
