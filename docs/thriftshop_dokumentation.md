@@ -395,7 +395,7 @@ package "Client (Frontend)" {
 
 package "Server (Backend - Railway)" {
     [FastAPI (REST API)] as API
-    [ShopServices (Authentification/Logik)] as Auth
+    [API (FastAPI Router)] as Auth
     API --> Auth
 }
 
@@ -432,7 +432,7 @@ Das objektorientierte Datenmodell der Anwendung besteht aus sechs Klassen, die d
 
 ![Thriftshop ER Modell](./assets/thriftshop_er_modell.png)
 
-Die Klasse **ShopServices**, im Klassendiagramm dargestellt, bildet die zentrale Geschäftslogik ab. Sie nutzt die sechs oben genannten Datenmodelle als Datenträger, um Informationen zu verarbeiten, zu speichern und abzurufen. Die eigentliche Datenbankkommunikation erfolgt über DAOs. Um das Klassendiagramm übersichtlich zu halten, wurden die DAOs dort nicht separat eingezeichnet.
+Die **API-Schicht** steht stellvertretend für die FastAPI-Router (`api/auth.py`, `api/benutzer.py`, `api/produkte.py` usw.). In der Implementierung ist die Logik nach Fachdomäne auf sieben Router-Module aufgeteilt. Die DAOs wurden im Diagramm weggelassen, um die Übersicht zu wahren.
 
 ![Thriftshop Klassendiagramm](./assets/thriftshop_klassendiagramm.png)
 
@@ -512,7 +512,7 @@ class Kategorie {
 
 ' --- LOGIK-SCHICHT (Methoden - Hier passiert die Arbeit) ---
 
-class ShopServices {
+class API {
     ---
     ' --- Authentifizierung und Profil ---
     + login(email: str, passwort: str): Benutzer
@@ -545,9 +545,9 @@ Produkt "1" <-- "*" BestellPosition : referenziert
 Produkt "*" --> "1" Kategorie : gehört
 Produkt "*" --> "1" Zustand : hat
 
-ShopServices ..> Bestellung : erstellt
-ShopServices ..> Benutzer : prüft Rolle
-ShopServices ..> Produkt : manipuliert
+API ..> Bestellung : erstellt
+API ..> Benutzer : prüft Rolle
+API ..> Produkt : manipuliert
 
 @enduml
 ```
@@ -686,9 +686,9 @@ class ProduktDAO:
         self.conn = db_connection
 ```
 
-### 5.4 Funktionslogik (ShopServices)
+### 5.4 Funktionslogik (API-Router)
 
-Die Klasse `ShopServices` bündelt die gesamte Geschäftslogik. Sie nutzt die DAOs für Datenbankzugriffe und die Datenmodelle als Datenträger. Die Methoden sind in vier Gruppen unterteilt:
+Die FastAPI-Router bündeln die gesamte Geschäftslogik. Sie nutzen die DAOs für Datenbankzugriffe und die Datenmodelle als Datenträger. Die Endpunkte sind in vier Gruppen unterteilt:
 
 **Authentifizierung und Profil:** Verwaltet den Login und die Profildaten eines Benutzers. `login()` prüft E-Mail und Passwort-Hash und gibt bei Erfolg das `Benutzer`-Objekt zurück. `profil_bearbeiten()` und `profil_loeschen()` aktualisieren bzw. entfernen den Datensatz und lösen jeweils eine E-Mail-Benachrichtigung aus.
 
@@ -727,17 +727,278 @@ Die Benutzeroberfläche ist eine plattformübergreifende Flutter-App (Material D
 | `shared_preferences` | Lokale Datenspeicherung (Token) |
 | `flutter_svg`        | SVG-Grafiken                    |
 
+### 5.7 REST-API (FastAPI-Routen)
+
+Das Backend stellt eine RESTful-API bereit, die mit dem Framework **FastAPI** entwickelt wurde. Die API ist in sieben Router aufgeteilt, die jeweils in einer eigenen Datei unter `backend/app/api/` liegen und in `app/main.py` registriert werden.
+
+| Präfix | Datei | Kurzbeschreibung |
+|---|---|---|
+| `/auth` | `api/auth.py` | Registrierung und Login |
+| `/benutzer` | `api/benutzer.py` | Benutzerverwaltung (CRUD, Passwort) |
+| `/produkte` | `api/produkte.py` | Produktverwaltung (CRUD, Soft-Delete) |
+| `/kategorien` | `api/kategorien.py` | Kategorien (CRUD, Slug-Suche) |
+| `/zustaende` | `api/zustaende.py` | Zustände (CRUD, Bezeichnungs-Suche) |
+| `/bestellungen` | `api/bestellungen.py` | Bestellungen und Statusverwaltung |
+| `/bestellpositionen` | `api/bestellposition.py` | Bestellpositionen (nur Lesen) |
+
+Alle Routen nutzen **Dependency Injection** (`Depends(get_db)`), um eine Datenbankverbindung aus dem Connection-Pool zu beziehen. Bei Fehlern wird die Verbindung automatisch in einem `finally`-Block geschlossen.
+
+---
+
+#### Authentifizierung (`/auth`)
+
+| Methode | Endpunkt | Beschreibung | Erfolgscode |
+|---|---|---|---|
+| `POST` | `/auth/registrieren` | Legt einen neuen Benutzer an; das Passwort wird vor dem Speichern automatisch mit bcrypt gehasht | 201 |
+| `POST` | `/auth/login` | Prüft E-Mail und Passwort; liefert bei Erfolg einen signierten JWT zurück | 200 |
+
+Fehlerfall Login: Bei falschem Passwort oder unbekannter E-Mail antwortet die Route mit `401 Unauthorized`.
+
+---
+
+#### Benutzerverwaltung (`/benutzer`)
+
+| Methode | Endpunkt | Beschreibung | Erfolgscode |
+|---|---|---|---|
+| `GET` | `/benutzer/` | Alle Benutzer paginiert abrufen (Admin-Dashboard); Parameter: `limit`, `offset` | 200 |
+| `GET` | `/benutzer/{benutzer_id}` | Einzelnen Benutzer per UUID abrufen | 200 / 404 |
+| `POST` | `/benutzer/` | Neuen Benutzer anlegen (direkter DB-Insert, ohne Passwort-Hashing) | 201 |
+| `PUT` | `/benutzer/{benutzer_id}` | Stammdaten eines Benutzers aktualisieren (Name, E-Mail, Telefon, Rolle) | 200 |
+| `PATCH` | `/benutzer/{benutzer_id}/passwort` | Passwort-Hash eines Benutzers aktualisieren; Parameter: `neues_passwort_hash` (Query) | 200 |
+| `DELETE` | `/benutzer/{benutzer_id}` | Benutzer dauerhaft löschen (DSGVO – Recht auf Vergessenwerden) | 204 |
+
+---
+
+#### Produktverwaltung (`/produkte`)
+
+| Methode | Endpunkt | Beschreibung | Erfolgscode |
+|---|---|---|---|
+| `GET` | `/produkte/` | Alle Produkte paginiert abrufen (auch inaktive, Admin-Sicht) | 200 |
+| `GET` | `/produkte/aktiv` | Nur aktive Produkte abrufen (Onlineshop-Ansicht) | 200 |
+| `GET` | `/produkte/{produkt_id}` | Einzelnes Produkt per UUID abrufen | 200 / 404 |
+| `POST` | `/produkte/` | Neues Produkt anlegen | 201 |
+| `PUT` | `/produkte/{produkt_id}` | Produktdaten aktualisieren (Bezeichnung, Preis, Rabatt, Lagerbestand usw.) | 200 |
+| `DELETE` | `/produkte/{produkt_id}` | Produkt **deaktivieren** (Soft-Delete: `produkt_aktiv = FALSE`); das Produkt bleibt in der DB, um bestehende Bestellpositionen nicht zu beschädigen | 204 |
+
+---
+
+#### Kategorien (`/kategorien`)
+
+| Methode | Endpunkt | Beschreibung | Erfolgscode |
+|---|---|---|---|
+| `GET` | `/kategorien/` | Alle Kategorien alphabetisch sortiert; Parameter: `limit`, `offset` | 200 |
+| `GET` | `/kategorien/slug/{slug}` | Kategorie per SEO-Slug abrufen (z. B. `/kategorien/slug/kleidung`) | 200 / 404 |
+| `GET` | `/kategorien/{kategorie_id}` | Kategorie per UUID abrufen | 200 / 404 |
+| `POST` | `/kategorien/` | Neue Kategorie anlegen | 201 |
+| `PUT` | `/kategorien/{kategorie_id}` | Kategorie aktualisieren (Bezeichnung, Slug, Rabatt, Steuersatz) | 200 |
+| `DELETE` | `/kategorien/{kategorie_id}` | Kategorie löschen; schlägt mit `500` fehl, solange Produkte dieser Kategorie zugeordnet sind (`ON DELETE RESTRICT`) | 204 |
+
+---
+
+#### Zustände (`/zustaende`)
+
+| Methode | Endpunkt | Beschreibung | Erfolgscode |
+|---|---|---|---|
+| `GET` | `/zustaende/` | Alle Zustände alphabetisch sortiert; Parameter: `limit`, `offset` | 200 |
+| `GET` | `/zustaende/bezeichnung/{bezeichnung}` | Zustand per Bezeichnung abrufen (z. B. `Gut`, `Neuwertig`) | 200 / 404 |
+| `GET` | `/zustaende/{zustand_id}` | Zustand per UUID abrufen | 200 / 404 |
+| `POST` | `/zustaende/` | Neuen Zustand anlegen | 201 |
+| `PUT` | `/zustaende/{zustand_id}` | Zustand aktualisieren (Bezeichnung, Beschreibung) | 200 |
+| `DELETE` | `/zustaende/{zustand_id}` | Zustand löschen; schlägt mit `500` fehl, solange Produkte diesen Zustand referenzieren (`ON DELETE RESTRICT`) | 204 |
+
+---
+
+#### Bestellungen (`/bestellungen`)
+
+| Methode | Endpunkt | Beschreibung | Erfolgscode |
+|---|---|---|---|
+| `GET` | `/bestellungen/` | Alle Bestellungen paginiert (Admin-Dashboard); Parameter: `limit`, `offset` | 200 |
+| `GET` | `/bestellungen/benutzer/{benutzer_id}` | Bestellhistorie eines Kunden | 200 |
+| `GET` | `/bestellungen/status/{status}` | Alle Bestellungen mit einem bestimmten Status (z. B. `Offen`, `Abgeschlossen`) | 200 |
+| `GET` | `/bestellungen/{bestellung_id}` | Einzelne Bestellung per UUID | 200 / 404 |
+| `POST` | `/bestellungen/` | Neue Bestellung **mit Positionen** anlegen (atomar: erst Bestellung, dann alle Positionen); Body: `bestellung` + `positionen` (Liste) | 201 |
+| `PATCH` | `/bestellungen/{bestellung_id}/status` | Status einer Bestellung ändern; Parameter: `neuer_status` (Query) | 200 |
+
+Erlaubte Statuswerte (DB-Constraint): `Offen`, `In Bearbeitung`, `Abgeschlossen`, `Storniert`, `Erstattet`.
+
+---
+
+#### Bestellpositionen (`/bestellpositionen`)
+
+Der Router ist **schreibgeschützt** – Positionen werden ausschließlich beim `POST /bestellungen/` angelegt.
+
+| Methode | Endpunkt | Beschreibung | Erfolgscode |
+|---|---|---|---|
+| `GET` | `/bestellpositionen/bestellung/{bestellung_id}` | Alle Positionen einer Bestellung | 200 |
+| `GET` | `/bestellpositionen/produkt/{produkt_id}` | Alle Positionen zu einem Produkt (Admin-Auswertung) | 200 |
+| `GET` | `/bestellpositionen/{bestellposition_id}` | Einzelne Bestellposition per UUID | 200 / 404 |
+
+---
+
+### 5.8 Core-Module (Sicherheit & Datenbankverbindung)
+
+Die beiden Module in `backend/app/core/` stellen übergreifende Funktionen bereit, die von allen Routen genutzt werden.
+
+#### `app/core/datenbank.py`
+
+Lädt die Verbindungsdaten aus der `.env`-Datei und stellt `get_db()` als FastAPI-Dependency bereit.
+
+| Funktion | Signatur | Beschreibung |
+|---|---|---|
+| `get_notwendige_env` | `(name: str) → str` | Gibt den Wert einer Umgebungsvariablen zurück; wirft `ValueError`, wenn die Variable fehlt |
+| `get_db` | `() → Generator` | FastAPI-Dependency: öffnet eine MySQL-Verbindung, übergibt sie per `yield` und schließt sie im `finally`-Block |
+
+#### `app/core/sicherheit.py`
+
+Kapselt das Passwort-Hashing (bcrypt) und die JWT-Verwaltung (HS256, 24 h Ablauf).
+
+| Funktion | Signatur | Beschreibung |
+|---|---|---|
+| `passwort_hashen` | `(klartext: str) → str` | Erzeugt einen bcrypt-Hash mit zufälligem Salt |
+| `passwort_pruefen` | `(klartext: str, passwort_hash: str) → bool` | Vergleicht Klartext mit gespeichertem Hash |
+| `token_erstellen` | `(daten: dict) → str` | Signiert ein JWT mit `JWT_SECRET` aus `.env`; enthält Ablaufzeit (`exp`) |
+| `token_lesen` | `(token: str) → dict` | Dekodiert und validiert ein JWT; wirft `JWTError` bei ungültigem Token |
+| `aktueller_benutzer` | `(token, db) → Benutzer` | FastAPI-Dependency: liest den JWT aus dem `Authorization`-Header, dekodiert ihn und gibt das Benutzerobjekt zurück |
+| `erfordert_rolle` | `(*rollen: str) → Depends` | Gibt eine Dependency-Funktion zurück, die `aktueller_benutzer` aufruft und zusätzlich prüft, ob die Rolle des Benutzers in der erlaubten Liste enthalten ist |
+
+#### Funktionsweise der Dependency Injection
+
+FastAPI führt `Depends()`-Parameter **vor** dem Funktionskörper aus. Schlägt die Prüfung fehl, wird die Route nie erreicht und FastAPI antwortet automatisch mit dem entsprechenden HTTP-Fehlercode.
+
+| Verwendung | Bedeutung |
+|---|---|
+| `benutzer=Depends(aktueller_benutzer)` | Route erfordert einen gültigen Login; das Benutzerobjekt wird im Funktionskörper verwendet (z. B. `benutzer.benutzer_id`) |
+| `_benutzer=Depends(aktueller_benutzer)` | Route erfordert einen gültigen Login; das Objekt wird im Körper **nicht** benötigt – `_` signalisiert „absichtlich unbenutzt" |
+| `_benutzer=Depends(erfordert_rolle("Administrator"))` | Route ist nur für Administratoren zugänglich; bei fehlender Berechtigung → `403 Forbidden` |
+| `_benutzer=Depends(erfordert_rolle("Administrator", "Mitarbeiter"))` | Mehrere Rollen erlaubt |
+
 ---
 
 ## 6 Qualitätsmanagement
 
-Zur Sicherstellung der Softwarequalität wurden verschiedene Testverfahren angewendet:
+Zur Sicherstellung der Softwarequalität wurden automatisierte Unit-Tests und Integrationstests mit **pytest** implementiert. Die Tests befinden sich im Verzeichnis `backend/tests/` und werden mit folgendem Befehl gestartet:
 
-- **Unit-Tests (Backend):** Die einzelnen DAO-Klassen wurden mit `pytest` auf korrekte Datenverarbeitung geprüft. Dabei wurde sichergestellt, dass die CRUD-Operationen die erwarteten Ergebnisse liefern und Fehlerfälle (z. B. ungültige Eingaben) korrekt behandelt werden.
+```bash
+cd backend
+pytest tests -v
+```
 
-- **Integrationstests:** Das Zusammenspiel zwischen FastAPI-Endpunkten, DAOs und der MySQL-Datenbank wurde automatisiert getestet. Ziel war es, sicherzustellen, dass die gesamte Verarbeitungskette von der HTTP-Anfrage bis zur Datenbankoperation reibungslos funktioniert.
+**Testergebnis: 46 Tests – 46 bestanden (0 Fehler)**
 
-- **Manuelle Systemtests (Frontend):** Auf physischen Testgeräten (Android/iPhone) wurden die wesentlichen Nutzungsszenarien manuell durchgespielt. Dazu gehören unter anderem: Registrierung → Login → Produkte suchen → Warenkorb befüllen → Bestellung aufgeben → Bestätigungs-E-Mail erhalten.
+### 6.1 Teststufen
+
+| Teststufe | Werkzeug | Umfang |
+|---|---|---|
+| Unit-Test | `pytest` | Sicherheitsmodul (Hashing, JWT) – ohne Datenbank und Server |
+| Integrationstest | `pytest` + `TestClient` | Alle FastAPI-Endpunkte gegen die echte MySQL-Datenbank |
+| Manueller Systemtest | Physische Testgeräte | UI/UX der Flutter-App (Registrierung → Bestellung → E-Mail) |
+
+### 6.2 Test-Fixtures (`conftest.py`)
+
+Gemeinsame Testdaten werden einmal pro Testsitzung durch Fixtures in `conftest.py` angelegt und nach dem Testlauf automatisch wieder entfernt (`yield`-Teardown). Alle IDs werden mit `uuid4()` eindeutig generiert, um `UNIQUE`-Constraint-Fehler bei Wiederholungen zu vermeiden.
+
+| Fixture | `scope` | Erstellt via | Beschreibung |
+|---|---|---|---|
+| `zustand_id` | `session` | `POST /zustaende/` | Testzustand; wird am Ende gelöscht |
+| `kategorie_id` | `session` | `POST /kategorien/` | Testkategorie; wird am Ende gelöscht |
+| `benutzer_id` | `session` | `POST /auth/registrieren` | Testbenutzer (Rolle: Kunde); wird am Ende gelöscht |
+| `produkt_id` | `session` | `POST /produkte/` | Testprodukt (hängt von `zustand_id` + `kategorie_id` ab); stellt sicher, dass FK-Referenzen für die „loeschen schlägt fehl"-Tests bestehen; wird am Ende deaktiviert |
+| `auth_token` | `session` | `POST /auth/login` | Legt einen eigenen Login-Benutzer an und gibt dessen JWT zurück |
+
+### 6.3 Unit-Tests (`test_sicherheit.py`)
+
+Testet die Funktionen in `app/core/sicherheit.py` isoliert – kein Server, keine Datenbankverbindung erforderlich.
+
+| Testklasse | Testfall | Beschreibung |
+|---|---|---|
+| `TestPasswortHashing` | `test_hash_wird_erzeugt` | bcrypt-Hash ist nicht identisch mit dem Klartext |
+| | `test_korrektes_passwort_wird_akzeptiert` | Richtiges Passwort besteht `passwort_pruefen()` |
+| | `test_falsches_passwort_wird_abgelehnt` | Falsches Passwort scheitert an `passwort_pruefen()` |
+| | `test_zwei_hashes_sind_unterschiedlich` | Dasselbe Passwort erzeugt zwei verschiedene Hashes (zufälliges Salt) |
+| `TestToken` | `test_token_wird_erzeugt` | `token_erstellen()` gibt einen nicht-leeren String zurück |
+| | `test_token_inhalt_korrekt` | Dekodierter Token enthält die ursprünglichen Nutzdaten (`sub`, `rolle`) |
+
+### 6.4 Integrationstests – Authentifizierung (`test_auth.py`)
+
+Testet die Routen `POST /auth/registrieren` und `POST /auth/login` mit einer echten Datenbankverbindung.
+
+| Testklasse | Testfall | Erwartet |
+|---|---|---|
+| `TestRegistrieren` | `test_registrieren_erfolgreich` | `201` + `{"nachricht": "Benutzer erfolgreich registriert"}` |
+| | `test_registrieren_ungueltige_rolle` | `500` (DB-CHECK-Constraint verletzt) |
+| `TestLogin` | `test_login_erfolgreich` | `200` + JWT im Body (`access_token`, `token_type: bearer`) |
+| | `test_login_falsches_passwort` | `401` |
+| | `test_login_unbekannte_email` | `401` |
+
+### 6.5 Integrationstests – Benutzerverwaltung (`test_benutzer.py`)
+
+Testet alle Routen unter `/benutzer/`.
+
+| Testklasse | Testfall | Erwartet |
+|---|---|---|
+| `TestBenutzerAbrufen` | `test_alle_benutzer_abrufen` | `200` + JSON-Liste |
+| | `test_benutzer_nach_id_abrufen` | `200` + korrektes `benutzer_id`-Feld (Fixture) |
+| | `test_benutzer_nicht_gefunden` | `404` |
+| `TestBenutzerSchreiben` | `test_benutzer_erstellen` | `201` + korrektes `benutzer_id`-Feld |
+| | `test_benutzer_aktualisieren` | `200` + aktualisierte Felder im Body |
+| | `test_passwort_setzen` | `200` + `{"benutzer_id": ..., "passwort_aktualisiert": true}` |
+| | `test_benutzer_loeschen` | `204` |
+
+### 6.6 Integrationstests – Kategorien (`test_kategorien.py`)
+
+| Testklasse | Testfall | Erwartet |
+|---|---|---|
+| `TestKategorienAbrufen` | `test_alle_kategorien_abrufen` | `200` + JSON-Liste |
+| | `test_kategorie_nicht_gefunden` | `404` |
+| | `test_kategorie_nach_slug` | `200` + korrektes `kategorie_id`-Feld |
+| | `test_slug_nicht_gefunden` | `404` |
+| `TestKategorienSchreiben` | `test_kategorie_erstellen` | `201` |
+| | `test_kategorie_aktualisieren` | `200` |
+| | `test_kategorie_loeschen` | `204` |
+| | `test_kategorie_loeschen_mit_produkt_schlaegt_fehl` | `500` (`ON DELETE RESTRICT`; Fixture-Produkt referenziert diese Kategorie) |
+
+### 6.7 Integrationstests – Zustände (`test_zustaende.py`)
+
+| Testklasse | Testfall | Erwartet |
+|---|---|---|
+| `TestZustaendeAbrufen` | `test_alle_zustaende_abrufen` | `200` + JSON-Liste |
+| | `test_zustand_nicht_gefunden` | `404` |
+| | `test_zustand_nach_bezeichnung` | `200` + korrektes `zustand_id`-Feld |
+| | `test_bezeichnung_nicht_gefunden` | `404` |
+| `TestZustaendeSchreiben` | `test_zustand_erstellen` | `201` |
+| | `test_zustand_aktualisieren` | `200` |
+| | `test_zustand_loeschen` | `204` |
+| | `test_zustand_loeschen_mit_produkt_schlaegt_fehl` | `500` (`ON DELETE RESTRICT`) |
+
+### 6.8 Integrationstests – Produkte (`test_produkte.py`)
+
+| Testklasse | Testfall | Erwartet |
+|---|---|---|
+| `TestProdukteAbrufen` | `test_alle_produkte_abrufen` | `200` + JSON-Liste |
+| | `test_aktive_produkte_abrufen` | `200` + JSON-Liste (nur aktive) |
+| | `test_produkt_nicht_gefunden` | `404` |
+| `TestProdukteSchreiben` | `test_produkt_erstellen` | `201` |
+| | `test_produkt_aktualisieren` | `200` |
+| | `test_produkt_deaktivieren` | `204` (Soft-Delete) |
+
+### 6.9 Integrationstests – Bestellungen (`test_bestellungen.py`)
+
+| Testklasse | Testfall | Erwartet |
+|---|---|---|
+| `TestBestellungenAbrufen` | `test_alle_bestellungen_abrufen` | `200` + JSON-Liste |
+| | `test_bestellung_nicht_gefunden` | `404` |
+| | `test_bestellungen_nach_benutzer` | `200` + JSON-Liste (Fixture-Benutzer) |
+| | `test_bestellungen_nach_status` | `200` + JSON-Liste (Status `Offen`) |
+| `TestBestellungenSchreiben` | `test_bestellungen_erstellen_mit_position` | `201`; legt zuerst ein Produkt an, dann eine Bestellung mit einer Position (inkl. Preis-Snapshot `steuersatz_gebucht`) |
+| | `test_bestellstatus_aktualisieren` | `200` + `{"bestellung_id": ..., "status": "In Bearbeitung"}` |
+
+### 6.10 Designentscheidungen im Testaufbau
+
+**Eindeutige Testdaten:** Alle Hilfsfunktionen (`_neue_*daten()`) erzeugen Bezeichnungen und E-Mail-Adressen mit einem UUID-Präfix. Dadurch können Tests beliebig oft wiederholt werden, ohne gegen `UNIQUE`-Constraints der Datenbank zu verstoßen.
+
+**Fixture-Abhängigkeit:** Die `produkt_id`-Fixture in `conftest.py` hängt von `zustand_id` und `kategorie_id` ab. Diese Reihenfolge stellt sicher, dass bei den „loeschen schlägt fehl"-Tests immer ein Produkt existiert, das auf die Fixture-Kategorie und den Fixture-Zustand verweist – andernfalls würde das Löschen unerwartet mit `204` statt `500` gelingen.
+
+**`raise_server_exceptions=False`:** Alle Test-Clients werden mit diesem Flag initialisiert. Server-seitige Ausnahmen (z. B. Datenbankfehler) werden damit als HTTP-Response zurückgegeben, anstatt den Testlauf mit einer Python-Exception abzubrechen. Dies ermöglicht, das HTTP-Statuscode-Verhalten gezielt zu testen.
 
 ---
 
@@ -851,4 +1112,4 @@ In zukünftigen Versionen könnte das System um folgende Funktionen erweitert we
 
 - Modul-Docstrings für alle Dateien hinzugefügt.
 
-- Automatisierte Tests unter `/backend/tests/`
+- Automatisierte Tests mit `pytest` unter `/backend/tests/`.
