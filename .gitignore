@@ -18,7 +18,10 @@ __pycache__/
 # Projektspezifische Dateien ===================================================
 *.pdf
 *.html
-copilot-instructions.md
 thriftshop_projektantrag.md
 openapi.json
+
 .aider*
+stop_backend.sh
+status_backend.sh
+start_backend.sh

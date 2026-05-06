@@ -12,7 +12,7 @@ load_dotenv()
 def get_notwendige_env(name: str) -> str:
     """Gibt den Wert einer Umgebungsvariable zurück oder bricht bei Fehlen mit einem ValueError ab."""
     value = os.getenv(name)
-    if not value:
+    if value is None:
         raise ValueError(
             f"Kritischer Fehler: Die Variable '{name}' fehlt in der .env Datei!"
         )

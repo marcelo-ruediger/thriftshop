@@ -571,8 +571,16 @@ Das Pflichtenheft beschreibt, wie die im Fachkonzept (3.3) gestellten Kundenanfo
 - **Sortiment jederzeit online einsehbar**  
   Die Flutter-App ruft beim Start die Produktliste über den Endpunkt `GET /produkte` vom FastAPI-Backend ab. Dieser Endpunkt ist öffentlich zugänglich und erfordert keinen Login, sodass Kunden das Sortiment jederzeit und von überall einsehen können. Die Produkte werden in einem `GridView` dargestellt.
 
-- **Such- und Filterfunktion**  
-  Im Frontend stehen ein Suchfeld und Kategorie-Filter (`FilterChip` - vordefiniert) zur Verfügung. Produkte können beispielsweise nach Kategorie oder Preis gefiltert werden. Jede Eingabe sendet eine neue Anfrage an das Backend (`GET /produkte?search=jacke&kategorie=Kleidung`). Das FastAPI-Backend filtert die Ergebnisse in der Datenbankabfrage und gibt nur passende Produkte zurück.
+- **Such- und Filterfunktion mit Provider-Integration**  
+  Die Produktliste (`ProduktlisteScreen`) rendert alle aktiven Produkte in einem responsiven `GridView` mit individuellen Produktkarten. Jede Karte zeigt Produktbild, Titel, Preis, Kategorie (via `KategorieService`) und Zustand (via `ZustandService` mit farbigen Badges). Die Daten werden über `ProductProvider` (ChangeNotifier) verwaltet, der API-Antworten in lokale Modell-Instanzen transformiert.
+
+  Eine `SearchBar` in der AppBar ruft beim Tippen `productProvider.filterBySearch()` auf. Der Provider sendet einen GET-Request an `/produkte?search=<begriff>` und aktualisiert die angezeigte Liste. Der Suchbegriff wird live im Backend gefiltert.
+
+  Kategorie-Filter werden als `FilterChip`-Widgets gerendert. Die Kategorien werden zur Laufzeit von `KategorieService` aus der API geladen und im Speicher gecacht. Kein Hardcoding mehr im Frontend. Der Benutzer kann eine Kategorie auswählen, woraufhin `productProvider.filterByCategory()` den API-Call `/produkte?kategorie_id=<uuid>` auslöst und die Liste aktualisiert.
+
+  Der `ZustandService` mapped `Zustand`-IDs zu farbigen Badges: Neu → grün,gebraucht → blau, angerissen → orange, pitch → lila. Die Farben werden direkt in den Produktkarten verwendet.
+
+  Die Produktliste unterstützt Pull-to-Refresh über `RefreshIndicator`. Während des Ladens wird ein `CircularProgressIndicator` angezeigt, bei Fehlern eine Fehlermeldung mit Retry-Button.
 
 #### Anforderung 2: Digitale Bestellabwicklung
 
@@ -629,21 +637,36 @@ backend/
 ├── init_db.py            # Datenbankinitialisierung
 └── main_test.py          # Tests
 
-lib/                      # Flutter Frontend
-├── core/
-│   ├── constants/        # Design-Tokens (Abstände, Radien)
-│   ├── network/          # API-Client (Dio + JWT-Interceptor)
-│   ├── router/           # Routen-Konfiguration (go_router)
-│   └── theme/            # ThemeData (Farben, Schriften)
-├── features/
-│   ├── auth/             # Login, Registrierung
-│   ├── catalog/          # Produktkatalog, Suche, Filter
-│   ├── cart/             # Warenkorb
-│   ├── orders/           # Bestellhistorie
-│   ├── profile/          # Profilverwaltung
-│   └── admin/            # Admin-Dashboard
-├── shared/widgets/       # Wiederverwendbare UI-Komponenten
-└── main.dart
+frontend/
+├── lib/
+│   ├── main.dart         # App-Entry, MultiProvider, Router-Setup
+│   ├── router.dart       # go_router Routenkonfiguration
+│   ├── core/
+│   │   ├── constants/    # Design-Tokens (Abstände, Radien, Farben)
+│   │   ├── network/      # API-Client (Dio + JWT-Interceptor)
+│   │   ├── router/       # Routen-Handler
+│   │   └── theme/        # ThemeData (Farben, Schriften, M3-Design)
+│   ├── models/           # DTOs für API-Response-JSON-Daten
+│   ├── providers/        # ChangeNotifier-Provider (Zustandsverwaltung)
+│   │   ├── auth_provider.dart
+│   │   ├── product_provider.dart
+│   │   ├── cart_provider.dart
+│   │   ├── order_provider.dart
+│   │   └── profile_provider.dart
+│   ├── screens/          # UI-Screens (Page-Routen)
+│   │   ├── auth/         # Login, Registrierung
+│   │   ├── produkte/     # Produktliste (Screen 2)
+│   │   ├── warenkorb/    # Warenkorb
+│   │   ├── bestellung/   # Bestellhistorie / Checkout
+│   │   └── profil/       # Profilverwaltung
+│   ├── services/         # Business Services & API-Wrapper
+│   │   ├── api_service.dart
+│   │   ├── auth_service.dart
+│   │   ├── kategorie_service.dart
+│   │   └── zustand_service.dart
+│   └── widgets/          # Wiederverwendbare UI-Komponenten
+├── pubspec.yaml          # Abhängigkeiten
+└── test/                 # Widget- und Integrationstests
 ```
 
 **Wichtige Designentscheidungen:**
@@ -712,9 +735,9 @@ Die Benutzeroberfläche ist eine plattformübergreifende Flutter-App (Material D
 
 **Routing:** `go_router` verwaltet alle Routen zentral. Nicht eingeloggte Nutzer werden auf `/login` weitergeleitet, Nicht-Admins aus dem Admin-Bereich auf die Startseite.
 
-**Zustandsverwaltung:** `provider` mit `ChangeNotifier` trennt Logik und Darstellung. Jedes Feature hat einen eigenen Provider (`AuthProvider`, `CartProvider`, `ProductProvider` usw.).
+**Zustandsverwaltung:** `provider` mit `ChangeNotifier` trennt Logik und Darstellung. Die App verwendet `MultiProvider` in `main.dart`, um fünf Provider als `ChangeNotifierProvider` zu registrieren: `AuthProvider`, `ProductProvider`, `CartProvider`, `OrderProvider` und `ProfileProvider`. Zusätzlich werden zwei Services (`KategorieService` und `ZustandService`) als `SingleInstance`-Service registriert, die Daten aus der API laden und im Speicher cachen. Die Widgets greifen über `context.read<T>()` (Wert, kein Rebuild) oder `context.watch<T>()` (Rebuild bei Änderung) auf die Provider und Services zu.
 
-**API-Anbindung:** `dio` sendet alle HTTP-Anfragen. Ein Interceptor hängt den JWT-Token automatisch an. Jeder Screen zeigt einen von drei Zuständen: Daten, Laden (Shimmer-Platzhalter) oder Fehler.
+**API-Anbindung:** `dio` sendet alle HTTP-Anfragen. Ein Interceptor hängt den JWT-Token automatisch an. `ApiService` kapselt die REST-Aufrufe für alle Endpunkte. Kategorieservice und Zustandservice laden die Daten einmal beim App-Start und cachen sie im Speicher, sodass Widgets über `context.read<KategorieService>().getKategorieName(id)` und `context.read<ZustandService>().getZustandColor(id)` auf cachierte Daten zugreifen können.
 
 | Package              | Zweck                           |
 | -------------------- | ------------------------------- |
@@ -722,10 +745,7 @@ Die Benutzeroberfläche ist eine plattformübergreifende Flutter-App (Material D
 | `go_router`          | Navigation                      |
 | `dio`                | HTTP-Anfragen                   |
 | `flutter_dotenv`     | Umgebungsvariablen              |
-| `google_fonts`       | Schriftart Inter                |
-| `shimmer`            | Lade-Platzhalter                |
 | `shared_preferences` | Lokale Datenspeicherung (Token) |
-| `flutter_svg`        | SVG-Grafiken                    |
 
 ### 5.7 REST-API (FastAPI-Routen)
 
@@ -736,8 +756,8 @@ Das Backend stellt eine RESTful-API bereit, die mit dem Framework **FastAPI** en
 | `/auth` | `api/auth.py` | Registrierung und Login |
 | `/benutzer` | `api/benutzer.py` | Benutzerverwaltung (CRUD, Passwort) |
 | `/produkte` | `api/produkte.py` | Produktverwaltung (CRUD, Soft-Delete) |
-| `/kategorien` | `api/kategorien.py` | Kategorien (CRUD, Slug-Suche) |
-| `/zustaende` | `api/zustaende.py` | Zustände (CRUD, Bezeichnungs-Suche) |
+| `/kategorien` | `api/kategorien.py` | Kategorien (CRUD, Slug-Suche) – wird vom Frontend geladen und gecacht |
+| `/zustaende` | `api/zustaende.py` | Zustände (CRUD, Bezeichnungs-Suche) – wird vom Frontend geladen und gecacht |
 | `/bestellungen` | `api/bestellungen.py` | Bestellungen und Statusverwaltung |
 | `/bestellpositionen` | `api/bestellposition.py` | Bestellpositionen (nur Lesen) |
 
@@ -844,6 +864,44 @@ Der Router ist **schreibgeschützt** – Positionen werden ausschließlich beim 
 | `GET` | `/bestellpositionen/bestellung/{bestellung_id}` | Alle Positionen einer Bestellung | 200 |
 | `GET` | `/bestellpositionen/produkt/{produkt_id}` | Alle Positionen zu einem Produkt (Admin-Auswertung) | 200 |
 | `GET` | `/bestellpositionen/{bestellposition_id}` | Einzelne Bestellposition per UUID | 200 / 404 |
+
+---
+
+### 5.9 Frontend-Services (Kategorien & Zustände)
+
+Zusätzlich zu den `ChangeNotifier`-Providern (`ProductProvider`, `CartProvider` usw.) gibt es zwei spezialisierte Services, die Daten aus der API laden und im Speicher cachen:
+
+#### `KategorieService` (`lib/services/kategorie_service.dart`)
+
+Lädt alle Kategorien einmalig über `GET /kategorien/` und speichert sie in einer lokalen `List<Kategorie>`. Widgets greifen über `context.read<KategorieService>().getKategorieName(kategorieId)` auf den Kategorie-Namen zu. Dies ersetzt das frühere Hardcoding von Kategoriebezeichnungen direkt im Frontend.
+
+#### `ZustandService` (`lib/services/zustand_service.dart`)
+
+Lädt alle Zustände einmalig über `GET /zustaende/` und erweitert sie um farbliche Zuordnungen:
+
+| Zustand | Farbe |
+|---|---|
+| Neu | grün (`Colors.green`) |
+| gebraucht | blau (`Colors.blue`) |
+| angerissen | orange (`Colors.orange`) |
+| pitch | lila (`Colors.purple`) |
+
+Widget greift über `context.read<ZustandService>().getZustandName(id)` und `getZustandColor(id)` zu. Dies ermöglicht visuell einheitliche Zustand-Badges in der Produktliste.
+
+#### Einbindung in die App
+
+Beide Services werden in `main.dart` als `SingleInstance` über `MultiProvider` registriert:
+
+```dart
+SingleInstanceProvider(
+  () => KategoriService(),
+),
+SingleInstanceProvider(
+  () => ZustandService(),
+),
+```
+
+Die Services werden vor den `ChangeNotifierProvider`-Wrappern geladen, sodass Widgets direkt beim ersten Build auf geladene Kategorien und Zustände zugreifen können.
 
 ---
 
@@ -1035,15 +1093,15 @@ Die im Fachkonzept definierten Anforderungen wurden weitgehend erfolgreich umges
 
 | Anforderung                       | Status    | Bemerkung                                                                    |
 | --------------------------------- | --------- | ---------------------------------------------------------------------------- |
-| Digitalisierung des Sortiments    | Umgesetzt | Produktkatalog mit Such- und Filterfunktion online verfügbar                 |
+| Digitalisierung des Sortiments    | Umgesetzt | Produktkatalog mit Such- und Filterfunktion online verfügbar, Provider-basiert mit dynamischen Kategorien |
 | Online-Bestellungen               | Umgesetzt | Warenkorb und Bestellprozess mit Datenbankpersistenz                         |
 | Automatische E-Mail-Bestätigung   | Umgesetzt | Integration mit Resend (SMTP) für Bestell- und Kontobenachrichtigungen       |
-| Login-System mit Rollenverwaltung | Umgesetzt | Supabase Auth mit JWT-Token und rollenbasierter Zugriffskontrolle            |
+| Login-System mit Rollenverwaltung | Umgesetzt | JWT-Token mit rollenbasierter Zugriffskontrolle                              |
 | Geschützter Admin-Bereich         | Umgesetzt | Dependency Injection prüft Benutzerrolle vor jeder Admin-Aktion              |
 | Relationale Datenbank             | Umgesetzt | MySQL-Schema mit 6 Tabellen, CHECK-Constraints und referenzieller Integrität |
 | DSGVO-konforme Datenhaltung       | Umgesetzt | Passwörter als bcrypt-Hash, Datenschutzerklärung, Recht auf Löschung         |
 
-Das System ist stabil und die Datenhaltung durch Preis-Snapshots in den Bestellpositionen revisionssicher. Alle Projektphasen wurden innerhalb des geplanten Zeitrahmens von 80 Stunden abgeschlossen.
+Das System ist stabil und die Datenhaltung durch Preis-Snapshots in den Bestellpositionen revisionssicher. Die Frontend-Architektur mit `provider` (ChangeNotifier) und spezialisierten Services (`KategorieService`, `ZustandService`) ermöglicht eine saubere Trennung von Zustandsverwaltung und UI. Die API-Endpunkte für Kategorien und Zustände werden zur Laufzeit vom Frontend geladen und gecacht, sodass keine Daten hartcodiert sind. Alle Projektphasen wurden innerhalb des geplanten Zeitrahmens von 80 Stunden abgeschlossen.
 
 ### 8.2 Aussichten
 In zukünftigen Versionen könnte das System um folgende Funktionen erweitert werden:
@@ -1077,8 +1135,8 @@ In zukünftigen Versionen könnte das System um folgende Funktionen erweitert we
 
 **Flutter Packages**
 - `go_router`: *Routing-Package für Flutter.* https://pub.dev/packages/go_router
-- `provider`: *Zustandsverwaltung für Flutter.* https://pub.dev/packages/provider
-- `dio`: *HTTP-Client für Dart/Flutter.* https://pub.dev/packages/dio
+- `provider`: *Zustandsverwaltung für Flutter (ChangeNotifier, MultiProvider).* https://pub.dev/packages/provider
+- `shared_preferences`: *Lokale Speicherung von Daten in Flutter.* https://pub.dev/packages/shared_preferences
 
 **Externe Dienste & Infrastruktur**
 - Railway: *Offizielle Dokumentation.* https://docs.railway.app/
