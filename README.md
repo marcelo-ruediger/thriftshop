@@ -56,20 +56,24 @@ Pydantic -> Für API / Datenvalidierung
 - [x] Integrationstests – Bestellungen (`test_bestellungen.py`)
 
 ### 7. Flutter-Frontend – Grundstruktur
-- [ ] Projektstruktur anlegen, Navigation (`go_router`), `BottomNavigationBar`
-- [ ] HTTP-Service für API-Kommunikation, Token-Speicherung (`shared_preferences`)
+- [x] Projektstruktur anlegen, Navigation (`go_router`), `BottomNavigationBar`
+- [x] HTTP-Service für API-Kommunikation, Token-Speicherung (`shared_preferences`)
+- [x] Auth-Screens implementieren (Login, Registrierung) 
+- [x] Auth-Service mit Token-Verwaltung
+- [x] API-Service mit JWT-Interceptor
+
+- [ ] http://0.0.0.0:8000/docs Port Colision (Thriftshop and oMLX Admins)
 
 ### 8. Flutter – Kundenseiten
-- [ ] Screen 1: Login / Registrierung
-- [ ] Screen 2: Produktliste (Suche, Filter)
-- [ ] Screen 3: Produktdetail + Warenkorb-Logik (Provider)
-- [ ] Screen 4: Warenkorb → Checkout → Bestätigung
-- [ ] Screen 5: Meine Bestellungen + Stornieren
-- [ ] Screen 6: Profil (Bearbeiten, Löschen, Abmelden)
+- [x] Screen 2: Produktliste (Suche, Filter mit Provider-Integration, dynamische Kategorien, Filter-Chips)
+- [x] Screen 3: Produktdetail + Warenkorb-Logik (Provider)
+- [x] Screen 4: Warenkorb → Checkout → Bestätigung
+- [x] Screen 5: Meine Bestellungen + Stornieren
+- [x] Screen 6: Profil (Bearbeiten, Löschen, Abmelden)
 
 ### 9. Flutter – Admin-Seiten
-- [ ] Screen 7: Produktverwaltung (Liste, Toggle, Formular)
-- [ ] Screen 8: Bestellverwaltung (Filter, Statusänderung)
+- [x] Screen 7: Produktverwaltung (CRUD: Erstellen, Bearbeiten, Löschen, Kategorie & Zustand-Dropdowns, Admin-Zugriffskontrolle)
+- [x] Screen 8: Bestellverwaltung (Filter, Statusänderung, Detailansicht)
 
 ### 10. Tests – Flutter-App
 - [ ] Manuelle Tests aller Screens auf Testgerät / Emulator
