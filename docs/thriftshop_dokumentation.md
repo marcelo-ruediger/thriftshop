@@ -554,7 +554,7 @@ API ..> Produkt : manipuliert
 
 ### 4.4 UI-Design
 
-Die Benutzeroberfläche durchlief zwei Entwurfsstufen. Zunächst wurden alle Screens als **Wireframe** mit Draw.io skizziert, um Seitenstruktur, Navigation und die Anordnung der Elemente festzulegen – ohne Farben oder Details. Auf Basis dieser Wireframes wurde anschließend mithilfe des KI-Modells **Google Gemini** ein **HTML-Mockup** erstellt, das das finale Design mit Farbschema, Schriften und Abständen abbildet. Das Mockup wurde abschließend als PDF exportiert. Es befindet sich im Anhang.
+Die Benutzeroberfläche durchlief zwei Entwurfsstufen. Zunächst wurden alle Screens als **Wireframe** mit Draw.io skizziert, um Seitenstruktur, Navigation und die Anordnung der Elemente festzulegen – ohne Farben oder Details. Auf Basis dieser Wireframes wurde anschließend ein **HTML-Mockup** erstellt, das das finale Design mit Farbschema, Schriften und Abständen abbildet. Das Mockup wurde abschließend als PDF exportiert. Es befindet sich im Anhang.
 
 ### 4.5 Test-Konzept
 Zur Gewährleistung der Softwarequalität werden verschiedene Teststufen definiert:
@@ -729,15 +729,20 @@ Da die SQL-Logik vollständig in den DAOs gekapselt ist, beschränkt sich die Mi
 
 Die Benutzeroberfläche ist eine plattformübergreifende Flutter-App (Material Design 3), die ausschließlich per REST/JSON mit dem Backend kommuniziert.
 
-**Design:** Farben, Schriften und Abstände sind zentral in `app_theme.dart` und `design_tokens.dart` definiert. Hauptfarbe ist `#4CAF93` (Grün, passend zum nachhaltigen Charakter des Shops), Schriftart ist **Inter**.
+#### Design
+Farben, Schriften und Abstände sind zentral in `app_theme.dart` und `design_tokens.dart` definiert. Hauptfarbe ist `#4CAF93` (Grün, passend zum nachhaltigen Charakter des Shops), Schriftart ist **Inter**.
 
-**Responsives Layout:** Ein `LayoutBuilder` in der Root-Shell schaltet je nach Bildschirmbreite zwischen `NavigationBar` (unten, mobil) und `NavigationRail` (links, Desktop) um. Auf dem Desktop wird der Inhalt auf maximal 1200 px begrenzt.
+#### Responsives Layout
+Ein `LayoutBuilder` in der Root-Shell schaltet je nach Bildschirmbreite zwischen `NavigationBar` (unten, mobil) und `NavigationRail` (links, Desktop) um. Auf dem Desktop wird der Inhalt auf maximal 1200 px begrenzt.
 
-**Routing:** `go_router` verwaltet alle Routen zentral. Nicht eingeloggte Nutzer werden auf `/login` weitergeleitet, Nicht-Admins aus dem Admin-Bereich auf die Startseite.
+#### Routing 
+`go_router` verwaltet alle Routen zentral. Nicht eingeloggte Nutzer werden auf `/login` weitergeleitet, Nicht-Admins aus dem Admin-Bereich auf die Startseite.
 
-**Zustandsverwaltung:** `provider` mit `ChangeNotifier` trennt Logik und Darstellung. Die App verwendet `MultiProvider` in `main.dart`, um fünf Provider als `ChangeNotifierProvider` zu registrieren: `AuthProvider`, `ProductProvider`, `CartProvider`, `OrderProvider` und `ProfileProvider`. Zusätzlich werden zwei Services (`KategorieService` und `ZustandService`) als `SingleInstance`-Service registriert, die Daten aus der API laden und im Speicher cachen. Die Widgets greifen über `context.read<T>()` (Wert, kein Rebuild) oder `context.watch<T>()` (Rebuild bei Änderung) auf die Provider und Services zu.
+#### Zustandsverwaltung 
+`provider` mit `ChangeNotifier` trennt Logik und Darstellung. Die App verwendet `MultiProvider` in `main.dart`, um fünf Provider als `ChangeNotifierProvider` zu registrieren: `AuthProvider`, `ProductProvider`, `CartProvider`, `OrderProvider` und `ProfileProvider`. Zusätzlich werden zwei Services (`KategorieService` und `ZustandService`) als `SingleInstance`-Service registriert, die Daten aus der API laden und im Speicher cachen. Die Widgets greifen über `context.read<T>()` (Wert, kein Rebuild) oder `context.watch<T>()` (Rebuild bei Änderung) auf die Provider und Services zu.
 
-**API-Anbindung:** `dio` sendet alle HTTP-Anfragen. Ein Interceptor hängt den JWT-Token automatisch an. `ApiService` kapselt die REST-Aufrufe für alle Endpunkte. Kategorieservice und Zustandservice laden die Daten einmal beim App-Start und cachen sie im Speicher, sodass Widgets über `context.read<KategorieService>().getKategorieName(id)` und `context.read<ZustandService>().getZustandColor(id)` auf cachierte Daten zugreifen können.
+#### API-Anbindung 
+`dio` sendet alle HTTP-Anfragen. Ein Interceptor hängt den JWT-Token automatisch an. `ApiService` kapselt die REST-Aufrufe für alle Endpunkte. Kategorieservice und Zustandservice laden die Daten einmal beim App-Start und cachen sie im Speicher, sodass Widgets über `context.read<KategorieService>().getKategorieName(id)` und `context.read<ZustandService>().getZustandColor(id)` auf cachierte Daten zugreifen können.
 
 | Package              | Zweck                           |
 | -------------------- | ------------------------------- |
@@ -746,6 +751,35 @@ Die Benutzeroberfläche ist eine plattformübergreifende Flutter-App (Material D
 | `dio`                | HTTP-Anfragen                   |
 | `flutter_dotenv`     | Umgebungsvariablen              |
 | `shared_preferences` | Lokale Datenspeicherung (Token) |
+
+#### Flutter-Frontend – Screens
+Die Flutter-App verwendet `go_router` für das Routing und `provider` für die Zustandsverwaltung. Die Navigation wechselt zwischen mobiler BottomNavigationBar und Desktop NavigationRail basierend auf der Bildschirmgröße (>=600px).
+
+##### Kunden-Screens
+
+- **Produktliste** (`lib/screens/produkte/produktliste_screen.dart`): Produktübersicht mit Suchfunktion (SearchBar), horizontaler Kategorie-Filter, Produktkarten mit Preis und Zustand
+- **Produktdetail** (`lib/screens/produkte/produktdetail_screen.dart`): Produktdetail mit Favoriten-Funktion, Mengenauswahl, Rabattpreis-Berechnung, Zustand/Kategorie-Anzeige
+- **Warenkorb** (`lib/screens/warenkorb/warenkorb_screen.dart`): Warenkorb mit Mengenanpassung (+/-), Gesamtpreis, Leeren-Button, Bestätigungsdialog
+- **Checkout** (`lib/screens/bestellung/bestell_screen.dart`): Bestellformular mit Adressdaten, Zahlungsmethoden-Auswahl (Rechnung, PayPal, Kreditkarte, SEPA), Bestellbestätigungsdialog
+- **Meine Bestellungen** (`lib/screens/meine_bestellungen/meine_bestellungen_screen.dart`): Bestellhistorie mit Statusanzeige, Refresh-Button, Stornier-Option
+- **Profil** (`lib/screens/profil/profil_screen.dart`): Profilbearbeitung (Vorname, Nachname, Email, Telefon), Logout, Account-Löschung
+
+##### Admin-Screens
+
+- **Produktverwaltung** (`lib/screens/admin/produktverwaltung_screen.dart`): Produkt-CRUD (Erstellen, Bearbeiten, Löschen), Kategorie- & Zustand-Dropdowns, Aktiv/Inaktiv-Schalter
+- **Bestellverwaltung** (`lib/screens/admin/bestellverwaltung_screen.dart`): Bestellübersicht mit Status-Filter (Alle, Offen, In Bearbeitung, Abgeschlossen, Storniert, Erstattet), Statusänderung, Bestelldetails
+
+##### Auth-Screens
+
+- **Login** (`lib/screens/auth/einloggen_screen.dart`): Email/Password-Login mit Formularvalidierung und Fehlermeldungen
+- **Registrierung** (`lib/screens/auth/anmeldung_screen.dart`): Registrierung mit Vorname, Nachname, Email, Telefon, Passwort
+
+##### Navigation
+
+- **MainShell** (`lib/screens/main_shell.dart`): Responsives Layout (Mobile: BottomNavigationBar, Desktop: NavigationRail)
+- **MainNavigation**: Wrapper mit Guards und BottomNavBar
+- **Router** (`lib/router.dart`): 8+ Routen für die gesamte App-Navigation
+
 
 ### 5.7 REST-API (FastAPI-Routen)
 
