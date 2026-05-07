@@ -1,5 +1,6 @@
 /// ProductProvider für Produkt-Management
 /// Verwaltet Produktliste, Filter und Suchbegriff
+library;
 
 import 'package:flutter/foundation.dart';
 
@@ -44,7 +45,7 @@ class ProductProvider with ChangeNotifier {
 
       // Kategorien aus dem Service aktualisieren
       _kategorien = _kategorieService.kategorien;
-      _categories = ['Alle']..addAll(_kategorien.map((k) => k.bezeichnung));
+      _categories = ['Alle', ..._kategorien.map((k) => k.bezeichnung)];
     } catch (e) {
       _errorMessage = 'Fehler beim Laden: $e';
     } finally {

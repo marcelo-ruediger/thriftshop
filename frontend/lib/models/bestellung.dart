@@ -1,5 +1,7 @@
 /// Das Bestellung-Modell für den Thriftshop
 /// Entspricht dem Python-Bestellung-Modell aus dem Backend
+library;
+
 import 'dart:convert';
 
 /// Eine Bestellung im Thriftshop

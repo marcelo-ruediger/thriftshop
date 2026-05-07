@@ -1,5 +1,7 @@
 /// Das Zustand-Modell für den Thriftshop
 /// Entspricht dem Python-Zustand-Modell aus dem Backend
+library;
+
 import 'dart:convert';
 
 /// Der Zustand eines Produkts (z.B. neu, gebraucht, etc.)

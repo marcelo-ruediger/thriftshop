@@ -1,5 +1,6 @@
 /// ProfileProvider für Profil-Management
 /// Verwaltet Benutzerprofile und Einstellungen
+library;
 
 import 'package:flutter/foundation.dart';
 

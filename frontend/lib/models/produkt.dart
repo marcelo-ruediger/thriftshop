@@ -1,5 +1,7 @@
 /// Das Produkt-Modell für den Thriftshop
 /// Entspricht dem Python-Produkt-Modell aus dem Backend
+library;
+
 import 'dart:convert';
 
 /// Ein Produkt im Thriftshop

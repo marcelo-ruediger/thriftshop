@@ -1,5 +1,6 @@
 /// Screen 6: Profil
 /// Zeigt und bearbeitet Benutzerprofil mit Logout und Account-Löschung
+library;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,5 +1,7 @@
 /// Das Kategorie-Modell für den Thriftshop
 /// Entspricht dem Python-Kategorie-Modell aus dem Backend
+library;
+
 import 'dart:convert';
 
 /// Eine Kategorie für Produkte im Thriftshop

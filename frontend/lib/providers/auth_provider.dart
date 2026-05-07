@@ -1,5 +1,6 @@
 /// AuthProvider für Authentifizierungs-Management
 /// Verwaltet Benutzer-Session und Login-Status
+library;
 
 import 'package:flutter/foundation.dart';
 

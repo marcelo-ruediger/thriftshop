@@ -1,4 +1,4 @@
-/// Router für die Thriftshop-App
+// Router für die Thriftshop-App
 import 'package:flutter/material.dart';
 
 import 'exports.dart';
@@ -40,7 +40,6 @@ class RouteGenerator {
 
       case Routes.bestell:
         final items = settings.arguments as List<WarenkorbItem>;
-        // Berechne Gesamtpreis aus den Items
         final totalPrice = items.fold(
           0.0,
           (sum, item) => sum + (item.produkt.preis * item.menge),

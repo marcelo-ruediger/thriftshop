@@ -1,5 +1,7 @@
 /// Das Benutzer-Modell für den Thriftshop
 /// Entspricht dem Python-Benutzer-Modell aus dem Backend
+library;
+
 import 'dart:convert';
 
 /// Benutzer des Thriftshop-Systems

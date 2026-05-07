@@ -1,5 +1,7 @@
 /// Produktdetail-Bildschirm für die Thriftshop-App
 /// Zeigt Produktdetails und ermöglicht das Hinzufügen zum Warenkorb
+library;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

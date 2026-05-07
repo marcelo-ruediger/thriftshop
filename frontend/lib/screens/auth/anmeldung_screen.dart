@@ -1,4 +1,6 @@
 /// Registrierung-Bildschirm für die Thriftshop-App
+library;
+
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
@@ -59,9 +61,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Registrieren'),
-      ),
+      appBar: AppBar(title: const Text('Registrieren')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -205,7 +205,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Text('Registrieren'),

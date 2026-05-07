@@ -3,6 +3,8 @@
 ///
 /// Dieses Screen ermöglicht die Verwaltung von Produkten
 /// (Erstellen, Bearbeiten, Löschen) für Administratoren.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -350,7 +352,7 @@ class _ProduktverwaltungScreenState extends State<ProduktverwaltungScreen> {
                   );
                   final dialogCtx = dialogContext;
                   await productProvider.updateProdukt(produkt);
-                  if (mounted) {
+                  if (mounted && dialogContext.mounted) {
                     Navigator.of(dialogCtx).pop();
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
                     scaffoldMessenger.showSnackBar(snackBar);
@@ -363,7 +365,7 @@ class _ProduktverwaltungScreenState extends State<ProduktverwaltungScreen> {
                   );
                   final dialogCtx = dialogContext;
                   await productProvider.createProdukt(produkt);
-                  if (mounted) {
+                  if (mounted && dialogContext.mounted) {
                     Navigator.of(dialogCtx).pop();
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
                     scaffoldMessenger.showSnackBar(snackBar);

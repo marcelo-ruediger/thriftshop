@@ -1,5 +1,6 @@
 /// CartProvider für Warenkorb-Management
 /// Verwaltet Warenkorb-Items und berechnet Gesamtpreis
+library;
 
 import 'package:flutter/foundation.dart';
 
@@ -7,7 +8,7 @@ import '../models/warenkorb_item.dart';
 import '../models/produkt.dart';
 
 class CartProvider with ChangeNotifier {
-  List<WarenkorbItem> _items = [];
+  final List<WarenkorbItem> _items = [];
 
   List<WarenkorbItem> get items => [..._items];
 
