@@ -1,4 +1,6 @@
 /// Hauptdatei für die Thriftshop-App
+library;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +12,7 @@ import 'providers/order_provider.dart';
 import 'providers/profile_provider.dart';
 import 'services/kategorie_service.dart';
 import 'services/zustand_service.dart';
+import 'widgets/main_navigation.dart';
 
 void main() {
   runApp(const ThriftShopApp());
@@ -42,11 +45,14 @@ class ThriftShopApp extends StatelessWidget {
         onGenerateRoute: RouteGenerator.generateRoute,
         initialRoute: Routes.start,
         routes: {
-          Routes.start: (context) => const ProduktListeScreen(),
-          Routes.produktliste: (context) => const ProduktListeScreen(),
+          Routes.start: (context) =>
+              MainNavigation(child: const ProduktListeScreen()),
+          Routes.produktliste: (context) =>
+              MainNavigation(child: const ProduktListeScreen()),
           Routes.produktdetail: (context) =>
               throw UnsupportedError('Use arguments'),
-          Routes.warenkorb: (context) => const WarenkorbScreen(),
+          Routes.warenkorb: (context) =>
+              MainNavigation(child: const WarenkorbScreen()),
           Routes.bestell: (context) => throw UnsupportedError('Use arguments'),
           Routes.profil: (context) => const ProfilScreen(),
         },
