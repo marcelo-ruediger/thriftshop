@@ -1,5 +1,6 @@
 /// OrderProvider für Bestell-Management
 /// Verwaltet Bestellhistorie und Bestellstatus
+library;
 
 import 'package:flutter/foundation.dart';
 

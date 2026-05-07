@@ -1,20 +1,16 @@
 /// Warenkorb-Item für die Thriftshop-App
+library;
+
 import '../models/produkt.dart';
 
 class WarenkorbItem {
   final Produkt produkt;
   int menge;
 
-  WarenkorbItem({
-    required this.produkt,
-    required this.menge,
-  });
+  WarenkorbItem({required this.produkt, required this.menge});
 
   Map<String, dynamic> toJson() {
-    return {
-      'produkt': produkt.toJson(),
-      'menge': menge,
-    };
+    return {'produkt': produkt.toJson(), 'menge': menge};
   }
 
   factory WarenkorbItem.fromJson(Map<String, dynamic> json) {
@@ -24,10 +20,7 @@ class WarenkorbItem {
     );
   }
 
-  WarenkorbItem copyWith({
-    Produkt? produkt,
-    int? menge,
-  }) {
+  WarenkorbItem copyWith({Produkt? produkt, int? menge}) {
     return WarenkorbItem(
       produkt: produkt ?? this.produkt,
       menge: menge ?? this.menge,

@@ -1,4 +1,6 @@
 /// Login-Bildschirm für die Thriftshop-App
+library;
+
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
@@ -44,9 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Einloggen'),
-      ),
+      appBar: AppBar(title: const Text('Einloggen')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -122,7 +122,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Text('Einloggen'),

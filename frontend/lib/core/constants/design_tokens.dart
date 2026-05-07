@@ -1,5 +1,6 @@
 /// Design Tokens für den Thriftshop
 /// Zentrale Definition von Abständen, Farben und Radien
+library;
 
 import 'package:flutter/material.dart';
 

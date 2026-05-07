@@ -1,5 +1,7 @@
 /// Das Bestellposition-Modell für den Thriftshop
 /// Entspricht dem Python-Bestellposition-Modell aus dem Backend
+library;
+
 import 'dart:convert';
 
 /// Eine Position in einer Bestellung

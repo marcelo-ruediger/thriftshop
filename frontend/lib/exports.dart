@@ -1,4 +1,6 @@
 /// Export-Datei für alle Screens
+library;
+
 export 'screens/produkte/produktliste_screen.dart';
 export 'screens/produkte/produktdetail_screen.dart';
 export 'screens/warenkorb/warenkorb_screen.dart';
