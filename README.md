@@ -62,7 +62,7 @@ Pydantic -> Für API / Datenvalidierung
 - [x] Auth-Service mit Token-Verwaltung
 - [x] API-Service mit JWT-Interceptor
 
-- [ ] http://0.0.0.0:8000/docs Port Colision (Thriftshop and oMLX Admins)
+- [x] http://0.0.0.0:8000/docs Port Colision (Thriftshop and oMLX Admins)
 
 ### 8. Flutter – Kundenseiten
 - [x] Screen 2: Produktliste (Suche, Filter mit Provider-Integration, dynamische Kategorien, Filter-Chips)
