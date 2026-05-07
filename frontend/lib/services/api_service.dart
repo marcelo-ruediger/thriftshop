@@ -1,5 +1,6 @@
 /// API-Service für die Kommunikation mit dem FastAPI-Backend
 /// Handles HTTP-Requets, Token-Management und Fehlerbehandlung
+library;
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

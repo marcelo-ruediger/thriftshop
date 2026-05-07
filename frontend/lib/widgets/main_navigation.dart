@@ -1,4 +1,5 @@
 /// Haupt-Navigation für die Thriftshop-App
+library;
 import 'package:flutter/material.dart';
 
 import '../router.dart';
