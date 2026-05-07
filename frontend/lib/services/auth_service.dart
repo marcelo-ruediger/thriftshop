@@ -1,4 +1,5 @@
 /// Auth-Service für die Thriftshop-App
+library;
 import 'package:dio/dio.dart';
 
 import '../models/benutzer.dart';

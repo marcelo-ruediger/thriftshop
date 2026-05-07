@@ -1,5 +1,6 @@
 /// Main-Shell für mobile/desktop Navigation
 /// Umschaltung zwischen BottomNavigationBar und NavigationRail
+library;
 
 import 'package:flutter/material.dart';
 
@@ -13,16 +14,16 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 600;
 
     if (isDesktop) {
-      return DesktopShell(child: widget.child, currentIndex: _currentIndex);
+      return DesktopShell(currentIndex: _currentIndex, child: widget.child);
     } else {
-      return MobileShell(child: widget.child, currentIndex: _currentIndex);
+      return MobileShell(currentIndex: _currentIndex, child: widget.child);
     }
   }
 }

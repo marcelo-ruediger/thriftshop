@@ -1,5 +1,6 @@
 /// Warenkorb-Bildschirm für die Thriftshop-App
 /// Zeigt alle Items im Warenkorb mit Mengenänderung und Gesamtpreis
+library;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,10 @@ class WarenkorbScreen extends StatelessWidget {
                                 );
                               }
                             },
-                            child: const Text('Leeren', style: TextStyle(color: Colors.red)),
+                            child: const Text(
+                              'Leeren',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ],
                       ),
@@ -123,7 +127,9 @@ class WarenkorbScreen extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer,
                           child: const Icon(Icons.image_outlined),
                         ),
                         title: Text(
@@ -144,11 +150,15 @@ class WarenkorbScreen extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       IconButton(
-                                        icon: const Icon(Icons.remove_circle_outline),
+                                        icon: const Icon(
+                                          Icons.remove_circle_outline,
+                                        ),
                                         onPressed: item.menge <= 1
                                             ? null
                                             : () {
-                                                context.read<CartProvider>().updateQuantity(
+                                                context
+                                                    .read<CartProvider>()
+                                                    .updateQuantity(
                                                       item.produkt.produktId,
                                                       item.menge - 1,
                                                     );
@@ -158,14 +168,22 @@ class WarenkorbScreen extends StatelessWidget {
                                         child: Text(
                                           '${item.menge}',
                                           textAlign: TextAlign.center,
-                                          style: const TextStyle(fontWeight: FontWeight.w600),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.add_circle_outline),
-                                        onPressed: item.menge < item.produkt.lagerbestand
+                                        icon: const Icon(
+                                          Icons.add_circle_outline,
+                                        ),
+                                        onPressed:
+                                            item.menge <
+                                                item.produkt.lagerbestand
                                             ? () {
-                                                context.read<CartProvider>().updateQuantity(
+                                                context
+                                                    .read<CartProvider>()
+                                                    .updateQuantity(
                                                       item.produkt.produktId,
                                                       item.menge + 1,
                                                     );
@@ -188,9 +206,14 @@ class WarenkorbScreen extends StatelessWidget {
                           ],
                         ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.red),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
                           onPressed: () {
-                            context.read<CartProvider>().removeItem(item.produkt.produktId);
+                            context.read<CartProvider>().removeItem(
+                              item.produkt.produktId,
+                            );
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -222,10 +245,7 @@ class WarenkorbScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Artikel:',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        const Text('Artikel:', style: TextStyle(fontSize: 16)),
                         Text(
                           '${cart.itemCount} (${items.length} verschiedene)',
                           style: const TextStyle(fontWeight: FontWeight.w600),
@@ -238,7 +258,10 @@ class WarenkorbScreen extends StatelessWidget {
                       children: [
                         const Text(
                           'Gesamtsumme:',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
                           '${cart.totalPrice.toStringAsFixed(2)} €',
@@ -260,7 +283,9 @@ class WarenkorbScreen extends StatelessWidget {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Bitte einloggen, um fortzufahren'),
+                                  content: Text(
+                                    'Bitte einloggen, um fortzufahren',
+                                  ),
                                   backgroundColor: Colors.orange,
                                 ),
                               );
@@ -280,8 +305,12 @@ class WarenkorbScreen extends StatelessWidget {
                         label: const Text('Zur Kasse'),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
                         ),
                       ),
                     ),
