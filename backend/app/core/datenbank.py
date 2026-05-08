@@ -6,7 +6,8 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+_env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), '.env')
+load_dotenv(_env_path)
 
 
 def get_notwendige_env(name: str) -> str:
@@ -24,7 +25,7 @@ def get_db():
     verbindung = mysql.connector.connect(
         host=get_notwendige_env("DB_HOST"),
         user=get_notwendige_env("DB_USER"),
-        password=get_notwendige_env("DB_PASSWORD"),
+        password=os.getenv("DB_PASSWORD", ""),
         database=get_notwendige_env("DB_NAME"),
     )
     try:

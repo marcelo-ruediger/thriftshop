@@ -75,11 +75,11 @@ class Produkt {
       lagerbestand: (json['lagerbestand'] as num).toInt(),
       zustandId: json['zustand_id'] as String,
       kategorieId: json['kategorie_id'] as String,
-      produktAktiv: json['produkt_aktiv'] as bool? ?? true,
+      produktAktiv: json['produkt_aktiv'] == true || json['produkt_aktiv'] == 1 ? true : false,
       erstellungsdatum: json['erstellungsdatum'] == null
           ? null
           : DateTime.parse(json['erstellungsdatum'] as String),
-      produktnr: json['produktnr'] as String,
+      produktnr: json['produktnr'] as String? ?? 'P00000',
     );
   }
 

@@ -31,7 +31,7 @@ class OrderProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _apiService.get('/bestellungen');
+      final response = await _apiService.get('/bestellungen/meine-bestellungen');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
         _bestellungen = data

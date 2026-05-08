@@ -14,7 +14,8 @@ import 'services/kategorie_service.dart';
 import 'services/zustand_service.dart';
 import 'widgets/main_navigation.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const ThriftShopApp());
 }
 
@@ -33,7 +34,15 @@ class ThriftShopApp extends StatelessWidget {
           create: (_) => ZustandService()..loadZustaende(),
         ),
         // State Management (ChangeNotifiers)
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = AuthProvider();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              provider.initialize();
+            });
+            return provider;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
@@ -45,16 +54,15 @@ class ThriftShopApp extends StatelessWidget {
         onGenerateRoute: RouteGenerator.generateRoute,
         initialRoute: Routes.start,
         routes: {
-          Routes.start: (context) =>
-              MainNavigation(child: const ProduktListeScreen()),
-          Routes.produktliste: (context) =>
-              MainNavigation(child: const ProduktListeScreen()),
+          Routes.start: (context) => const MainNavigation(),
+          Routes.produktliste: (context) => const MainNavigation(),
+          Routes.login: (context) => const LoginScreen(),
+          Routes.registration: (context) => const RegistrationScreen(),
           Routes.produktdetail: (context) =>
               throw UnsupportedError('Use arguments'),
-          Routes.warenkorb: (context) =>
-              MainNavigation(child: const WarenkorbScreen()),
+          Routes.warenkorb: (context) => const MainNavigation(),
           Routes.bestell: (context) => throw UnsupportedError('Use arguments'),
-          Routes.profil: (context) => const ProfilScreen(),
+          Routes.profil: (context) => const MainNavigation(),
         },
         theme: ThemeData(
           useMaterial3: true,

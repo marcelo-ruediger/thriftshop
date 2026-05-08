@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/order_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../router.dart';
 import '../../models/bestellung.dart';
 
@@ -23,7 +24,10 @@ class _MeineBestellungenScreenState extends State<MeineBestellungenScreen> {
     super.initState();
     // Bestellungen laden
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<OrderProvider>().loadBestellungen();
+      final auth = context.read<AuthProvider>();
+      if (auth.isAuthenticated) {
+        context.read<OrderProvider>().loadBestellungen();
+      }
     });
   }
 
@@ -37,13 +41,41 @@ class _MeineBestellungenScreenState extends State<MeineBestellungenScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              context.read<OrderProvider>().refresh();
+              final auth = context.read<AuthProvider>();
+              if (auth.isAuthenticated) {
+                context.read<OrderProvider>().refresh();
+              }
             },
           ),
         ],
       ),
-      body: Consumer<OrderProvider>(
-        builder: (context, orderProvider, child) {
+      body: Consumer2<AuthProvider, OrderProvider>(
+        builder: (context, authProvider, orderProvider, child) {
+          // Nicht eingeloggt
+          if (!authProvider.isAuthenticated) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.login, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Bitte einloggen, um Bestellungen anzusehen',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(Routes.login);
+                    },
+                    icon: const Icon(Icons.login),
+                    label: const Text('Einloggen'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           // Ladezustand
           if (orderProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
