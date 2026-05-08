@@ -572,7 +572,7 @@ Das Pflichtenheft beschreibt, wie die im Fachkonzept (3.3) gestellten Kundenanfo
   Die Flutter-App ruft beim Start die Produktliste über den Endpunkt `GET /produkte` vom FastAPI-Backend ab. Dieser Endpunkt ist öffentlich zugänglich und erfordert keinen Login, sodass Kunden das Sortiment jederzeit und von überall einsehen können. Die Produkte werden in einem `GridView` dargestellt.
 
 - **Such- und Filterfunktion mit Provider-Integration**  
-  Die Produktliste (`ProduktlisteScreen`) rendert alle aktiven Produkte in einem responsiven `GridView` mit individuellen Produktkarten. Jede Karte zeigt Produktbild, Titel, Preis, Kategorie (via `KategorieService`) und Zustand (via `ZustandService` mit farbigen Badges). Die Daten werden über `ProductProvider` (ChangeNotifier) verwaltet, der API-Antworten in lokale Modell-Instanzen transformiert.
+  Die Produktliste (`ProduktlisteScreen`) rendert alle aktiven Produkte in einem responsiven `GridView` mit individuellen Produktkarten. Jede Karte zeigt ein Produktbild, Titel, Preis, Kategorie (via `KategorieService`) und Zustand (via `ZustandService` mit farbigen Badges). Die Daten werden über `ProductProvider` (ChangeNotifier) verwaltet, der API-Antworten in lokale Modell-Instanzen transformiert.
 
   Eine `SearchBar` in der AppBar ruft beim Tippen `productProvider.filterBySearch()` auf. Der Provider sendet einen GET-Request an `/produkte?search=<begriff>` und aktualisiert die angezeigte Liste. Der Suchbegriff wird live im Backend gefiltert.
 
@@ -753,8 +753,8 @@ Die Flutter-App verwendet einen eigenen `RouteGenerator` für das Routing und `p
 
 ##### Kunden-Screens
 
-- **Produktliste** (`lib/screens/produkte/produktliste_screen.dart`): Produktübersicht mit Suchfunktion (SearchBar), horizontaler Kategorie-Filter, Produktkarten mit Preis und Zustand
-- **Produktdetail** (`lib/screens/produkte/produktdetail_screen.dart`): Produktdetail mit Favoriten-Funktion, Mengenauswahl, Rabattpreis-Berechnung, Zustand/Kategorie-Anzeige
+- **Produktliste** (`lib/screens/produkte/produktliste_screen.dart`): Produktübersicht mit Suchfunktion (SearchBar), horizontaler Kategorie-Filter, Produktkarten mit Produktbild, Preis und Zustand
+- **Produktdetail** (`lib/screens/produkte/produktdetail_screen.dart`): Produktdetail mit Produktbild, Favoriten-Funktion, Mengenauswahl, Rabattpreis-Berechnung, Zustand/Kategorie-Anzeige
 - **Warenkorb** (`lib/screens/warenkorb/warenkorb_screen.dart`): Warenkorb mit Mengenanpassung (+/-), Gesamtpreis, Leeren-Button, Bestätigungsdialog
 - **Checkout** (`lib/screens/bestellung/bestell_screen.dart`): Bestellformular mit Adressdaten, Zahlungsmethoden-Auswahl (Rechnung, PayPal, Kreditkarte, SEPA), Bestellbestätigungsdialog
 - **Meine Bestellungen** (`lib/screens/meine_bestellungen/meine_bestellungen_screen.dart`): Bestellhistorie mit Statusanzeige, Refresh-Button, Stornier-Option
@@ -772,8 +772,8 @@ Die Flutter-App verwendet einen eigenen `RouteGenerator` für das Routing und `p
 
 ##### Navigation
 
-- **MainNavigation** (`lib/widgets/main_navigation.dart`): Wrapper mit `BottomNavigationBar`. Bei Admin-Benutzern (Administrator/Mitarbeiter) werden automatisch zwei zusätzliche Tabs für Produkt- und Bestellverwaltung angezeigt.
-- **Router** (`lib/router.dart`): 11 Routen für die gesamte App-Navigation
+- **MainNavigation** (`lib/widgets/main_navigation.dart`): Statische `BottomNavigationBar`–Leiste. Die Tabs werden über `IndexedStack` verwaltet, sodass nur der Body-Content wechselt und die Navigation immer sichtbar und statisch bleibt. Bei Admin-Benutzern (Administrator/Mitarbeiter) werden automatisch zwei zusätzliche Tabs für Produkt- und Bestellverwaltung angezeigt.
+- **Router** (`lib/router.dart`): 11 Routen für die gesamte App-Navigation. Nicht-Tab-Screens (Produktdetail, Checkout, Login, Registrierung) werden als Overlay über den Tab-Stack navigiert und verschwinden bei `Navigator.pop` wieder.
 
 
 ### 5.7 REST-API (FastAPI-Routen)
