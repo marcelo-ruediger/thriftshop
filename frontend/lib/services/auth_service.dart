@@ -26,7 +26,7 @@ class AuthService {
     try {
       final response = await _apiService.post(
         '/auth/login',
-        data: {'email': email, 'password': password},
+        data: {'email': email, 'passwort': password},
       );
 
       if (response.statusCode == 200) {
@@ -58,13 +58,13 @@ class AuthService {
   }) async {
     try {
       final response = await _apiService.post(
-        '/auth/register',
+        '/auth/registrieren',
         data: {
           'vorname': vorname,
           'nachname': nachname,
           'email': email,
-          'telefonnummer': telefonnummer,
-          'password': password,
+          'telefon': telefonnummer,
+          'passwort_hash': password,
         },
       );
 

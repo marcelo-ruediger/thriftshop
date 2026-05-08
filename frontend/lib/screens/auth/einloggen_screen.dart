@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../router.dart';
 import '../../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -132,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/registration');
+                  Navigator.pushNamed(context, Routes.registration);
                 },
                 child: const Text('Noch kein Konto? Hier registrieren'),
               ),

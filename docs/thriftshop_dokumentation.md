@@ -418,11 +418,11 @@ API --> Mail : API Call (Bestätigungsmail)
 ### 4.3 Datenmodell
 Das objektorientierte Datenmodell der Anwendung besteht aus sechs Klassen, die die Struktur der gespeicherten Daten abbilden.
 
-- Benutzer: Repräsentiert einen registrierten Kunden oder Mitarbeiter. Neben persönlichen Stammdaten (Name, E-Mail, Telefon) wird das Passwort ausschließlich als kryptografischer Hash (bcrypt) gespeichert. Das Attribut `rolle` wird auf Datenbankebene durch einen CHECK-Constraint auf die Werte „Administrator“, „Mitarbeiter“ und „Kunde“ beschränkt. Diese Rolle dient im Backend als Basis für die autorisierte Zugriffskontrolle (RBAC – Role-Based Access Control). Ein Benutzer steht in einer 1:n-Beziehung zu Bestellungen.
+- Benutzer: Repräsentiert einen registrierten Kunden oder Mitarbeiter. Neben persönlichen Stammdaten (Vorname, Nachname, E-Mail, Telefon) wird das Passwort ausschließlich als kryptografischer Hash (bcrypt) gespeichert. Das Attribut `rolle` wird auf Datenbankebene durch einen CHECK-Constraint auf die Werte „Administrator“, „Mitarbeiter“ und „Kunde“ beschränkt. Diese Rolle dient im Backend als Basis für die autorisierte Zugriffskontrolle (RBAC – Role-Based Access Control). Ein Benutzer steht in einer 1:n-Beziehung zu Bestellungen.
 
-- Produkt: Bildet einen physischen Verkaufsartikel ab. Jedes Produkt verfügt über eine eindeutige UUID, eine menschenlesbare `produktnr`, sowie den preis und einen optionalen `produkt_rabatt` (jeweils als Decimal). Das Flag `produkt_aktiv` steuert die Sichtbarkeit im Frontend. Ein Produkt ist über Foreign Keys fest genau einer Kategorie und einem Zustand zugeordnet.
+- Produkt: Bildet einen physischen Verkaufsartikel ab. Jedes Produkt verfügt über eine eindeutige UUID (`produkt_id`), eine menschenlesbare `produktnr` sowie den `preis` und einen optionalen `produkt_rabatt` (jeweils als Decimal). Das Flag `produkt_aktiv` steuert die Sichtbarkeit im Frontend. Ein Produkt ist über Foreign Keys fest genau einer Kategorie und einem Zustand zugeordnet.
 
-- Kategorie: Gruppiert Produkte thematisch (z. B. Kleidung, Medien). Sie kann einen `kategorie_rabatt` besitzen. Die Logik prüft zur Laufzeit via `MAX()`, ob der produkt- oder kategoriespezifische Rabatt für den Endpreis angewendet wird.
+- Kategorie: Gruppiert Produkte thematisch (z. B. Kleidung, Medien). Sie kann einen `kategorie_rabatt` besitzen.
 
 - Zustand: Definiert den physischen Erhaltungsgrad eines Artikels (z. B. „wie neu“, „stark gebraucht“). Dies ist im Thriftshop-Kontext entscheidend für die Preisfindung und Transparenz gegenüber dem Käufer.
 
@@ -596,18 +596,18 @@ Das Pflichtenheft beschreibt, wie die im Fachkonzept (3.3) gestellten Kundenanfo
 #### Anforderung 3: Verwaltung und Datensicherheit
 
 - **Login-System mit Rollenverwaltung**  
-  Die Authentifizierung erfolgt über Supabase Auth, das nach erfolgreichem Login einen signierten JWT-Token ausstellt. Die Benutzerrolle (`ADMIN`, `MITARBEITER` oder `KUNDE`) ist im Token hinterlegt. Die Flutter-App speichert den Token lokal und sendet ihn bei jedem API-Request im Authorization-Header mit. Das FastAPI-Backend prüft bei jedem Request die Gültigkeit und Rolle des Tokens. Da es sich um ein kleines Unternehmen handelt, ist die Benutzerrolle `Mitarbeiter` zunächst inaktiv. Bei Bedarf kann sie als Alternative zum Administrator mit eingeschränkten Berechtigungen aktiviert werden. 
+  Die Authentifizierung erfolgt über eine eigene JWT-Implementierung (`app/core/sicherheit.py`). Nach erfolgreichem Login (`POST /auth/login`) stellt das FastAPI-Backend einen signierten JWT-Token aus, der die Benutzerrolle (`Administrator`, `Mitarbeiter` oder `Kunde`) enthält. Die Flutter-App speichert den Token lokal (`shared_preferences`) und sendet ihn bei jedem API-Request im `Authorization: Bearer`-Header mit. Das FastAPI-Backend prüft bei geschützten Routen die Gültigkeit und Rolle des Tokens. Die Benutzerrolle `Mitarbeiter` steht als Alternative zum Administrator mit eingeschränkten Berechtigungen zur Verfügung.
 
 - **Geschützter Admin-Bereich**   
-  Alle Aktionen, die Daten in der Datenbank verändern (Produkte erstellen, ändern, löschen oder Bestellungen aktualisieren) mit `POST`, `PUT`, `DELETE`, `PATCH`, sind im Backend per Dependency-Injection geschützt. Diese Funktion prüft automatisch bei jeder Anfrage, ob der Benutzer die nötigen Rechte hat, bevor die Aktion ausgeführt wird. Anfragen ohne gültigen Admin-Token werden mit HTTP `403 Forbidden` abgewiesen. Im Frontend wird die Admin-Navigation nur angezeigt, wenn die Rolle im Token `ADMIN` ist.
+  Admin-Routen (z. B. Produkt-CRUD, Bestellstatus-Änderung) sind im Backend per Dependency Injection (`Depends(erfordert_rolle("Administrator", "Mitarbeiter"))`) geschützt. Diese prüft automatisch bei jeder Anfrage die Benutzerrolle, bevor die Aktion ausgeführt wird. Anfragen ohne gültige Admin-Rolle werden mit HTTP `403 Forbidden` abgewiesen. Im Frontend wird die Admin-Navigation nur angezeigt, wenn die Rolle `Administrator` oder `Mitarbeiter` ist (über `AuthProvider`).
 
 - **Zentrale relationale Datenbank**  
-  Alle persistenten Daten werden in einer PostgreSQL-Datenbank auf Supabase gespeichert. Die Tabellen entsprechen dem Klassendiagramm (Abschnitt 4.3): `benutzer`, `produkt`, `kategorie`, `zustand`, `bestellung`, `bestellposition`. Ein direkter Zugriff vom Frontend auf die Datenbank ist technisch ausgeschlossen. Alle Anfragen laufen ausschließlich über das FastAPI-Backend.
+  Alle persistenten Daten werden in einer MySQL-Datenbank (`thriftshop`) gespeichert. Die Tabellen entsprechen dem Klassendiagramm (Abschnitt 4.3): `benutzer`, `produkt`, `kategorie`, `zustand`, `bestellung`, `bestellposition`. Für die Produktion ist eine Migration auf PostgreSQL (Supabase) geplant – da die SQL-Logik vollständig in den DAOs gekapselt ist, beschränkt sich die Migration auf Verbindungsparameter und kleinere SQL-Dialekt-Unterschiede. Ein direkter Zugriff vom Frontend auf die Datenbank ist technisch ausgeschlossen. Alle Anfragen laufen ausschließlich über das FastAPI-Backend.
 
 - **Datenschutz, Datensicherheit und rechtliche Rahmenbedingungen**  
   Passwörter werden ausschließlich als bcrypt-Hash gespeichert (`passlib`-Bibliothek) mit eingebautem Salting. Es wird kein Klartext-Passwort in der Datenbank abgelegt oder über das Netzwerk übertragen. Für Bestellungen werden nur die Daten erhoben und verarbeitet, die für den rechtmäßigen Zweck notwendig sind (Vorname, Nachname, E-Mail, Telefon).
   Eine Datenschutzerklärung ist vorhanden, um das Recht auf Information über die Verarbeitung der Daten zu gewährleisten. Der Benutzer muss dieser Datenschutzerklärung zustimmen. Der Benutzer hat zudem das Recht auf Datenübertragbarkeit, Löschung (Recht auf Vergessenwerden) und Widerspruch, und kann jederzeit seine Einwilligung zur Verarbeitung personenbezogener Daten widerrufen. Für weitere DSGVO-konforme Regelungen muss sich die Thriftshop Köln GmbH von einem Anwalt beraten lassen.
-  Allgemeine Geschäftsbedingungen (AGB) mit den entsprechenden rechtlichen Anforderungen müssen ebenfalls von der Thriftshop Köln GmbH zur Verfügung gestellt werden. Diese werden auf einer dedizierten Webseite für den Benutzer angezeigt und müssen beim Kauf vom Kunden akzeptiert werden. Darüber hinaus sind ein Impressum sowie ein Cookie-Banner vorhanden. Der Cookie-Banner wird beim Öffnen der Website angezeigt, sodass der Benutzer seine Präferenzen auswählen und seine Einwilligung erteilen kann.
+  Allgemeine Geschäftsbedingungen (AGB), Impressum und Cookie-Banner müssen von der Thriftshop Köln GmbH bereitgestellt werden und sind in zukünftigen Versionen zu integrieren.
 
 
 #### Abgrenzung (Nicht-Ziele, unverändert)
@@ -713,13 +713,13 @@ class ProduktDAO:
 
 Die FastAPI-Router bündeln die gesamte Geschäftslogik. Sie nutzen die DAOs für Datenbankzugriffe und die Datenmodelle als Datenträger. Die Endpunkte sind in vier Gruppen unterteilt:
 
-**Authentifizierung und Profil:** Verwaltet den Login und die Profildaten eines Benutzers. `login()` prüft E-Mail und Passwort-Hash und gibt bei Erfolg das `Benutzer`-Objekt zurück. `profil_bearbeiten()` und `profil_loeschen()` aktualisieren bzw. entfernen den Datensatz und lösen jeweils eine E-Mail-Benachrichtigung aus.
+**Authentifizierung und Profil:** Verwaltet den Login und die Profildaten eines Benutzers. `login()` prüft E-Mail und Passwort-Hash und gibt bei Erfolg einen JWT-Token zurück (`access_token`, `token_type: bearer`). `profil_bearbeiten()` (`PUT /auth/profile`) aktualisiert die Stammdaten. `profil_loeschen()` (`DELETE /auth/profile`) entfernt den Benutzer. `profil_aktuell()` (`GET /auth/me`) liefert die Daten des eingeloggten Benutzers.
 
-**Katalog und Suche:** `produkte_anzeigen()` nimmt ein Filter-Dictionary entgegen (z. B. Kategorie, Suchbegriff, Preisspanne) und gibt die gefilterte Produktliste zurück. `produkt_details()` liefert alle Informationen zu einem einzelnen Produkt anhand seiner UUID.
+**Katalog und Suche:** `GET /produkte/` gibt alle Produkte (auch inaktive, Admin-Sicht) zurück. `GET /produkte/aktiv` gibt nur aktive Produkte (Onlineshop-Ansicht) zurück. `GET /produkte/{id}` liefert die Details eines einzelnen Produkts. Filterung nach Kategorie und Suchbegriff erfolgt im Frontend (`ProductProvider`).
 
-**Bestellprozess:** `bestellung_aufgeben()` verarbeitet den Warenkorb, legt die Bestellung mit allen Positionen in der Datenbank an und löst die Bestätigungsmail aus. Zusätzlich können Kunden eine Bestellung stornieren oder eine Erstattung beantragen.
+**Bestellprozess:** `POST /bestellungen/` legt eine Bestellung mit allen Positionen atomar in der Datenbank an. `PATCH /bestellungen/{id}/status` erlaubt die Statusänderung (Admin/Mitarbeiter). `PATCH /bestellungen/{id}/stornieren` ermöglicht die Stornierung durch den Kunden (nur bei Status `Offen`).
 
-**Admin-Funktionen:** Methoden wie `produkt_anlegen()`, `produkt_bearbeiten()` oder `bestellungen_einsehen()` erwarten als ersten Parameter ein `Benutzer`-Objekt mit der Rolle `ADMIN`. Fehlt diese Berechtigung, wird eine Exception geworfen, bevor irgendeine Aktion ausgeführt wird.
+**Admin-Funktionen:** Methoden wie `produkt_erstellen()`, `produkt_aktualisieren()`, `bestellungen_einsehen()` sind im Backend per Dependency Injection (`Depends(erfordert_rolle("Administrator", "Mitarbeiter"))`) geschützt. Fehlt diese Berechtigung, wird eine Exception geworfen, bevor irgendeine Aktion ausgeführt wird.
 
 ### 5.5 Migration auf PostgreSQL
 
@@ -730,30 +730,26 @@ Da die SQL-Logik vollständig in den DAOs gekapselt ist, beschränkt sich die Mi
 Die Benutzeroberfläche ist eine plattformübergreifende Flutter-App (Material Design 3), die ausschließlich per REST/JSON mit dem Backend kommuniziert.
 
 #### Design
-Farben, Schriften und Abstände sind zentral in `app_theme.dart` und `design_tokens.dart` definiert. Hauptfarbe ist `#4CAF93` (Grün, passend zum nachhaltigen Charakter des Shops), Schriftart ist **Inter**.
+Farben, Schriften und Abstände sind über `ThemeData` in `main.dart` definiert. Hauptfarbe ist `#8B4513` (Braun, passend zum Thriftshop-Charakter). Die App nutzt Material Design 3 (`useMaterial3: true`).
 
-#### Responsives Layout
-Ein `LayoutBuilder` in der Root-Shell schaltet je nach Bildschirmbreite zwischen `NavigationBar` (unten, mobil) und `NavigationRail` (links, Desktop) um. Auf dem Desktop wird der Inhalt auf maximal 1200 px begrenzt.
+#### Routing
+Ein eigener `RouteGenerator` in `router.dart` verwaltet alle Routen zentral über `MaterialApp.onGenerateRoute`. Nicht eingeloggte Nutzer erhalten eine SnackBar und werden auf die Startseite weitergeleitet. Nicht-Admins werden aus dem Admin-Bereich blockiert (Zugriff-verweigert-Ansicht).
 
-#### Routing 
-`go_router` verwaltet alle Routen zentral. Nicht eingeloggte Nutzer werden auf `/login` weitergeleitet, Nicht-Admins aus dem Admin-Bereich auf die Startseite.
+#### Zustandsverwaltung
+`provider` mit `ChangeNotifier` trennt Logik und Darstellung. Die App verwendet `MultiProvider` in `main.dart`, um fünf Provider als `ChangeNotifierProvider` zu registrieren: `AuthProvider`, `ProductProvider`, `CartProvider`, `OrderProvider` und `ProfileProvider`. Zusätzlich werden zwei Services (`KategorieService` und `ZustandService`) als `Provider<T>()` registriert, die Daten aus der API laden und im Speicher cachen. Die Widgets greifen über `context.read<T>()` (Wert, kein Rebuild) oder `context.watch<T>()` (Rebuild bei Änderung) auf die Provider und Services zu.
 
-#### Zustandsverwaltung 
-`provider` mit `ChangeNotifier` trennt Logik und Darstellung. Die App verwendet `MultiProvider` in `main.dart`, um fünf Provider als `ChangeNotifierProvider` zu registrieren: `AuthProvider`, `ProductProvider`, `CartProvider`, `OrderProvider` und `ProfileProvider`. Zusätzlich werden zwei Services (`KategorieService` und `ZustandService`) als `SingleInstance`-Service registriert, die Daten aus der API laden und im Speicher cachen. Die Widgets greifen über `context.read<T>()` (Wert, kein Rebuild) oder `context.watch<T>()` (Rebuild bei Änderung) auf die Provider und Services zu.
+#### API-Anbindung
+`dio` sendet alle HTTP-Anfragen. Ein Interceptor hängt den JWT-Token automatisch an (`Authorization: Bearer`). `ApiService` kapselt die REST-Aufrufe für alle Endpunkte. Kategorieservice und Zustandservice laden die Daten einmal beim App-Start und cachen sie im Speicher, sodass Widgets über `context.read<KategorieService>().getKategorieName(id)` und `context.read<ZustandService>().getZustandColor(id)` auf cachierte Daten zugreifen können.
 
-#### API-Anbindung 
-`dio` sendet alle HTTP-Anfragen. Ein Interceptor hängt den JWT-Token automatisch an. `ApiService` kapselt die REST-Aufrufe für alle Endpunkte. Kategorieservice und Zustandservice laden die Daten einmal beim App-Start und cachen sie im Speicher, sodass Widgets über `context.read<KategorieService>().getKategorieName(id)` und `context.read<ZustandService>().getZustandColor(id)` auf cachierte Daten zugreifen können.
-
-| Package              | Zweck                           |
-| -------------------- | ------------------------------- |
-| `provider`           | Zustandsverwaltung              |
-| `go_router`          | Navigation                      |
-| `dio`                | HTTP-Anfragen                   |
-| `flutter_dotenv`     | Umgebungsvariablen              |
-| `shared_preferences` | Lokale Datenspeicherung (Token) |
+| Package                | Zweck                           |
+| ---------------------- | ------------------------------- |
+| `provider`             | Zustandsverwaltung              |
+| `dio`                  | HTTP-Anfragen                   |
+| `shared_preferences`   | Lokale Datenspeicherung (Token) |
+| `intl`                 | Datums- und Zahlenformatierung  |
 
 #### Flutter-Frontend – Screens
-Die Flutter-App verwendet `go_router` für das Routing und `provider` für die Zustandsverwaltung. Die Navigation wechselt zwischen mobiler BottomNavigationBar und Desktop NavigationRail basierend auf der Bildschirmgröße (>=600px).
+Die Flutter-App verwendet einen eigenen `RouteGenerator` für das Routing und `provider` für die Zustandsverwaltung. Die Navigation erfolgt über eine `MainNavigation` mit `BottomNavigationBar` (Start, Warenkorb, Profil).
 
 ##### Kunden-Screens
 
@@ -776,9 +772,8 @@ Die Flutter-App verwendet `go_router` für das Routing und `provider` für die Z
 
 ##### Navigation
 
-- **MainShell** (`lib/screens/main_shell.dart`): Responsives Layout (Mobile: BottomNavigationBar, Desktop: NavigationRail)
-- **MainNavigation**: Wrapper mit Guards und BottomNavBar
-- **Router** (`lib/router.dart`): 8+ Routen für die gesamte App-Navigation
+- **MainNavigation** (`lib/widgets/main_navigation.dart`): Wrapper mit `BottomNavigationBar`. Bei Admin-Benutzern (Administrator/Mitarbeiter) werden automatisch zwei zusätzliche Tabs für Produkt- und Bestellverwaltung angezeigt.
+- **Router** (`lib/router.dart`): 11 Routen für die gesamte App-Navigation
 
 
 ### 5.7 REST-API (FastAPI-Routen)
@@ -805,6 +800,10 @@ Alle Routen nutzen **Dependency Injection** (`Depends(get_db)`), um eine Datenba
 |---|---|---|---|
 | `POST` | `/auth/registrieren` | Legt einen neuen Benutzer an; das Passwort wird vor dem Speichern automatisch mit bcrypt gehasht | 201 |
 | `POST` | `/auth/login` | Prüft E-Mail und Passwort; liefert bei Erfolg einen signierten JWT zurück | 200 |
+| `GET` | `/auth/me` | Gibt die Daten des aktuell eingeloggten Benutzers zurück (erfordert JWT) | 200 / 401 |
+| `GET` | `/auth/logout` | Stateless-Logout (JWT verfällt automatisch) | 200 |
+| `PUT` | `/auth/profile` | Aktualisiert die Stammdaten des Benutzers (erfordert JWT) | 200 |
+| `DELETE` | `/auth/profile` | Löscht das Benutzerkonto (erfordert JWT / Benutzer-ID) | 200 / 404 |
 
 Fehlerfall Login: Bei falschem Passwort oder unbekannter E-Mail antwortet die Route mit `401 Unauthorized`.
 
@@ -962,19 +961,14 @@ Kapselt das Passwort-Hashing (bcrypt) und die JWT-Verwaltung (HS256, 24 h Ablauf
 | `passwort_pruefen` | `(klartext: str, passwort_hash: str) → bool` | Vergleicht Klartext mit gespeichertem Hash |
 | `token_erstellen` | `(daten: dict) → str` | Signiert ein JWT mit `JWT_SECRET` aus `.env`; enthält Ablaufzeit (`exp`) |
 | `token_lesen` | `(token: str) → dict` | Dekodiert und validiert ein JWT; wirft `JWTError` bei ungültigem Token |
-| `aktueller_benutzer` | `(token, db) → Benutzer` | FastAPI-Dependency: liest den JWT aus dem `Authorization`-Header, dekodiert ihn und gibt das Benutzerobjekt zurück |
-| `erfordert_rolle` | `(*rollen: str) → Depends` | Gibt eine Dependency-Funktion zurück, die `aktueller_benutzer` aufruft und zusätzlich prüft, ob die Rolle des Benutzers in der erlaubten Liste enthalten ist |
 
 #### Funktionsweise der Dependency Injection
 
-FastAPI führt `Depends()`-Parameter **vor** dem Funktionskörper aus. Schlägt die Prüfung fehl, wird die Route nie erreicht und FastAPI antwortet automatisch mit dem entsprechenden HTTP-Fehlercode.
+FastAPI führt `Depends()`-Parameter **vor** dem Funktionskörper aus. Schlägt die Prüfung fehl, wird die Route nie erreicht und FastAPI antwortet automatisch mit dem entsprechenden HTTP-Fehlercode. Admin-Routen nutzen `Depends(erfordert_rolle("Administrator", "Mitarbeiter"))` zum Schutz. Der `/auth/me`-Endpunkt liest den Token manuell aus dem Header.
 
 | Verwendung | Bedeutung |
 |---|---|
-| `benutzer=Depends(aktueller_benutzer)` | Route erfordert einen gültigen Login; das Benutzerobjekt wird im Funktionskörper verwendet (z. B. `benutzer.benutzer_id`) |
-| `_benutzer=Depends(aktueller_benutzer)` | Route erfordert einen gültigen Login; das Objekt wird im Körper **nicht** benötigt – `_` signalisiert „absichtlich unbenutzt" |
-| `_benutzer=Depends(erfordert_rolle("Administrator"))` | Route ist nur für Administratoren zugänglich; bei fehlender Berechtigung → `403 Forbidden` |
-| `_benutzer=Depends(erfordert_rolle("Administrator", "Mitarbeiter"))` | Mehrere Rollen erlaubt |
+| `Depends(erfordert_rolle("Administrator", "Mitarbeiter"))` | Route ist nur für Administratoren und Mitarbeiter zugänglich; bei fehlender Berechtigung → `403 Forbidden` |
 
 ---
 
@@ -1129,13 +1123,13 @@ Die im Fachkonzept definierten Anforderungen wurden weitgehend erfolgreich umges
 | --------------------------------- | --------- | ---------------------------------------------------------------------------- |
 | Digitalisierung des Sortiments    | Umgesetzt | Produktkatalog mit Such- und Filterfunktion online verfügbar, Provider-basiert mit dynamischen Kategorien |
 | Online-Bestellungen               | Umgesetzt | Warenkorb und Bestellprozess mit Datenbankpersistenz                         |
-| Automatische E-Mail-Bestätigung   | Umgesetzt | Integration mit Resend (SMTP) für Bestell- und Kontobenachrichtigungen       |
+| Automatische E-Mail-Bestätigung   | Geplant   | Resend-Integration ist in der Planung; Backend-Struktur ermöglicht einfachen Anschluss |
 | Login-System mit Rollenverwaltung | Umgesetzt | JWT-Token mit rollenbasierter Zugriffskontrolle                              |
-| Geschützter Admin-Bereich         | Umgesetzt | Dependency Injection prüft Benutzerrolle vor jeder Admin-Aktion              |
+| Geschützter Admin-Bereich         | Teilweise | Admin-Routen per DI geschützt; Frontend-Nav-Guards für nicht-Admin-Benutzer        |
 | Relationale Datenbank             | Umgesetzt | MySQL-Schema mit 6 Tabellen, CHECK-Constraints und referenzieller Integrität |
 | DSGVO-konforme Datenhaltung       | Umgesetzt | Passwörter als bcrypt-Hash, Datenschutzerklärung, Recht auf Löschung         |
 
-Das System ist stabil und die Datenhaltung durch Preis-Snapshots in den Bestellpositionen revisionssicher. Die Frontend-Architektur mit `provider` (ChangeNotifier) und spezialisierten Services (`KategorieService`, `ZustandService`) ermöglicht eine saubere Trennung von Zustandsverwaltung und UI. Die API-Endpunkte für Kategorien und Zustände werden zur Laufzeit vom Frontend geladen und gecacht, sodass keine Daten hartcodiert sind. Alle Projektphasen wurden innerhalb des geplanten Zeitrahmens von 80 Stunden abgeschlossen.
+Das System ist stabil und die Datenhaltung durch Preis-Snapshots in den Bestellpositionen revisionssicher. Die Frontend-Architektur mit `provider` (ChangeNotifier) und spezialisierten Services (`KategorieService`, `ZustandService`) ermöglicht eine saubere Trennung von Zustandsverwaltung und UI. Die API-Endpunkte für Kategorien und Zustände werden zur Laufzeit vom Frontend geladen und gecacht, sodass keine Daten hartcodiert sind. Admin-Screens sind über die Navigation nur für Benutzer mit Administrator- oder Mitarbeiter-Rolle verfügbar. Alle Projektphasen wurden innerhalb des geplanten Zeitrahmens von 80 Stunden abgeschlossen.
 
 ### 8.2 Aussichten
 In zukünftigen Versionen könnte das System um folgende Funktionen erweitert werden:

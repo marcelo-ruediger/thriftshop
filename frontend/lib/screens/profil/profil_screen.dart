@@ -235,7 +235,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.start);
+                      Navigator.of(context).pushNamed(Routes.login);
                     },
                     child: const Text('Zum Login'),
                   ),

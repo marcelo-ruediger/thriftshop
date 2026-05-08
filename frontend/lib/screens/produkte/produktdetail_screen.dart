@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
+import '../../router.dart';
 import '../../services/kategorie_service.dart';
 import '../../services/zustand_service.dart';
 import '../../models/produkt.dart';
@@ -440,7 +441,7 @@ class _ProduktDetailScreenState extends State<ProduktDetailScreen> {
             label: 'Ansehen',
             textColor: Colors.white,
             onPressed: () {
-              Navigator.pushNamed(context, '/warenkorb');
+              Navigator.pushNamed(context, Routes.warenkorb);
             },
           ),
         ),

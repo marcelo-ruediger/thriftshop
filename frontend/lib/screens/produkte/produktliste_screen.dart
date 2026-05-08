@@ -1,11 +1,11 @@
 /// Produktliste-Bildschirm für die Thriftshop-App
-/// Produktliste-Bildschirm für die Thriftshop-App
 library;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/product_provider.dart';
+import '../../router.dart';
 import '../../services/kategorie_service.dart';
 import '../../services/zustand_service.dart';
 import '../../models/produkt.dart';
@@ -46,7 +46,7 @@ class _ProduktListeScreenState extends State<ProduktListeScreen> {
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.pushNamed(context, '/warenkorb');
+              Navigator.pushNamed(context, Routes.warenkorb);
             },
           ),
         ],
