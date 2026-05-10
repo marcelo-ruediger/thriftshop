@@ -10,6 +10,7 @@ import '../../providers/order_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../router.dart';
+import '../../models/bestellung.dart';
 
 class BestellScreen extends StatefulWidget {
   final List<WarenkorbItem> items;
@@ -27,12 +28,11 @@ class BestellScreen extends StatefulWidget {
 
 class _BestellScreenState extends State<BestellScreen> {
   final _formKey = GlobalKey<FormState>();
-  // ignore: unused_field
   String _adresse = '';
-  // ignore: unused_field
   String _email = '';
   bool _bestellt = false;
   String? _fehler;
+  Bestellung? _erstelltBestellung;
 
   final List<String> _zahlungsmethoden = [
     'Rechnung',
@@ -61,12 +61,25 @@ class _BestellScreenState extends State<BestellScreen> {
 
     try {
       final orderProvider = context.read<OrderProvider>();
-      
-      await orderProvider.placeOrder(widget.items, widget.gesamtpreis);
+
+      // Neue Bestellung platzieren und erstellte Bestellung zur\u00fcckbekommen
+      final bestellung = await orderProvider.placeOrder(
+        widget.items,
+        widget.gesamtpreis,
+      );
+
+      // Katalog aktualisieren
+      await orderProvider.loadBestellungen();
 
       if (context.mounted) {
+        // Warenkorb leeren
         context.read<CartProvider>().clearCart();
-        
+
+        // Erfolgte Bestellung speichern f\u00fcr den Dialog
+        setState(() {
+          _erstelltBestellung = bestellung;
+        });
+
         // Erfolgs-Dialog anzeigen
         await showDialog(
           context: context,
@@ -79,8 +92,30 @@ class _BestellScreenState extends State<BestellScreen> {
               children: [
                 const Text('Ihre Bestellung wurde erfolgreich aufgegeben.'),
                 const SizedBox(height: 12),
+                if (_erstelltBestellung != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Bestellnummer: ${_erstelltBestellung!.bestellungId}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Laufende Nummer: ${_erstelltBestellung!.laufendeNr}',
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 Text(
-                  'Gesamtbetrag: ${widget.gesamtpreis.toStringAsFixed(2)} €',
+                  'Gesamtbetrag: ${widget.gesamtpreis.toStringAsFixed(2)} \u20ac',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -95,6 +130,16 @@ class _BestellScreenState extends State<BestellScreen> {
                   );
                 },
                 child: const Text('Weiter einkaufen'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    Routes.meineBestellungen,
+                    (route) => false,
+                  );
+                },
+                child: const Text('Meine Bestellungen'),
               ),
             ],
           ),
@@ -118,16 +163,12 @@ class _BestellScreenState extends State<BestellScreen> {
     if (widget.items.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Bestellung')),
-        body: const Center(
-          child: Text('Ihr Warenkorb ist leer.'),
-        ),
+        body: const Center(child: Text('Ihr Warenkorb ist leer.')),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bestellung aufgeben'),
-      ),
+      appBar: AppBar(title: const Text('Bestellung aufgeben')),
       body: _bestellt
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -167,7 +208,9 @@ class _BestellScreenState extends State<BestellScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimary,
                       ),
                       child: const Text(
                         'Kostenpflichtig bestellen',
@@ -189,28 +232,30 @@ class _BestellScreenState extends State<BestellScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Bestellübersicht',
+              'Bestell\u00fcbersicht',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Divider(height: 24),
-            ...widget.items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${item.produkt.bezeichnung} x ${item.menge}',
-                      style: const TextStyle(fontSize: 14),
+            ...widget.items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${item.produkt.bezeichnung} x ${item.menge}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
                     ),
-                  ),
-                  Text(
-                    '${(item.produkt.preis * item.menge).toStringAsFixed(2)} €',
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ],
+                    Text(
+                      '${(item.produkt.preis * item.menge).toStringAsFixed(2)} \u20ac',
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
             const Divider(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,7 +265,7 @@ class _BestellScreenState extends State<BestellScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '${widget.gesamtpreis.toStringAsFixed(2)} €',
+                  '${widget.gesamtpreis.toStringAsFixed(2)} \u20ac',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -246,7 +291,7 @@ class _BestellScreenState extends State<BestellScreen> {
         const SizedBox(height: 12),
         TextFormField(
           decoration: const InputDecoration(
-            labelText: 'Straße, Hausnummer',
+            labelText: 'Stra\u00dfe, Hausnummer',
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.home),
           ),
@@ -271,7 +316,7 @@ class _BestellScreenState extends State<BestellScreen> {
               return 'Bitte geben Sie Ihre E-Mail ein';
             }
             if (!value.contains('@')) {
-              return 'Ungültige E-Mail-Adresse';
+              return 'Ung\u00fcltige E-Mail-Adresse';
             }
             return null;
           },
@@ -297,10 +342,7 @@ class _BestellScreenState extends State<BestellScreen> {
             prefixIcon: Icon(Icons.payment),
           ),
           items: _zahlungsmethoden.map((methode) {
-            return DropdownMenuItem(
-              value: methode,
-              child: Text(methode),
-            );
+            return DropdownMenuItem(value: methode, child: Text(methode));
           }).toList(),
           onChanged: (value) {
             if (value != null) {

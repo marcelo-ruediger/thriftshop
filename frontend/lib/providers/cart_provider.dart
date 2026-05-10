@@ -29,18 +29,19 @@ class CartProvider with ChangeNotifier {
   }
 
   void addItem(Produkt produkt, {int quantity = 1}) {
-    final existingItem = _items.firstWhere(
+    // Prüfen ob das Produkt bereits im Warenkorb ist
+    final existingIndex = _items.indexWhere(
       (item) => item.produkt.produktId == produkt.produktId,
-      orElse: () => WarenkorbItem(produkt: produkt, menge: 0),
     );
 
-    if (existingItem.produkt.produktId == produkt.produktId) {
-      existingItem.menge += quantity;
-      notifyListeners();
+    if (existingIndex != -1) {
+      // Produkt existiert bereits - Menge erhöhen
+      _items[existingIndex].menge += quantity;
     } else {
+      // Neues Produkt zum Warenkorb hinzufügen
       _items.add(WarenkorbItem(produkt: produkt, menge: quantity));
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   void removeItem(String produktId) {

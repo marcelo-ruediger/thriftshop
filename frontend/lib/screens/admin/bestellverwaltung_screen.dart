@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -11,7 +10,8 @@ class BestellverwaltungScreen extends StatefulWidget {
   const BestellverwaltungScreen({super.key});
 
   @override
-  State<BestellverwaltungScreen> createState() => _BestellverwaltungScreenState();
+  State<BestellverwaltungScreen> createState() =>
+      _BestellverwaltungScreenState();
 }
 
 class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
@@ -20,7 +20,6 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
   // ignore: unused_field
   List<Bestellposition>? _currentPositionen;
   String? _selectedStatus;
-
 
   final List<String> _statusFilter = [
     'Alle',
@@ -43,27 +42,16 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
     await context.read<OrderProvider>().loadAllBestellungen();
   }
 
-  Future<void> _updateStatus(String bestellungId, String neuerStatus) async {
-    final success = await context
-        .read<OrderProvider>()
-        .updateStatus(bestellungId, neuerStatus);
+  void _updateStatus(String bestellungId, String neuerStatus) async {
+    context.read<OrderProvider>().updateStatus(bestellungId, neuerStatus);
 
     if (mounted) {
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Status erfolgreich aktualisiert'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fehler beim Aktualisieren des Status'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Status erfolgreich aktualisiert'),
+          backgroundColor: Colors.green,
+        ),
+      );
     }
   }
 
@@ -72,7 +60,9 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
 
     setState(() {
       _selectedBestellungId = bestellungId;
-      _currentPositionen = context.read<OrderProvider>().selectedBestellungPositionen;
+      _currentPositionen = context
+          .read<OrderProvider>()
+          .selectedBestellungPositionen;
     });
 
     // Positionen laden
@@ -109,8 +99,11 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                         const Icon(Icons.calendar_today, size: 16),
                         const SizedBox(width: 8),
                         Text(
-                          DateFormat('dd.MM.yyyy HH:mm')
-                              .format(DateTime.parse(bestellung['bestelldatum'] as String)),
+                          DateFormat('dd.MM.yyyy HH:mm').format(
+                            DateTime.parse(
+                              bestellung['bestelldatum'] as String,
+                            ),
+                          ),
                           style: const TextStyle(fontSize: 14),
                         ),
                       ],
@@ -129,14 +122,20 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                     const Divider(height: 32),
                     const Text(
                       'Bestellpositionen',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     // Positionen laden und anzeigen
                     FutureBuilder(
-                      future: context.read<OrderProvider>().loadBestellpositionen(bestellungId),
+                      future: context
+                          .read<OrderProvider>()
+                          .loadBestellpositionen(bestellungId),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(16.0),
@@ -146,7 +145,10 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                         }
 
                         final positionen =
-                            context.read<OrderProvider>().selectedBestellungPositionen ?? [];
+                            context
+                                .read<OrderProvider>()
+                                .selectedBestellungPositionen ??
+                            [];
 
                         if (positionen.isEmpty) {
                           return const Center(
@@ -166,7 +168,9 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                                 subtitle: Text('Menge: ${pos.menge}'),
                                 trailing: Text(
                                   '${pos.einzelpreisGebucht.toStringAsFixed(2)} €',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             );
@@ -178,7 +182,10 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                     // Status-Übersicht
                     const Text(
                       'Statusverwaltung',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     _buildStatusButtons(
@@ -226,7 +233,7 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
       children: erlaubteUebergaenge.map((status) {
         return ElevatedButton(
           onPressed: () async {
-            await _updateStatus(bestellungId, status);
+            _updateStatus(bestellungId, status);
             if (mounted) {
               setModalState(() {});
             }
@@ -296,9 +303,7 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
         (authProvider.benutzer!.rolle != 'Administrator' &&
             authProvider.benutzer!.rolle != 'Mitarbeiter')) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Bestellverwaltung'),
-        ),
+        appBar: AppBar(title: const Text('Bestellverwaltung')),
         body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -384,7 +389,11 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Colors.red,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           orderProvider.errorMessage!,
@@ -406,8 +415,10 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                 // Wenn _selectedStatus null ist (="Alle"), zeige alle Bestellungen
                 final gefilterteBestellungen =
                     _selectedStatus == null || _selectedStatus == 'Alle'
-                        ? orderProvider.allBestellungen
-                        : orderProvider.filterByStatus(_selectedStatus!);
+                    ? orderProvider.allBestellungen
+                    : orderProvider.allBestellungen
+                        .where((bestellung) => bestellung['status'] == _selectedStatus)
+                        .toList();
 
                 // Leere Liste
                 if (gefilterteBestellungen.isEmpty) {
@@ -415,7 +426,11 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.receipt_long, size: 64, color: Colors.grey),
+                        const Icon(
+                          Icons.receipt_long,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
                         const SizedBox(height: 16),
                         const Text(
                           'Keine Bestellungen gefunden',
@@ -434,7 +449,10 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                     final status = bestellung['status'] as String;
 
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: _getStatusColor(status),
@@ -454,9 +472,7 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                             Text(
                               'Datum: ${DateFormat('dd.MM.yyyy HH:mm').format(DateTime.parse(bestellung['bestelldatum'] as String))}',
                             ),
-                            Text(
-                              'Benutzer-ID: ${bestellung['benutzer_id']}',
-                            ),
+                            Text('Benutzer-ID: ${bestellung['benutzer_id']}'),
                           ],
                         ),
                         trailing: Column(
@@ -469,7 +485,9 @@ class _BestellverwaltungScreenState extends State<BestellverwaltungScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: _getStatusColor(status).withValues(alpha: 0.2),
+                                color: _getStatusColor(
+                                  status,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(

@@ -64,7 +64,10 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
-  Future<void> placeOrder(List<WarenkorbItem> items, double totalPrice) async {
+  /// Platziert eine neue Bestellung und gibt die erstellte Bestellung zurück
+  /// 
+  /// Gibt das erstellte [Bestellung]-Objekt mit der backend-generierten ID und Bestellnummer zurück.
+  Future<Bestellung> placeOrder(List<WarenkorbItem> items, double totalPrice) async {
     _isLoading = true;
     notifyListeners();
 
@@ -87,8 +90,23 @@ class OrderProvider with ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
-        // Bestellung erfolgreich
-        await loadBestellungen();
+        // Neue Bestellung aus der Response erstellen
+        final responseData = response.data as Map<String, dynamic>;
+        final newBestellung = Bestellung(
+          bestellungId: responseData['bestellung_id'] as String,
+          laufendeNr: (responseData['laufende_nr'] as num).toInt(),
+          status: responseData['status'] as String,
+          bestelldatum: DateTime.now(), // Wird vom Backend gesetzt, wir ermitteln es nicht
+          benutzerId: '', // Wird später beim Laden aktualisiert
+        );
+
+        // Bestellung zur Liste hinzufügen
+        _bestellungen.insert(0, newBestellung);
+        
+        // Neuen Kunden-Bereich synchronisieren
+        notifyListeners();
+
+        return newBestellung;
       } else {
         throw Exception('Bestellung fehlgeschlagen');
       }
@@ -104,76 +122,60 @@ class OrderProvider with ChangeNotifier {
     await loadBestellungen();
   }
 
-  /// Admin: Alle Bestellungen laden
-  Future<void> loadAllBestellungen({int limit = 100, int offset = 0}) async {
+  Future<List<Bestellung>> loadAllBestellungen({int limit = 50, int offset = 0}) async {
     _isLoading = true;
-    _errorMessage = null;
     notifyListeners();
 
     try {
       final response = await _apiService.get(
-        '/bestellungen/?limit=$limit&offset=$offset',
+        '/bestellungen/',
+        queryParameters: {'limit': limit, 'offset': offset},
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
-        _allBestellungen = data
-            .map((item) => item as Map<String, dynamic>)
+        _allBestellungen = data.cast<Map<String, dynamic>>();
+        return _allBestellungen
+            .map((item) => Bestellung.fromJson(item))
             .toList();
       } else {
-        _errorMessage = 'Konnte Bestellungen nicht laden';
+        throw Exception('Konnte alle Bestellungen nicht laden');
       }
     } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Laden: $e';
+      throw Exception('Fehler beim Laden: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Admin: Bestellstatus aktualisieren
-  Future<bool> updateStatus(String bestellungId, String neuerStatus) async {
+  Future<void> updateStatus(String bestellungId, String neuerStatus) async {
     try {
       final response = await _apiService.patch(
         '/bestellungen/$bestellungId/status',
-        data: {'neuer_status': neuerStatus},
+        data: neuerStatus,
       );
       if (response.statusCode == 200) {
         await loadAllBestellungen();
-        return true;
       }
-      return false;
     } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Aktualisieren: $e';
-      notifyListeners();
-      return false;
+      throw Exception('Fehler beim Aktualisieren des Status: $e');
     }
   }
 
-  /// Admin: Bestellpositionen für eine Bestellung laden
-  Future<void> loadBestellpositionen(String bestellungId) async {
+  Future<List<Bestellposition>> loadBestellpositionen(String bestellungId) async {
     try {
-      final response = await _apiService.get('/bestellungen/$bestellungId');
+      final response = await _apiService.get('/bestellposition/bestellung/$bestellungId');
       if (response.statusCode == 200) {
-        final data = response.data as Map<String, dynamic>;
-        if (data['bestellpositionen'] != null) {
-          _selectedBestellungPositionen = (data['bestellpositionen'] as List)
-              .map(
-                (pos) => Bestellposition.fromJson(pos as Map<String, dynamic>),
-              )
-              .toList();
-        }
+        final List<dynamic> data = response.data;
+        _selectedBestellungPositionen = data
+            .map((item) => Bestellposition.fromJson(item as Map<String, dynamic>))
+            .toList();
+        return _selectedBestellungPositionen!;
+      } else {
+        throw Exception('Konnte Bestellpositionen nicht laden');
       }
     } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Laden der Positionen: $e';
-      notifyListeners();
+      throw Exception('Fehler beim Laden: $e');
     }
-  }
-
-  /// Admin: Bestellungen nach Status filtern
-  List<Map<String, dynamic>> filterByStatus(String status) {
-    if (status.isEmpty || status == 'Alle') {
-      return _allBestellungen;
-    }
-    return _allBestellungen.where((b) => b['status'] == status).toList();
   }
 }

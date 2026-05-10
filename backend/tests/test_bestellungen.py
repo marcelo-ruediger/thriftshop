@@ -12,28 +12,29 @@ from app.main import app
 client = TestClient(app, raise_server_exceptions=False)
 
 
-def _neue_bestelldaten(benutzer_id: str) -> dict:
-    """Erzeugt eindeutige Bestelldaten für jeden Testlauf."""
-    eindeutige_id = str(uuid.uuid4())
+def _neue_bestelldaten(benutzer_id: str, produkt_id: str = None) -> dict:
+    """Erzeugt eindeutige Bestelldaten für jeden Testlauf im neuen Frontend-Format.
+    
+    Gibt ein Dict mit bestellpositionen und gesamtpreis zurück, wie vom
+    Backend-POST /bestellungen erwartet.
+    """
+    preis = 9.99
+    menge = 2
+    if produkt_id:
+        return {
+            "bestellpositionen": [
+                {
+                    "produkt_id": produkt_id,
+                    "menge": menge,
+                    "preis": str(preis),
+                }
+            ],
+            "gesamtpreis": preis * menge,
+        }
+    # Ohne produkt_id: leere Bestellung für Status-Tests
     return {
-        "bestellung_id": eindeutige_id,
-        "laufende_nr": uuid.uuid4().int % 100000,
-        "status": "Offen",
-        "bestelldatum": "2026-04-20T10:00:00",
-        "benutzer_id": benutzer_id,
-    }
-
-
-def _neue_bestellposition(bestellung_id: str, produkt_id: str) -> dict:
-    """Erzeugt eine gültige Bestellposition mit Snapshot-Feldern."""
-    return {
-        "bestellposition_id": str(uuid.uuid4()),
-        "menge": 2,
-        "einzelpreis_gebucht": "9.99",
-        "rabatt_angewendet": "0.00",
-        "steuersatz_gebucht": "19.00",
-        "produkt_id": produkt_id,
-        "bestellung_id": bestellung_id,
+        "bestellpositionen": [],
+        "gesamtpreis": 0,
     }
 
 
@@ -101,38 +102,50 @@ class TestBestellungenSchreiben:
         produkt_antwort = client.post("/produkte", json=produkt)
         assert produkt_antwort.status_code == 201
 
-        # 2) Bestellung + Position erstellen
-        bestellung = _neue_bestelldaten(benutzer_id)
-        position = _neue_bestellposition(
-            bestellung["bestellung_id"], produkt["produkt_id"]
-        )
-
+        # 2) Bestellung mit Position im Frontend-Format erstellen
         antwort = client.post(
             "/bestellungen/",
-            json={"bestellung": bestellung, "positionen": [position]},
+            json=_neue_bestelldaten(benutzer_id, produkt["produkt_id"]),
             headers={"Authorization": f"Bearer {auth_token}"},
         )
         assert antwort.status_code == 201
-        assert antwort.json()["bestellung_id"] == bestellung["bestellung_id"]
+        antwort_data = antwort.json()
+        assert "bestellung_id" in antwort_data
+        # 3) Verify die Bestellung hat mindestens eine Position
+        position_antwort = client.get(
+            f"/bestellpositionen/bestellung/{antwort_data['bestellung_id']}"
+        )
+        assert position_antwort.status_code == 200
+        positionen = position_antwort.json()
+        assert len(positionen) >= 1
+        assert positionen[0]["produkt_id"] == produkt["produkt_id"]
 
     def test_bestellstatus_aktualisieren(
-        self, auth_token: str, admin_token: str, benutzer_id: str
+        self, auth_token: str, admin_token: str, benutzer_id: str, zustand_id: str, kategorie_id: str
     ) -> None:
-        # Für den Status-Test reichen leere Positionen
-        bestellung = _neue_bestelldaten(benutzer_id)
-        client.post(
+        # Zuerst ein Produkt erstellen
+        produkt = _neue_produktdaten(zustand_id, kategorie_id)
+        produkt_antwort = client.post("/produkte", json=produkt)
+        assert produkt_antwort.status_code == 201
+
+        # Dann eine Bestellung im Frontend-Format erstellen
+        antwort = client.post(
             "/bestellungen/",
-            json={"bestellung": bestellung, "positionen": []},
+            json=_neue_bestelldaten(benutzer_id, produkt["produkt_id"]),
             headers={"Authorization": f"Bearer {auth_token}"},
         )
+        assert antwort.status_code == 201
+        bestell_data = antwort.json()
+        bestellung_id = bestell_data["bestellung_id"]
 
+        # Status auf "In Bearbeitung" setzen
         antwort = client.patch(
-            f"/bestellungen/{bestellung['bestellung_id']}/status",
+            f"/bestellungen/{bestellung_id}/status",
             params={"neuer_status": "In Bearbeitung"},
             headers={"Authorization": f"Bearer {admin_token}"},
         )
         assert antwort.status_code == 200
         assert antwort.json() == {
-            "bestellung_id": bestellung["bestellung_id"],
+            "bestellung_id": bestellung_id,
             "status": "In Bearbeitung",
         }
