@@ -24,6 +24,10 @@ class _ProduktDetailScreenState extends State<ProduktDetailScreen> {
   int _menge = 1;
   bool _isFavorite = false;
   bool _isAddingToCart = false;
+  // Lokaler SnackBar-Status
+  bool _showSnackbar = false;
+  String _snackbarMessage = '';
+  bool _snackbarError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -343,6 +347,64 @@ class _ProduktDetailScreenState extends State<ProduktDetailScreen> {
               ),
             ),
           ),
+          // Lokaler SnackBar (nur auf diesem Screen, verschwindet automatisch nach 5 Sekunden)
+          if (_showSnackbar)
+            Positioned(
+              bottom: 80,
+              left: 16,
+              right: 16,
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _snackbarError ? Colors.red : Color(0xFF8B4513),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _snackbarError ? Icons.error : Icons.check_circle,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _snackbarMessage,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _showSnackbar = false;
+                          });
+                        },
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           // Fixed bottom button
           Container(
             padding: const EdgeInsets.all(16.0),
@@ -427,39 +489,48 @@ class _ProduktDetailScreenState extends State<ProduktDetailScreen> {
 
       if (!mounted) return;
 
-      // Erfolgsmeldung anzeigen
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '${widget.produkt.bezeichnung} (${_menge}x) hinzugefügt',
-          ),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          action: SnackBarAction(
-            label: 'Ansehen',
-            textColor: Colors.white,
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.warenkorb);
-            },
-          ),
-        ),
-      );
+      // Loading-Zustand zurücksetzen – Button wieder aktiv
+      setState(() {
+        _isAddingToCart = false;
+      });
 
-      // Zurück zur Produktliste
-      Navigator.pop(context);
+      // Erfolgsmeldung anzeigen (verschwindet nach 5 Sekunden automatisch)
+      _showLocalSnackBar(
+        message: '${widget.produkt.bezeichnung} (${_menge}x) hinzugefügt',
+        duration: const Duration(seconds: 5),
+        isError: false,
+      );
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _isAddingToCart = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Fehler beim Hinzufügen: $e'),
-          backgroundColor: Colors.red,
-        ),
+      _showLocalSnackBar(
+        message: 'Fehler beim Hinzufügen: $e',
+        duration: const Duration(seconds: 5),
+        isError: true,
       );
     }
+  }
+
+  void _showLocalSnackBar({
+    required String message,
+    required Duration duration,
+    bool isError = false,
+  }) {
+    setState(() {
+      _showSnackbar = true;
+      _snackbarMessage = message;
+      _snackbarError = isError;
+    });
+
+    // Auto-hide nach der angegebenen Duration
+    Future.delayed(duration, () {
+      if (mounted && _showSnackbar) {
+        setState(() {
+          _showSnackbar = false;
+        });
+      }
+    });
   }
 }

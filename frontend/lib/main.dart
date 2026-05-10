@@ -60,7 +60,7 @@ class ThriftShopApp extends StatelessWidget {
           Routes.registration: (context) => const RegistrationScreen(),
           Routes.produktdetail: (context) =>
               throw UnsupportedError('Use arguments'),
-          Routes.warenkorb: (context) => const MainNavigation(),
+          Routes.warenkorb: (context) => const WarenkorbScreen(),
           Routes.bestell: (context) => throw UnsupportedError('Use arguments'),
           Routes.profil: (context) => const MainNavigation(),
         },
