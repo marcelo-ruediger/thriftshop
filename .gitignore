@@ -24,3 +24,13 @@ openapi.json
 stop_backend.sh
 status_backend.sh
 start_backend.sh
+
+# MacOS Dateien
+.DS_Store
+Podfile
+frontend/macos/Flutter/Flutter-Debug.xcconfig
+frontend/macos/Flutter/Flutter-Release.xcconfig
+
+# iOS
+frontend/ios/Flutter/Debug.xcconfig
+frontend/ios/Flutter/Release.xcconfig
