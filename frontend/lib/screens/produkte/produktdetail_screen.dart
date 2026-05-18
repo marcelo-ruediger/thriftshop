@@ -1,17 +1,15 @@
-/// Produktdetail-Bildschirm für die Thriftshop-App
-/// Zeigt Produktdetails und ermöglicht das Hinzufügen zum Warenkorb
+/// Detail-Screen für Produkte
+/// Zeigt alle Produktdetails inklusive Bild, Preis, Beschreibung etc.
 library;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
-import '../../router.dart';
-import '../../services/kategorie_service.dart';
-import '../../services/zustand_service.dart';
 import '../../models/produkt.dart';
 
 class ProduktDetailScreen extends StatefulWidget {
+  /// Das angezeigte Produkt
   final Produkt produkt;
 
   const ProduktDetailScreen({super.key, required this.produkt});
@@ -21,516 +19,407 @@ class ProduktDetailScreen extends StatefulWidget {
 }
 
 class _ProduktDetailScreenState extends State<ProduktDetailScreen> {
+  /// Ausgewählte Menge
   int _menge = 1;
-  bool _isFavorite = false;
-  bool _isAddingToCart = false;
-  // Lokaler SnackBar-Status
-  bool _showSnackbar = false;
-  String _snackbarMessage = '';
-  bool _snackbarError = false;
+
+  /// Gibt an, ob das Produkt favorisiert ist
+  bool _isFavorit = false;
 
   @override
   Widget build(BuildContext context) {
-    final zustandService = context.watch<ZustandService>();
-    final kategorieService = context.watch<KategorieService>();
-
-    final zustandName = zustandService.getZustandName(widget.produkt.zustandId);
-    final zustandColor = zustandService.getZustandColor(
-      widget.produkt.zustandId,
-    );
-    final kategorieName = kategorieService.getKategorieName(
-      widget.produkt.kategorieId,
-    );
-    final rabattierterPreis = _berechneRabattiertenPreis();
+    final theme = Theme.of(context);
+    final aktuellerPreis = _getAktuellerPreis();
+    final farbe = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Produktdetails'),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: _isFavorite ? Colors.red : null,
-            ),
-            onPressed: () {
-              setState(() {
-                _isFavorite = !_isFavorite;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    _isFavorite
-                        ? 'Zur Favoritenliste hinzugefügt'
-                        : 'Aus Favoritenliste entfernt',
-                  ),
-                  duration: const Duration(seconds: 1),
+      body: CustomScrollView(
+        slivers: [
+          // App Bar mit Bild-Hintergrund
+          SliverAppBar(
+            expandedHeight: 300,
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(background: _buildBildHeader()),
+            actions: [
+              // Favoriten-Button
+              IconButton(
+                icon: Icon(
+                  _isFavorit ? Icons.favorite : Icons.favorite_border,
+                  color: _isFavorit ? Colors.red : Colors.white,
                 ),
-              );
-            },
+                onPressed: () {
+                  setState(() {
+                    _isFavorit = !_isFavorit;
+                  });
+                  if (_isFavorit) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Zur Favoritenliste hinzugefügt'),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  }
+                },
+              ),
+              // Teilen-Button
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Teilen-Funktion kommt bald!'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+            ],
+            backgroundColor: Colors.grey[200],
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Produktbild-Platzhalter
-          Container(
-            height: 300,
-            color: Colors.grey.shade200,
-            child: const Center(
-              child: Icon(Icons.image_outlined, size: 80, color: Colors.grey),
-            ),
-          ),
-          // Scrollable product details
-          Expanded(
-            child: SingleChildScrollView(
+
+          // Produktdetails
+          SliverToBoxAdapter(
+            child: Container(
+              color: Colors.white,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Kategorie und Zustand
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            kategorieName,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.blue.shade700,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        if (zustandName != 'Unbekannt')
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: zustandColor.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              zustandName,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: zustandColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // Produktname
+                    // Produktname und ID
                     Text(
                       widget.produkt.bezeichnung,
-                      style: const TextStyle(
-                        fontSize: 26,
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    // Produkt-ID und Artikelnummer
-                    Row(
-                      children: [
-                        Text(
-                          'ID: ${widget.produkt.produktId}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          'Art.-Nr: ${widget.produkt.produktnr}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 4),
+                    Text(
+                      'Artikel-Nr: ${widget.produkt.produktnr}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    // Preis
-                    if (widget.produkt.produktRabatt > 0)
-                      Row(
+
+                    // Preisbereich
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: farbe.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '${rabattierterPreis.toStringAsFixed(2)} €',
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF8B4513),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            '${widget.produkt.preis.toStringAsFixed(2)} €',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey.shade500,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              '-${widget.produkt.produktRabatt.toStringAsFixed(0)}%',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    else
-                      Text(
-                        '${widget.produkt.preis.toStringAsFixed(2)} €',
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8B4513),
-                        ),
-                      ),
-                    const SizedBox(height: 24),
-                    // Beschreibung
-                    if (widget.produkt.produktInfo.isNotEmpty)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Beschreibung',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            widget.produkt.produktInfo,
-                            style: TextStyle(
-                              fontSize: 15,
-                              height: 1.5,
-                              color: Colors.grey.shade800,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
-                    // Produkt-Details
-                    _buildDetailRow(
-                      'Lagerbestand',
-                      '${widget.produkt.lagerbestand} verfügbar',
-                    ),
-                    _buildDetailRow(
-                      'Rabatt',
-                      widget.produkt.produktRabatt > 0
-                          ? '${widget.produkt.produktRabatt.toStringAsFixed(0)}%'
-                          : 'Kein Rabatt',
-                    ),
-                    _buildDetailRow(
-                      'Aktiv',
-                      widget.produkt.produktAktiv ? 'Ja' : 'Nein',
-                    ),
-                    const SizedBox(height: 24),
-                    // Menge-Auswahl
-                    const Text(
-                      'Menge',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        // Mengen-Steuerung
-                        Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              IconButton(
-                                onPressed: _menge > 1
-                                    ? () => setState(() => _menge--)
-                                    : null,
-                                icon: const Icon(Icons.remove),
-                                color: Color(0xFF8B4513),
-                                disabledColor: Colors.grey.shade400,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 8,
-                                ),
-                                child: Text(
-                                  '$_menge',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                              if (widget.produkt.produktRabatt > 0)
+                                Text(
+                                  '${widget.produkt.preis.toStringAsFixed(2)} €',
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                    decoration: TextDecoration.lineThrough,
                                   ),
                                 ),
+                              Text(
+                                '${aktuellerPreis.toStringAsFixed(2)} €',
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                  color: farbe.onPrimaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              IconButton(
-                                onPressed: _menge < widget.produkt.lagerbestand
-                                    ? () => setState(() => _menge++)
-                                    : null,
-                                icon: const Icon(Icons.add),
-                                color: Color(0xFF8B4513),
-                                disabledColor: Colors.grey.shade400,
+                              if (widget.produkt.produktRabatt > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Chip(
+                                    label: Text(
+                                      '-${widget.produkt.produktRabatt.toInt()}%',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const Chip(
+                                label: Text(
+                                  'Auf Lager',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                backgroundColor: Colors.green,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Kategorie: ${widget.produkt.kategorieId.substring(0, 8)}...',
+                                style: theme.textTheme.bodySmall,
+                              ),
+                              Text(
+                                'Zustand: ${widget.produkt.zustandId.substring(0, 8)}...',
+                                style: theme.textTheme.bodySmall,
                               ),
                             ],
                           ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Beschreibung
+                    if (widget.produkt.produktInfo.isNotEmpty) ...[
+                      Text(
+                        'Beschreibung',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          widget.produkt.produktInfo,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    // Menge-Auswahl
+                    Text(
+                      'Menge',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // MINUS Button
+                        SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: OutlinedButton(
+                            onPressed: _menge > 1
+                                ? () {
+                                    setState(() {
+                                      _menge--;
+                                    });
+                                  }
+                                : null,
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: const Icon(Icons.remove),
+                          ),
                         ),
                         const SizedBox(width: 16),
-                        // Gesamtpreis
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(12),
+                        // Mengenanzeige
+                        Container(
+                          width: 60,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '$_menge',
+                              style: theme.textTheme.headlineSmall,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Gesamtpreis',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey.shade700,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${(_berechneRabattiertenPreis() * _menge).toStringAsFixed(2)} €',
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8B4513),
-                                  ),
-                                ),
-                              ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // PLUS Button
+                        SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: OutlinedButton(
+                            onPressed: _menge < widget.produkt.lagerbestand
+                                ? () {
+                                    setState(() {
+                                      _menge++;
+                                    });
+                                  }
+                                : null,
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              padding: EdgeInsets.zero,
                             ),
+                            child: const Icon(Icons.add),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${widget.produkt.lagerbestand} Stück verfügbar',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
           ),
-          // Lokaler SnackBar (nur auf diesem Screen, verschwindet automatisch nach 5 Sekunden)
-          if (_showSnackbar)
-            Positioned(
-              bottom: 80,
-              left: 16,
-              right: 16,
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _snackbarError ? Colors.red : Color(0xFF8B4513),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _snackbarError ? Icons.error : Icons.check_circle,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _snackbarMessage,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _showSnackbar = false;
-                          });
-                        },
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ],
+        ],
+      ),
+      // Bottom Action Bar
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Gesamtpreis
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Gesamtpreis',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
                   ),
                 ),
-              ),
-            ),
-          // Fixed bottom button
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, -2),
+                Text(
+                  '${(aktuellerPreis * _menge).toStringAsFixed(2)} €',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: farbe.primary,
+                  ),
                 ),
               ],
             ),
-            child: ElevatedButton.icon(
-              onPressed: _isAddingToCart ? null : _addToCart,
-              icon: _isAddingToCart
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                      ),
-                    )
-                  : const Icon(Icons.shopping_cart),
-              label: const Text(
-                'In den Warenkorb',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF8B4513),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            const SizedBox(width: 16),
+            // Zum Warenkorb hinzufügen Button
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: _fuerWarenkorbHinzufuegen,
+                icon: const Icon(Icons.shopping_cart_outlined),
+                label: const Text('In den Warenkorb'),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+  /// Berechnet den aktuellen Preis mit Rabatt
+  double _getAktuellerPreis() {
+    final rabatt = widget.produkt.produktRabatt;
+    if (rabatt > 0) {
+      return widget.produkt.preis * (1 - rabatt / 100);
+    }
+    return widget.produkt.preis;
+  }
+
+  /// Build für das Produktbild mit Platzhalter
+  Widget _buildBildHeader() {
+    final bildpfad = widget.produkt.bildpfad;
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Center(
+            child: bildpfad != null && bildpfad.isNotEmpty
+                ? Image.asset(
+                    'assets/produktbilder/$bildpfad',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _buildBildPlatzhalter();
+                    },
+                  )
+                : _buildBildPlatzhalter(),
           ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  double _berechneRabattiertenPreis() {
-    if (widget.produkt.produktRabatt <= 0) {
-      return widget.produkt.preis;
-    }
-    final rabatt = widget.produkt.preis * (widget.produkt.produktRabatt / 100);
-    return widget.produkt.preis - rabatt;
+  /// Build für den Bild-Platzhalter
+  Widget _buildBildPlatzhalter() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.image_not_supported_outlined,
+          size: 64,
+          color: Colors.grey[400],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Kein Bild verfügbar',
+          style: TextStyle(color: Colors.grey[600], fontSize: 14),
+        ),
+      ],
+    );
   }
 
-  Future<void> _addToCart() async {
-    setState(() {
-      _isAddingToCart = true;
-    });
+  /// Fügt das Produkt zum Warenkorb hinzu
+  void _fuerWarenkorbHinzufuegen() {
+    final cartProvider = context.read<CartProvider>();
+    cartProvider.addItem(widget.produkt, quantity: _menge);
 
-    try {
-      // CartProvider aktualisieren
-      final cartProvider = context.read<CartProvider>();
-      cartProvider.addItem(widget.produkt, quantity: _menge);
-
-      if (!mounted) return;
-
-      // Loading-Zustand zurücksetzen – Button wieder aktiv
-      setState(() {
-        _isAddingToCart = false;
-      });
-
-      // Erfolgsmeldung anzeigen (verschwindet nach 5 Sekunden automatisch)
-      _showLocalSnackBar(
-        message: '${widget.produkt.bezeichnung} (${_menge}x) hinzugefügt',
-        duration: const Duration(seconds: 5),
-        isError: false,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isAddingToCart = false;
-      });
-      _showLocalSnackBar(
-        message: 'Fehler beim Hinzufügen: $e',
-        duration: const Duration(seconds: 5),
-        isError: true,
-      );
-    }
-  }
-
-  void _showLocalSnackBar({
-    required String message,
-    required Duration duration,
-    bool isError = false,
-  }) {
-    setState(() {
-      _showSnackbar = true;
-      _snackbarMessage = message;
-      _snackbarError = isError;
-    });
-
-    // Auto-hide nach der angegebenen Duration
-    Future.delayed(duration, () {
-      if (mounted && _showSnackbar) {
-        setState(() {
-          _showSnackbar = false;
-        });
-      }
-    });
+    // Zeigt eine Bestätigungsnachricht
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${widget.produkt.bezeichnung} (x$_menge) zum Warenkorb hinzugefügt!',
+        ),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+        action: SnackBarAction(
+          label: 'Ansehen',
+          textColor: Colors.white,
+          onPressed: () {
+            // TODO: Zur Warenkorb-Seite navigieren
+          },
+        ),
+      ),
+    );
   }
 }

@@ -1,6 +1,7 @@
 """
-Datenbankinitialisierung - erstellt alle Tabellen anhand des definierten Schemas.
-Ausführen mit: python backend/init_db.py
+Datenbankinitialisierung - erstellt alle Tabellen anhand des definierten Schemas
+.
+Ausfuehren mit: python backend/init_db.py
 """
 
 import mysql.connector
@@ -65,7 +66,7 @@ def init_db():
     """)
 
     # Bestellungstabelle -----------------------------
-    # ON DELETE RESTRICT für Archivierung
+    # ON DELETE RESTRICT f�r Archivierung
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS bestellung (
             bestellung_id CHAR(36) PRIMARY KEY,   
@@ -85,7 +86,7 @@ def init_db():
 
     # Produkttabelle -----------------------------------
     # produkt_rabatt DEFAULT 0.00 -> Vereinfacht Backend Rechenlogik, SQL-Abfragen und vermeidet "NullPointerExceptions"
-    # ON DELETE RESTRICT -> Verhindert das Löschen von zustand_id und kategorie_id, solange noch Produkte darauf verweisen
+    # ON DELETE RESTRICT -> Verhindert das L�schen von zustand_id und kategorie_id, solange noch Produkte darauf verweisen
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS produkt (
             produkt_id CHAR(36) PRIMARY KEY,
@@ -101,6 +102,7 @@ def init_db():
                    
             zustand_id CHAR(36) NOT NULL,
             kategorie_id CHAR(36) NOT NULL,
+            bildpfad VARCHAR(255) DEFAULT NULL,
             
             CONSTRAINT fk_produkt_zustand
                 FOREIGN KEY (zustand_id)

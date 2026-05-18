@@ -36,6 +36,9 @@ class Produkt {
   /// Die ID der Kategorie des Produkts
   final String kategorieId;
 
+  /// Der Pfad zum Produktbild (Dateiname, z.B. "001_gel1.png")
+  final String? bildpfad;
+
   /// Gibt an, ob das Produkt aktiv ist
   final bool produktAktiv;
 
@@ -57,6 +60,7 @@ class Produkt {
     required this.lagerbestand,
     required this.zustandId,
     required this.kategorieId,
+    this.bildpfad,
     this.produktAktiv = true,
     required this.produktnr,
     DateTime? erstellungsdatum,
@@ -75,7 +79,10 @@ class Produkt {
       lagerbestand: (json['lagerbestand'] as num).toInt(),
       zustandId: json['zustand_id'] as String,
       kategorieId: json['kategorie_id'] as String,
-      produktAktiv: json['produkt_aktiv'] == true || json['produkt_aktiv'] == 1 ? true : false,
+      bildpfad: json['bildpfad'] as String?,
+      produktAktiv: json['produkt_aktiv'] == true || json['produkt_aktiv'] == 1
+          ? true
+          : false,
       erstellungsdatum: json['erstellungsdatum'] == null
           ? null
           : DateTime.parse(json['erstellungsdatum'] as String),
@@ -96,6 +103,7 @@ class Produkt {
       'lagerbestand': lagerbestand,
       'zustand_id': zustandId,
       'kategorie_id': kategorieId,
+      'bildpfad': bildpfad,
       'produkt_aktiv': produktAktiv,
       'erstellungsdatum': erstellungsdatum?.toIso8601String(),
       'produktnr': produktnr,
