@@ -107,8 +107,8 @@ class ProduktDAO:
                     INSERT INTO produkt (
                         produkt_id, laufende_nr, bezeichnung, slug, produkt_info,
                         preis, produkt_rabatt, lagerbestand,
-                        zustand_id, kategorie_id, produkt_aktiv, erstellungsdatum
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        zustand_id, kategorie_id, bildpfad, produkt_aktiv, erstellungsdatum
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
                     (
                         str(produkt.produkt_id),
@@ -121,6 +121,7 @@ class ProduktDAO:
                         produkt.lagerbestand,
                         str(produkt.zustand_id),
                         str(produkt.kategorie_id),
+                        produkt.bildpfad,
                         produkt.produkt_aktiv,
                         produkt.erstellungsdatum,
                     ),
@@ -147,6 +148,7 @@ class ProduktDAO:
                         lagerbestand = %s,
                         zustand_id = %s,
                         kategorie_id = %s,
+                        bildpfad = %s,
                         produkt_aktiv = %s
                     WHERE produkt_id = %s
                     """,
@@ -159,6 +161,7 @@ class ProduktDAO:
                         produkt.lagerbestand,
                         str(produkt.zustand_id),
                         str(produkt.kategorie_id),
+                        produkt.bildpfad,
                         produkt.produkt_aktiv,
                         str(produkt.produkt_id),
                     ),

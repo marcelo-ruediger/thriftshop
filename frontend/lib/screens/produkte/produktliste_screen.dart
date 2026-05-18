@@ -238,23 +238,14 @@ class _ProduktListeScreenState extends State<ProduktListeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Produktbild-Platzhalter
+            // Produktbild
             Expanded(
               flex: 3,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
                 ),
-                child: Center(
-                  child: Icon(
-                    Icons.inventory_2_outlined,
-                    size: 48,
-                    color: Colors.grey.shade400,
-                  ),
-                ),
+                child: _buildProduktbild(produkt),
               ),
             ),
             // Produktinformationen
@@ -336,4 +327,34 @@ class _ProduktListeScreenState extends State<ProduktListeScreen> {
       ),
     );
   }
+
+  /// Build für Produktbild in der Liste
+  Widget _buildProduktbild(Produkt produkt) {
+    final bildpfad = produkt.bildpfad;
+    return Container(
+      color: Colors.grey.shade200,
+      child: bildpfad != null && bildpfad.isNotEmpty
+          ? Image.asset(
+              'assets/produktbilder/$bildpfad',
+              fit: BoxFit.contain,
+              width: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                return _buildProduktbildPlatzhalter();
+              },
+            )
+          : _buildProduktbildPlatzhalter(),
+    );
+  }
+
+  /// Build für Produktbild-Platzhalter
+  Widget _buildProduktbildPlatzhalter() {
+    return Center(
+      child: Icon(
+        Icons.inventory_2_outlined,
+        size: 48,
+        color: Colors.grey.shade400,
+      ),
+    );
+  }
+
 }

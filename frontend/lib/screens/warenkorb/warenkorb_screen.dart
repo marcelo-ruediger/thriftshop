@@ -126,11 +126,24 @@ class WarenkorbScreen extends StatelessWidget {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primaryContainer,
-                          child: const Icon(Icons.image_outlined),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            color: Theme.of(context).colorScheme.primaryContainer,
+                            child: item.produkt.bildpfad != null
+                                ? Image.asset(
+                                    'assets/produktbilder/${item.produkt.bildpfad}',
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(Icons.image_not_supported_outlined);
+                                    },
+                                  )
+                                : const Icon(Icons.image_not_supported_outlined),
+                          ),
                         ),
                         title: Text(
                           item.produkt.bezeichnung,
