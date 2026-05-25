@@ -131,7 +131,9 @@ class WarenkorbScreen extends StatelessWidget {
                           child: Container(
                             width: 50,
                             height: 50,
-                            color: Theme.of(context).colorScheme.primaryContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
                             child: item.produkt.bildpfad != null
                                 ? Image.asset(
                                     'assets/produktbilder/${item.produkt.bildpfad}',
@@ -139,10 +141,14 @@ class WarenkorbScreen extends StatelessWidget {
                                     height: 50,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.image_not_supported_outlined);
+                                      return const Icon(
+                                        Icons.image_not_supported_outlined,
+                                      );
                                     },
                                   )
-                                : const Icon(Icons.image_not_supported_outlined),
+                                : const Icon(
+                                    Icons.image_not_supported_outlined,
+                                  ),
                           ),
                         ),
                         title: Text(
@@ -155,58 +161,63 @@ class WarenkorbScreen extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text('ID: ${item.produkt.produktId}'),
                             const SizedBox(height: 8),
-                            Row(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('Menge: '),
-                                SizedBox(
-                                  width: 100,
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.remove_circle_outline,
-                                        ),
-                                        onPressed: item.menge <= 1
-                                            ? null
-                                            : () {
-                                                context
-                                                    .read<CartProvider>()
-                                                    .updateQuantity(
-                                                      item.produkt.produktId,
-                                                      item.menge - 1,
-                                                    );
-                                              },
+                                Row(
+                                  children: [
+                                    const Text('Menge: '),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.remove_circle_outline,
+                                        size: 20,
                                       ),
-                                      Expanded(
-                                        child: Text(
-                                          '${item.menge}',
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                          ),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      onPressed: item.menge <= 1
+                                          ? null
+                                          : () {
+                                              context
+                                                  .read<CartProvider>()
+                                                  .updateQuantity(
+                                                    item.produkt.produktId,
+                                                    item.menge - 1,
+                                                  );
+                                            },
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Text(
+                                        '${item.menge}',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.add_circle_outline,
-                                        ),
-                                        onPressed:
-                                            item.menge <
-                                                item.produkt.lagerbestand
-                                            ? () {
-                                                context
-                                                    .read<CartProvider>()
-                                                    .updateQuantity(
-                                                      item.produkt.produktId,
-                                                      item.menge + 1,
-                                                    );
-                                              }
-                                            : null,
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.add_circle_outline,
+                                        size: 20,
                                       ),
-                                    ],
-                                  ),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      onPressed:
+                                          item.menge < item.produkt.lagerbestand
+                                          ? () {
+                                              context
+                                                  .read<CartProvider>()
+                                                  .updateQuantity(
+                                                    item.produkt.produktId,
+                                                    item.menge + 1,
+                                                  );
+                                            }
+                                          : null,
+                                    ),
+                                  ],
                                 ),
-                                const Spacer(),
+                                const SizedBox(height: 4),
                                 Text(
                                   '${(item.produkt.preis * item.menge).toStringAsFixed(2)} €',
                                   style: const TextStyle(
