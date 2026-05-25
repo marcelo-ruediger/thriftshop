@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/cart_provider.dart';
 import '../../models/produkt.dart';
+import '../../router.dart';
 
 class ProduktDetailScreen extends StatefulWidget {
   /// Das angezeigte Produkt
@@ -45,7 +46,7 @@ class _ProduktDetailScreenState extends State<ProduktDetailScreen> {
               IconButton(
                 icon: Icon(
                   _isFavorit ? Icons.favorite : Icons.favorite_border,
-                  color: _isFavorit ? Colors.red : Colors.white,
+                  color: _isFavorit ? Colors.red : Colors.black,
                 ),
                 onPressed: () {
                   setState(() {
@@ -404,21 +405,38 @@ class _ProduktDetailScreenState extends State<ProduktDetailScreen> {
     final cartProvider = context.read<CartProvider>();
     cartProvider.addItem(widget.produkt, quantity: _menge);
 
-    // Zeigt eine Bestätigungsnachricht
-    ScaffoldMessenger.of(context).showSnackBar(
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
       SnackBar(
-        content: Text(
-          '${widget.produkt.bezeichnung} (x$_menge) zum Warenkorb hinzugefügt!',
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                '${widget.produkt.bezeichnung} (x$_menge) zum Warenkorb hinzugefügt!',
+              ),
+            ),
+            const SizedBox(width: 8),
+            OutlinedButton(
+              onPressed: () {
+                messenger.hideCurrentSnackBar();
+                Navigator.of(context).pushNamed(Routes.warenkorb);
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: Colors.white, width: 1),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                visualDensity: VisualDensity.compact,
+              ),
+              child: const Text('Ansehen'),
+            ),
+          ],
         ),
         backgroundColor: Colors.green,
-        duration: const Duration(seconds: 2),
-        action: SnackBarAction(
-          label: 'Ansehen',
-          textColor: Colors.white,
-          onPressed: () {
-            // TODO: Zur Warenkorb-Seite navigieren
-          },
-        ),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
