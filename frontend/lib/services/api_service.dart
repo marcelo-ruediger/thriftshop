@@ -1,6 +1,7 @@
 /// API-Service für die Kommunikation mit dem FastAPI-Backend
 /// Handles HTTP-Requets, Token-Management und Fehlerbehandlung
 library;
+
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,35 +10,34 @@ class ApiService {
 
   factory ApiService() => _instance;
 
-  late final Dio _dio;
+  // late removed - will be set sunchronously before first use
   late final SharedPreferences _prefs;
+  Dio? _dio;
 
-  ApiService._internal() {
-    _init();
-  }
+  ApiService._internal();
 
-  Future<void> _init() async {
-    _prefs = await SharedPreferences.getInstance();
-    _dio = Dio(
+  // Initialize the service (call once at app startup)
+  static Future<void> initialize() async {
+    final instance = _instance;
+    instance._prefs = await SharedPreferences.getInstance();
+    instance._dio = Dio(
       BaseOptions(
-        baseUrl: 'http://localhost:8001', // oder deine Backend-URL
+        baseUrl: 'http://localhost:8001',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
       ),
     );
 
-    // Interceptor für Token-Management
-    _dio.interceptors.add(
+    instance._dio!.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          final token = _prefs.getString('auth_token');
+          final token = instance._prefs.getString('auth_token');
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
           return handler.next(options);
         },
         onError: (DioException error, handler) {
-          // Token abgelaufen -> refresh logic hier
           if (error.response?.statusCode == 401) {
             // Token refresh oder logout
           }
@@ -47,13 +47,23 @@ class ApiService {
     );
   }
 
+  // Helper: ensure Dio is initialized
+  Dio get _dioOrNull {
+    if (_dio == null) {
+      throw StateError(
+        'ApiService not initialized. Call ApiService.initialize() before using.',
+      );
+    }
+    return _dio!;
+  }
+
   // GET Request
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      return await _dio.get(path, queryParameters: queryParameters);
+      return await _dioOrNull.get(path, queryParameters: queryParameters);
     } on DioException catch (e) {
       throw handleError(e);
     }
@@ -66,7 +76,7 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
-      return await _dio.post(
+      return await _dioOrNull.post(
         path,
         data: data,
         queryParameters: queryParameters,
@@ -79,7 +89,7 @@ class ApiService {
   // PATCH Request
   Future<Response> patch(String path, {dynamic data}) async {
     try {
-      return await _dio.patch(path, data: data);
+      return await _dioOrNull.patch(path, data: data);
     } on DioException catch (e) {
       throw handleError(e);
     }
@@ -88,7 +98,7 @@ class ApiService {
   // PUT Request
   Future<Response> put(String path, {dynamic data}) async {
     try {
-      return await _dio.put(path, data: data);
+      return await _dioOrNull.put(path, data: data);
     } on DioException catch (e) {
       throw handleError(e);
     }
@@ -97,7 +107,7 @@ class ApiService {
   // DELETE Request
   Future<Response> delete(String path, {dynamic data}) async {
     try {
-      return await _dio.delete(path, data: data);
+      return await _dioOrNull.delete(path, data: data);
     } on DioException catch (e) {
       throw handleError(e);
     }

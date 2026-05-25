@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:thriftshop_koeln/services/api_service.dart';
 
 import 'exports.dart';
 import 'providers/auth_provider.dart';
@@ -16,6 +17,7 @@ import 'widgets/main_navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ApiService.initialize(); // vor Flutter App API initialisieren
   runApp(const ThriftShopApp());
 }
 
