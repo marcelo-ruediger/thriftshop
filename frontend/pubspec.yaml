@@ -28,4 +28,6 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/koeln_thriftshop_logo.png
+    - assets/thriftshop_background.png
     - assets/produktbilder/
