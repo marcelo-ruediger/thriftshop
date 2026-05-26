@@ -34,3 +34,7 @@ frontend/macos/Flutter/Flutter-Release.xcconfig
 # iOS
 frontend/ios/Flutter/Debug.xcconfig
 frontend/ios/Flutter/Release.xcconfig
+frontend/ios/Pods/
+frontend/ios/flutter_export_environment.sh
+frontend/ios/Runner/GeneratedPluginRegistrant.h
+frontend/ios/Runner/GeneratedPluginRegistrant.m
