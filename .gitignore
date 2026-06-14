@@ -21,10 +21,6 @@ __pycache__/
 thriftshop_projektantrag.md
 openapi.json
 
-stop_backend.sh
-status_backend.sh
-start_backend.sh
-
 # MacOS Dateien
 .DS_Store
 Podfile
@@ -38,3 +34,9 @@ frontend/ios/Pods/
 frontend/ios/flutter_export_environment.sh
 frontend/ios/Runner/GeneratedPluginRegistrant.h
 frontend/ios/Runner/GeneratedPluginRegistrant.m
+
+# VS Code Config
+.vscode
+
+
+frontend/.metadata

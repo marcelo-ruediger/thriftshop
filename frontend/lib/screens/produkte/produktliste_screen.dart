@@ -250,7 +250,7 @@ class _ProduktListeScreenState extends State<ProduktListeScreen> {
             ),
             // Produktinformationen
             Expanded(
-              flex: 4,
+              flex: 2,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -287,7 +287,7 @@ class _ProduktListeScreenState extends State<ProduktListeScreen> {
                         ),
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 8),
                     // Zustand und Preis
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
