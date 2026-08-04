@@ -18,6 +18,7 @@ __pycache__/
 # Projektspezifische Dateien ===================================================
 *.pdf
 *.html
+*.bak
 thriftshop_projektantrag.md
 openapi.json
 
@@ -38,5 +39,9 @@ frontend/ios/Runner/GeneratedPluginRegistrant.m
 # VS Code Config
 .vscode
 
+<<<<<<< HEAD
 
+=======
+# Flutter
+>>>>>>> 675f2e6 (Update .gitignore, remove unused files, and adjust layout in ProduktlisteScreen)
 frontend/.metadata
