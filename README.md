@@ -198,6 +198,9 @@ Any host that runs a Docker container works the same way; the container listens 
 - The admin order list shows the newest 200 orders; product and user lists are not paginated.
 - The two typefaces (Inter, Fraunces) are loaded from Google Fonts at runtime. For a real German
   shop they should be bundled with the app instead.
+- 41 of the 50 product photos are AI-generated; nine are stock photos from
+  [Pexels](https://www.pexels.com). Sources, photographers and how to swap or undo a photo are in
+  [`produktbilder-quellen/`](produktbilder-quellen/README.md).
 - `docs/` holds the original planning documents of the project (in German: requirements, UML,
   wireframes, UI guideline). They describe the first design, which used MySQL; the application
   now uses SQLite and the structure described above.
