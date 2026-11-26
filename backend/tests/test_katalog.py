@@ -57,6 +57,23 @@ def test_produktbilder_werden_ausgeliefert(client):
     assert client.get("/bilder/..%2Fapp%2Fmain.py").status_code == 404
 
 
+def test_produktbilder_werden_beim_server_nachgefragt(client):
+    """Ein unter gleichem Namen ausgetauschtes Foto muss sofort sichtbar sein: Der Browser
+    fragt jedes Mal nach und bekommt für ein unverändertes Bild nur eine leere 304-Antwort."""
+    produkt = next(p for p in client.get("/api/produkte").json() if p["bildpfad"])
+    pfad = f"/bilder/{produkt['bildpfad']}"
+    antwort = client.get(pfad)
+    assert antwort.headers["cache-control"] == "no-cache"
+
+    unveraendert = client.get(pfad, headers={"If-None-Match": antwort.headers["etag"]})
+    assert unveraendert.status_code == 304
+    assert unveraendert.content == b""
+
+    veraltet = client.get(pfad, headers={"If-None-Match": '"anderes-bild"'})
+    assert veraltet.status_code == 200
+    assert veraltet.content == antwort.content
+
+
 # --- Produktverwaltung --------------------------------------------------------
 
 

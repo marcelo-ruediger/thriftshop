@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 
 from app.api import auth, benutzer, bestellungen, kategorien, produkte, zustaende
 from app.core.config import einstellungen
@@ -89,13 +89,25 @@ _BILDNAME = re.compile(r"^[\w-]+\.(webp|png|jpe?g)$")
 
 
 @app.get("/bilder/{dateiname}", include_in_schema=False)
-def produktbild(dateiname: str):
-    """Liefert ein Produktbild - erst aus den Uploads, dann aus den mitgelieferten Bildern."""
+def produktbild(dateiname: str, request: Request):
+    """Liefert ein Produktbild - erst aus den Uploads, dann aus den mitgelieferten Bildern.
+
+    Der Browser darf das Bild speichern, fragt aber jedes Mal nach, ob es noch aktuell ist
+    (ETag). So erscheint ein unter gleichem Namen ausgetauschtes Foto sofort, und ein
+    unverändertes kostet nur eine leere 304-Antwort.
+    """
     if _BILDNAME.fullmatch(dateiname):
         for verzeichnis in (einstellungen.upload_verzeichnis, einstellungen.bilder_verzeichnis):
             pfad = verzeichnis / dateiname
             if pfad.is_file():
-                return FileResponse(pfad, headers={"Cache-Control": "public, max-age=604800"})
+                stand = pfad.stat()
+                kopf = {
+                    "Cache-Control": "no-cache",
+                    "ETag": f'"{stand.st_mtime_ns:x}-{stand.st_size:x}"',
+                }
+                if request.headers.get("if-none-match") == kopf["ETag"]:
+                    return Response(status_code=304, headers=kopf)
+                return FileResponse(pfad, headers=kopf, stat_result=stand)
     raise HTTPException(status_code=404, detail="Bild nicht gefunden")
 
 
