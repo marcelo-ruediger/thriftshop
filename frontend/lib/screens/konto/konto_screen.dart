@@ -29,8 +29,9 @@ class KontoScreen extends StatelessWidget {
     final ja = await bestaetigen(
       context,
       titel: 'Konto endgültig löschen?',
-      text: 'Deine persönlichen Daten werden entfernt. Das lässt sich nicht rückgängig machen. '
-          'Bestellungen bleiben aus buchhalterischen Gründen anonymisiert erhalten.',
+      text: 'Deine persönlichen Daten werden entfernt und noch laufende Bestellungen storniert. '
+          'Das lässt sich nicht rückgängig machen. Abgeschlossene Bestellungen bleiben aus '
+          'buchhalterischen Gründen anonymisiert erhalten.',
       aktion: 'Konto löschen',
       gefaehrlich: true,
     );

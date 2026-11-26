@@ -50,6 +50,14 @@ def mitarbeiter(client) -> dict[str, str]:
 
 
 @pytest.fixture
+def ohne_demo_modus(monkeypatch):
+    """Schaltet den Demo-Modus für einen Test ab (kein Schutz und keine Maskierung)."""
+    from app.core.config import einstellungen
+
+    monkeypatch.setattr(einstellungen, "demo_modus", False)
+
+
+@pytest.fixture
 def neuer_kunde(client):
     """Registriert einen frischen Kunden und gibt (Header, Benutzerdaten, Passwort) zurück."""
     kennung = uuid.uuid4().hex[:10]

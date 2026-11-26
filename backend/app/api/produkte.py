@@ -18,7 +18,7 @@ from app.dao.kategorie_dao import KategorieDAO
 from app.dao.produkt_dao import ProduktDAO
 from app.dao.zustand_dao import ZustandDAO
 from app.models import Produkt
-from app.schemas import BildAusgabe, ProduktAnfrage, ProduktAusgabe
+from app.schemas import BildAusgabe, ProduktAnfrage, ProduktAusgabe, SichtbarkeitAnfrage
 from app.services.slug import slug_erzeugen
 
 router = APIRouter(prefix="/produkte", tags=["Produkte"])
@@ -102,12 +102,15 @@ def produkt_erstellen(
     """Legt ein neues Produkt an. ID, Produktnummer und Slug vergibt der Server."""
     _referenzen_pruefen(db, anfrage)
     dao = ProduktDAO(db)
+    daten = anfrage.model_dump()
+    if daten["lagerbestand"] is None:
+        daten["lagerbestand"] = 1
     produkt = Produkt(
         produkt_id=uuid4(),
         laufende_nr=0,  # vergibt die Datenbank
         slug=_eindeutiger_slug(dao, anfrage.bezeichnung),
         erstellungsdatum=jetzt(),
-        **anfrage.model_dump(),
+        **daten,
     )
     dao.erstellen(produkt)
     db.commit()
@@ -121,7 +124,10 @@ def produkt_aktualisieren(
     _personal=Depends(erfordert_personal),
     db=Depends(get_db),
 ):
-    """Aktualisiert ein bestehendes Produkt."""
+    """Aktualisiert ein bestehendes Produkt.
+
+    Der Lagerbestand wird nur geändert, wenn er mitgesendet wird.
+    """
     dao = ProduktDAO(db)
     produkt = dao.get_nach_id(produkt_id)
     if not produkt:
@@ -131,8 +137,25 @@ def produkt_aktualisieren(
     if anfrage.bezeichnung != produkt.bezeichnung:
         produkt.slug = _eindeutiger_slug(dao, anfrage.bezeichnung, produkt_id)
     for feld, wert in anfrage.model_dump().items():
+        if feld == "lagerbestand" and wert is None:
+            continue  # nicht mitgesendet: der aktuelle Bestand bleibt
         setattr(produkt, feld, wert)
     dao.aktualisieren(produkt)
+    db.commit()
+    return dao.get_nach_id(produkt_id)
+
+
+@router.patch("/{produkt_id}/sichtbarkeit", response_model=ProduktAusgabe)
+def sichtbarkeit_aendern(
+    produkt_id: UUID,
+    anfrage: SichtbarkeitAnfrage,
+    _personal=Depends(erfordert_personal),
+    db=Depends(get_db),
+):
+    """Nimmt ein Produkt aus dem Shop oder stellt es wieder ein - ändert sonst nichts."""
+    dao = ProduktDAO(db)
+    if not dao.sichtbarkeit_setzen(produkt_id, anfrage.produkt_aktiv):
+        raise nicht_gefunden("Produkt")
     db.commit()
     return dao.get_nach_id(produkt_id)
 
@@ -143,7 +166,7 @@ def produkt_deaktivieren(
 ):
     """Deaktiviert ein Produkt (Soft-Delete) - es verschwindet aus dem Katalog,
     bleibt aber für bestehende Bestellungen erhalten."""
-    if not ProduktDAO(db).deaktivieren(produkt_id):
+    if not ProduktDAO(db).sichtbarkeit_setzen(produkt_id, False):
         raise nicht_gefunden("Produkt")
     db.commit()
     return Response(status_code=204)

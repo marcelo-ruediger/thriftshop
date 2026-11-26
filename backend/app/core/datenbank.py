@@ -9,6 +9,7 @@ import sqlite3
 from collections.abc import Iterator
 from datetime import datetime, timezone
 from decimal import Decimal
+from pathlib import Path
 from uuid import UUID
 
 from app.core.config import einstellungen
@@ -108,11 +109,12 @@ def jetzt() -> datetime:
     return datetime.now(timezone.utc).replace(microsecond=0)
 
 
-def verbinden() -> sqlite3.Connection:
-    """Öffnet eine neue Verbindung zur SQLite-Datei."""
-    einstellungen.datenbank_pfad.parent.mkdir(parents=True, exist_ok=True)
+def verbinden(pfad: Path | None = None) -> sqlite3.Connection:
+    """Öffnet eine neue Verbindung zur SQLite-Datei (Standard: die konfigurierte Datenbank)."""
+    pfad = pfad or einstellungen.datenbank_pfad
+    pfad.parent.mkdir(parents=True, exist_ok=True)
     verbindung = sqlite3.connect(
-        einstellungen.datenbank_pfad,
+        pfad,
         detect_types=sqlite3.PARSE_DECLTYPES,
         # FastAPI führt Dependency und Endpunkt ggf. in verschiedenen Threads aus
         check_same_thread=False,
@@ -123,9 +125,9 @@ def verbinden() -> sqlite3.Connection:
     return verbindung
 
 
-def schema_erstellen() -> None:
+def schema_erstellen(pfad: Path | None = None) -> None:
     """Legt alle Tabellen an, falls sie noch nicht existieren."""
-    verbindung = verbinden()
+    verbindung = verbinden(pfad)
     try:
         verbindung.executescript(SCHEMA)
         verbindung.commit()

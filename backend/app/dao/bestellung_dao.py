@@ -23,10 +23,20 @@ class BestellungDAO:
         self.db = db_verbindung
 
     # Lesen
-    def _laden(self, bedingung: str = "", parameter: tuple = ()) -> list[Bestellung]:
-        """Lädt Bestellungen samt ihrer Positionen."""
+    def _laden(
+        self,
+        bedingung: str = "",
+        parameter: tuple = (),
+        limit: int | None = None,
+        offset: int = 0,
+    ) -> list[Bestellung]:
+        """Lädt Bestellungen samt ihrer Positionen - neueste zuerst."""
+        seite = ""
+        if limit is not None:
+            seite = "LIMIT ? OFFSET ?"
+            parameter = (*parameter, limit, offset)
         zeilen = self.db.execute(
-            f"{_AUSWAHL} {bedingung} ORDER BY b.laufende_nr DESC", parameter
+            f"{_AUSWAHL} {bedingung} ORDER BY b.laufende_nr DESC {seite}", parameter
         ).fetchall()
         bestellungen = {zeile["bestellung_id"]: Bestellung(**zeile) for zeile in zeilen}
         if not bestellungen:
@@ -49,11 +59,13 @@ class BestellungDAO:
             )
         return list(bestellungen.values())
 
-    def get_alle(self, status: str | None = None) -> list[Bestellung]:
-        """Gibt alle Bestellungen zurück - optional nach Status gefiltert."""
+    def get_alle(
+        self, status: str | None = None, limit: int = 200, offset: int = 0
+    ) -> list[Bestellung]:
+        """Gibt Bestellungen seitenweise zurück - optional nach Status gefiltert."""
         if status:
-            return self._laden("WHERE b.status = ?", (status,))
-        return self._laden()
+            return self._laden("WHERE b.status = ?", (status,), limit, offset)
+        return self._laden(limit=limit, offset=offset)
 
     def get_nach_id(self, bestellung_id: UUID) -> Bestellung | None:
         treffer = self._laden("WHERE b.bestellung_id = ?", (bestellung_id,))
@@ -104,10 +116,23 @@ class BestellungDAO:
             ],
         )
 
-    def status_aktualisieren(self, bestellung_id: UUID, neuer_status: str) -> None:
+    def status_aktualisieren(
+        self, bestellung_id: UUID, neuer_status: str, bisheriger_status: str
+    ) -> bool:
+        """Setzt den Status nur, wenn er noch dem erwarteten entspricht.
+
+        Gibt False zurück, wenn eine andere Anfrage den Status inzwischen geändert hat.
+        """
+        cursor = self.db.execute(
+            "UPDATE bestellung SET status = ? WHERE bestellung_id = ? AND status = ?",
+            (neuer_status, bestellung_id, bisheriger_status),
+        )
+        return cursor.rowcount > 0
+
+    def anmerkungen_entfernen(self, benutzer_id: UUID) -> None:
+        """Löscht die Freitext-Anmerkungen eines Kunden (können Personendaten enthalten)."""
         self.db.execute(
-            "UPDATE bestellung SET status = ? WHERE bestellung_id = ?",
-            (neuer_status, bestellung_id),
+            "UPDATE bestellung SET anmerkung = NULL WHERE benutzer_id = ?", (benutzer_id,)
         )
 
     # Auswertung

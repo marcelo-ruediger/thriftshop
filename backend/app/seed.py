@@ -5,12 +5,14 @@ Wird beim ersten Start automatisch eingespielt (siehe app.main), damit der Shop
 sofort benutzbar ist. Manuell: `python -m app.seed` (nur in eine leere Datenbank).
 """
 
+import os
 import random
 import sqlite3
 from datetime import timedelta
 from decimal import Decimal
-from uuid import uuid4
+from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
 
+from app.core.config import einstellungen
 from app.core.datenbank import jetzt, schema_erstellen, verbinden
 from app.core.sicherheit import (
     ROLLE_ADMIN,
@@ -25,6 +27,7 @@ from app.dao.zustand_dao import ZustandDAO
 from app.models import Benutzer, Kategorie, Produkt, Zustand
 from app.schemas import BestellungAnfrage, PositionAnfrage
 from app.services.bestellservice import Bestellservice
+from app.services.demo import DEMO_EMAILS
 from app.services.slug import slug_erzeugen
 
 # (Vorname, Nachname, E-Mail, Passwort, Rolle)
@@ -34,7 +37,7 @@ DEMO_KONTEN = [
     ("Lena", "Sommer", "kunde@example.com", "kunde1234", ROLLE_KUNDE),
     ("Jonas", "Weber", "jonas@example.com", "jonas1234", ROLLE_KUNDE),
 ]
-DEMO_EMAILS = {konto[2] for konto in DEMO_KONTEN}
+assert {konto[2] for konto in DEMO_KONTEN} == DEMO_EMAILS
 
 ZUSTAENDE = [
     ("Neu mit Etikett", "Ungetragen bzw. unbenutzt, teilweise noch originalverpackt."),
@@ -158,19 +161,91 @@ PRODUKTE = [
 ]
 
 
+def feste_id(art: str, schluessel: str) -> UUID:
+    """Immer dieselbe UUID für denselben Demo-Datensatz.
+
+    So bleiben Produkt-IDs gleich, wenn die Datenbank neu aufgebaut wird (z.B. bei
+    jedem Neustart auf einem kostenlosen Hosting-Tarif) - gespeicherte Warenkörbe
+    und Links der Besucher funktionieren weiter.
+    """
+    return uuid5(NAMESPACE_URL, f"thriftshop-koeln/{art}/{schluessel}")
+
+
 def ist_leer(db: sqlite3.Connection) -> bool:
-    return db.execute("SELECT COUNT(*) FROM benutzer").fetchone()[0] == 0
+    """True, wenn noch in keiner der Stammtabellen ein Datensatz steht."""
+    return all(
+        db.execute(f"SELECT COUNT(*) FROM {tabelle}").fetchone()[0] == 0
+        for tabelle in ("benutzer", "produkt", "kategorie", "zustand")
+    )
+
+
+def demo_datenbank_bereitstellen() -> bool:
+    """Füllt eine leere Datenbank mit den Demo-Daten - ganz oder gar nicht.
+
+    Die Daten entstehen in einer zweiten Datei, die erst am Ende an die Stelle der
+    eigentlichen Datenbank tritt. Wird der Vorgang unterbrochen, bleibt die
+    Datenbank leer und der nächste Start versucht es einfach erneut.
+    Gibt True zurück, wenn Daten eingespielt wurden.
+    """
+    ziel = einstellungen.datenbank_pfad
+    verbindung = verbinden()
+    try:
+        if not ist_leer(verbindung):
+            return False
+    finally:
+        verbindung.close()
+
+    entwurf = ziel.with_name(ziel.name + ".seed")
+    entwurf.unlink(missing_ok=True)  # Rest eines abgebrochenen Versuchs
+    schema_erstellen(entwurf)
+    verbindung = verbinden(entwurf)
+    try:
+        demo_daten_einspielen(verbindung)
+    finally:
+        verbindung.close()
+    os.replace(entwurf, ziel)
+    return True
+
+
+def administrator_sicherstellen(db: sqlite3.Connection) -> bool:
+    """Legt den in ADMIN_EMAIL/ADMIN_PASSWORT angegebenen Administrator an, solange
+    es noch keinen gibt - der Einstieg für einen Betrieb ohne Demo-Daten.
+    Gibt True zurück, wenn ein Konto angelegt oder hochgestuft wurde."""
+    dao = BenutzerDAO(db)
+    if not einstellungen.admin_email or dao.anzahl_administratoren() > 0:
+        return False
+    vorhanden = dao.get_nach_email(einstellungen.admin_email)
+    if vorhanden:
+        vorhanden.rolle = ROLLE_ADMIN
+        dao.aktualisieren_stammdaten(vorhanden)
+        return True
+    if len(einstellungen.admin_passwort) < 8 or len(einstellungen.admin_passwort.encode()) > 72:
+        raise ValueError("ADMIN_PASSWORT muss 8 bis 72 Zeichen lang sein")
+    dao.erstellen(
+        Benutzer(
+            benutzer_id=uuid4(),
+            vorname="Admin",
+            nachname="Thriftshop",
+            email=einstellungen.admin_email,
+            passwort_hash=passwort_hashen(einstellungen.admin_passwort),
+            rolle=ROLLE_ADMIN,
+        )
+    )
+    return True
 
 
 def demo_daten_einspielen(db: sqlite3.Connection) -> None:
     """Füllt eine leere Datenbank mit Katalog, Demo-Konten und Beispielbestellungen."""
     zustaende, kategorien = {}, {}
     for bezeichnung, beschreibung in ZUSTAENDE:
-        zustaende[bezeichnung] = Zustand(uuid4(), bezeichnung, beschreibung)
+        zustaende[bezeichnung] = Zustand(
+            feste_id("zustand", bezeichnung), bezeichnung, beschreibung
+        )
         ZustandDAO(db).erstellen(zustaende[bezeichnung])
     for bezeichnung, rabatt in KATEGORIEN:
+        slug = slug_erzeugen(bezeichnung)
         kategorien[bezeichnung] = Kategorie(
-            uuid4(), bezeichnung, slug_erzeugen(bezeichnung), Decimal(rabatt)
+            feste_id("kategorie", slug), bezeichnung, slug, Decimal(rabatt)
         )
         KategorieDAO(db).erstellen(kategorien[bezeichnung])
 
@@ -180,11 +255,12 @@ def demo_daten_einspielen(db: sqlite3.Connection) -> None:
     produkt_dao = ProduktDAO(db)
     produkte: dict[str, Produkt] = {}
     for index, (bild, bezeichnung, kategorie, zustand, preis, bestand, rabatt, info) in enumerate(eintraege):
+        slug = slug_erzeugen(bezeichnung)
         produkt = Produkt(
-            produkt_id=uuid4(),
+            produkt_id=feste_id("produkt", slug),
             laufende_nr=0,
             bezeichnung=bezeichnung,
-            slug=slug_erzeugen(bezeichnung),
+            slug=slug,
             produkt_info=info,
             preis=Decimal(preis),
             produkt_rabatt=Decimal(rabatt),
@@ -248,10 +324,7 @@ def demo_daten_einspielen(db: sqlite3.Connection) -> None:
 
 if __name__ == "__main__":
     schema_erstellen()
-    verbindung = verbinden()
-    if ist_leer(verbindung):
-        demo_daten_einspielen(verbindung)
+    if demo_datenbank_bereitstellen():
         print(f"Demo-Daten eingespielt: {len(PRODUKTE)} Produkte, {len(DEMO_KONTEN)} Konten.")
     else:
         print("Die Datenbank enthält bereits Daten - nichts geändert.")
-    verbindung.close()

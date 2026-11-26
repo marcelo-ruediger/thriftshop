@@ -19,23 +19,24 @@ from fastapi.responses import FileResponse, JSONResponse
 from app.api import auth, benutzer, bestellungen, kategorien, produkte, zustaende
 from app.core.config import einstellungen
 from app.core.datenbank import schema_erstellen, verbinden
-from app.seed import demo_daten_einspielen, ist_leer
+from app.seed import administrator_sicherstellen, demo_datenbank_bereitstellen
 
 log = logging.getLogger("uvicorn.error")
 
 
 @asynccontextmanager
 async def lebenszyklus(_app: FastAPI):
-    """Beim Start: Tabellen anlegen und eine leere Datenbank mit Demo-Daten füllen."""
+    """Beim Start: Tabellen anlegen, eine leere Datenbank mit Demo-Daten füllen und
+    bei Bedarf den ersten Administrator anlegen."""
     schema_erstellen()
-    if einstellungen.demo_daten:
-        verbindung = verbinden()
-        try:
-            if ist_leer(verbindung):
-                demo_daten_einspielen(verbindung)
-                log.info("Demo-Daten eingespielt (%s)", einstellungen.datenbank_pfad)
-        finally:
-            verbindung.close()
+    if einstellungen.demo_daten and demo_datenbank_bereitstellen():
+        log.info("Demo-Daten eingespielt (%s)", einstellungen.datenbank_pfad)
+    verbindung = verbinden()
+    try:
+        if administrator_sicherstellen(verbindung):
+            log.info("Administrator %s angelegt", einstellungen.admin_email)
+    finally:
+        verbindung.close()
     yield
 
 

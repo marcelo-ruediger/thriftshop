@@ -10,12 +10,22 @@ from decimal import Decimal
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, StringConstraints
+from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, StringConstraints
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)]
-# bcrypt verarbeitet höchstens 72 Bytes
-Passwort = Annotated[str, StringConstraints(min_length=8, max_length=72)]
+
+
+def _hoechstens_72_bytes(wert: str) -> str:
+    # bcrypt verarbeitet höchstens 72 Bytes - Umlaute und Emojis zählen mehrfach
+    if len(wert.encode()) > 72:
+        raise ValueError("Das Passwort ist zu lang")
+    return wert
+
+
+Passwort = Annotated[
+    str, StringConstraints(min_length=8, max_length=72), AfterValidator(_hoechstens_72_bytes)
+]
 Prozent = Annotated[Decimal, Field(ge=0, lt=100, decimal_places=2)]
 Betrag = Annotated[Decimal, Field(gt=0, lt=1_000_000, decimal_places=2)]
 
@@ -113,7 +123,10 @@ class ProduktAnfrage(BaseModel):
     produkt_info: Text
     preis: Betrag
     produkt_rabatt: Prozent = Decimal("0")
-    lagerbestand: int = Field(1, ge=0, le=100_000)
+    # Ohne Angabe: neues Produkt = 1, bestehendes Produkt = Bestand bleibt unverändert.
+    # So überschreibt das Speichern eines Formulars keinen Bestand, den Bestellungen
+    # inzwischen verändert haben.
+    lagerbestand: int | None = Field(None, ge=0, le=100_000)
     zustand_id: UUID
     kategorie_id: UUID
     bildpfad: str | None = None
@@ -139,6 +152,10 @@ class ProduktAusgabe(Ausgabe):
     erstellungsdatum: datetime
 
 
+class SichtbarkeitAnfrage(BaseModel):
+    produkt_aktiv: bool
+
+
 class BildAusgabe(BaseModel):
     bildpfad: str
 
@@ -155,6 +172,9 @@ class BestellungAnfrage(BaseModel):
     positionen: list[PositionAnfrage] = Field(min_length=1, max_length=100)
     zahlungsart: Zahlungsart = "Zahlung bei Abholung"
     anmerkung: Annotated[str, StringConstraints(strip_whitespace=True, max_length=500)] | None = None
+    # Summe, die dem Kunden angezeigt wurde. Weicht sie vom aktuellen Preis ab, wird
+    # die Bestellung abgelehnt statt stillschweigend zu einem anderen Preis gebucht.
+    erwartete_summe: Decimal | None = Field(None, ge=0)
 
 
 class StatusAnfrage(BaseModel):

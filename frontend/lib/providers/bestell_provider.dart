@@ -40,15 +40,22 @@ class BestellProvider extends ChangeNotifier {
   Future<Bestellung> bestellen(
     List<WarenkorbItem> items, {
     required String zahlungsart,
+    required double erwarteteSumme,
     String? anmerkung,
   }) async {
     final bestellung = await _api.bestellen(
       mengen: {for (final item in items) item.produkt.produktId: item.menge},
       zahlungsart: zahlungsart,
+      erwarteteSumme: erwarteteSumme,
       anmerkung: anmerkung,
     );
-    _bestellungen = [bestellung, ...?_bestellungen];
-    notifyListeners();
+    // Nur eine bereits geladene Liste ergänzen. Sonst sähe eine nie geladene
+    // Historie so aus, als bestünde sie nur aus dieser einen Bestellung.
+    final geladen = _bestellungen;
+    if (geladen != null) {
+      _bestellungen = [bestellung, ...geladen];
+      notifyListeners();
+    }
     return bestellung;
   }
 

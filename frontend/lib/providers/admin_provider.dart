@@ -15,8 +15,12 @@ class AdminProvider extends ChangeNotifier {
 
   final ShopApi _api;
 
+  /// So viele Bestellungen lädt die Bestellverwaltung höchstens (die neuesten).
+  static const int bestellLimit = 200;
+
   List<Produkt>? _produkte;
   List<Bestellung>? _bestellungen;
+  List<Bestellung>? _neuesteBestellungen;
   List<Benutzer>? _benutzer;
   Statistik? _statistik;
   String? _fehler;
@@ -24,6 +28,9 @@ class AdminProvider extends ChangeNotifier {
   /// Jeweils `null`, solange noch nicht geladen.
   List<Produkt>? get produkte => _produkte;
   List<Bestellung>? get bestellungen => _bestellungen;
+
+  /// Die fünf neuesten Bestellungen für die Übersicht.
+  List<Bestellung>? get neuesteBestellungen => _neuesteBestellungen;
   List<Benutzer>? get benutzer => _benutzer;
   Statistik? get statistik => _statistik;
   String? get fehler => _fehler;
@@ -39,16 +46,19 @@ class AdminProvider extends ChangeNotifier {
   }
 
   Future<void> uebersichtLaden() => _laden(() async {
-    final ergebnisse = await Future.wait([_api.statistik(), _api.alleBestellungen()]);
+    final ergebnisse = await Future.wait([
+      _api.statistik(),
+      _api.alleBestellungen(limit: 5),
+    ]);
     _statistik = ergebnisse[0] as Statistik;
-    _bestellungen = ergebnisse[1] as List<Bestellung>;
+    _neuesteBestellungen = ergebnisse[1] as List<Bestellung>;
   });
 
   Future<void> produkteLaden() =>
       _laden(() async => _produkte = await _api.alleProdukte());
 
   Future<void> bestellungenLaden() =>
-      _laden(() async => _bestellungen = await _api.alleBestellungen());
+      _laden(() async => _bestellungen = await _api.alleBestellungen(limit: bestellLimit));
 
   Future<void> benutzerLaden() =>
       _laden(() async => _benutzer = await _api.alleBenutzer());
@@ -66,6 +76,15 @@ class AdminProvider extends ChangeNotifier {
 
   Future<void> produktSpeichern(String produktId, ProduktEingabe eingabe) async {
     final produkt = await _api.produktSpeichern(produktId, eingabe);
+    _produkte = [
+      for (final p in _produkte ?? const <Produkt>[])
+        p.produktId == produktId ? produkt : p,
+    ];
+    notifyListeners();
+  }
+
+  Future<void> sichtbarkeitAendern(String produktId, bool aktiv) async {
+    final produkt = await _api.sichtbarkeitSetzen(produktId, aktiv);
     _produkte = [
       for (final p in _produkte ?? const <Produkt>[])
         p.produktId == produktId ? produkt : p,
@@ -95,6 +114,7 @@ class AdminProvider extends ChangeNotifier {
   void leeren() {
     _produkte = null;
     _bestellungen = null;
+    _neuesteBestellungen = null;
     _benutzer = null;
     _statistik = null;
     _fehler = null;

@@ -20,7 +20,6 @@ ALGORITHMUS = "HS256"
 ROLLE_ADMIN = "Administrator"
 ROLLE_MITARBEITER = "Mitarbeiter"
 ROLLE_KUNDE = "Kunde"
-ROLLEN = (ROLLE_ADMIN, ROLLE_MITARBEITER, ROLLE_KUNDE)
 PERSONAL = (ROLLE_ADMIN, ROLLE_MITARBEITER)
 
 
@@ -73,7 +72,9 @@ def aktueller_benutzer(
         raise fehler from None
 
     benutzer = BenutzerDAO(db).get_nach_id(benutzer_id)
-    if benutzer is None:
+    # Ein anonymisiertes (gelöschtes) Konto hat keinen Passwort-Hash mehr - seine
+    # noch nicht abgelaufenen Tokens dürfen nicht weiter funktionieren.
+    if benutzer is None or not benutzer.passwort_hash:
         raise fehler
     return benutzer
 

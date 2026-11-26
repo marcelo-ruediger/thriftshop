@@ -34,6 +34,10 @@ class Bestellfehler(Exception):
     """Fachlicher Fehler - wird von der API als HTTP 409 bzw. 422 ausgegeben."""
 
 
+class Statuskonflikt(Bestellfehler):
+    """Eine andere Anfrage hat den Status der Bestellung inzwischen geändert."""
+
+
 class Bestellservice:
     def __init__(self, db: sqlite3.Connection):
         self.db = db
@@ -80,6 +84,13 @@ class Bestellservice:
                         bestellung_id=bestellung.bestellung_id,
                     )
                 )
+            if (
+                anfrage.erwartete_summe is not None
+                and anfrage.erwartete_summe != bestellung.gesamtpreis
+            ):
+                raise Bestellfehler(
+                    "Ein Preis hat sich inzwischen geändert. Bitte prüfe deinen Warenkorb."
+                )
             self.bestellungen.erstellen(bestellung)
             self.db.commit()
         except BaseException:
@@ -95,7 +106,15 @@ class Bestellservice:
             )
         try:
             self.db.execute("BEGIN IMMEDIATE")
-            self.bestellungen.status_aktualisieren(bestellung.bestellung_id, neuer_status)
+            # Die Prüfung oben lief auf einem möglicherweise veralteten Stand. Erst die
+            # bedingte Änderung innerhalb der Transaktion stellt sicher, dass zwei
+            # gleichzeitige Anfragen die Ware nicht doppelt zurückbuchen.
+            if not self.bestellungen.status_aktualisieren(
+                bestellung.bestellung_id, neuer_status, bisheriger_status=bestellung.status
+            ):
+                raise Statuskonflikt(
+                    "Die Bestellung wurde gerade von jemand anderem geändert. Bitte lade die Seite neu."
+                )
             if (bestellung.status, neuer_status) in _WARE_ZURUECK:
                 for position in bestellung.positionen:
                     self.produkte.bestand_erhoehen(position.produkt_id, position.menge)

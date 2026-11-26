@@ -96,6 +96,7 @@ class ShopApi {
   Future<Bestellung> bestellen({
     required Map<String, int> mengen,
     required String zahlungsart,
+    required double erwarteteSumme,
     String? anmerkung,
   }) async => Bestellung.fromJson(
     await _client.post(
@@ -107,6 +108,8 @@ class ShopApi {
         ],
         'zahlungsart': zahlungsart,
         'anmerkung': anmerkung,
+        // Der Server lehnt ab, wenn sich ein Preis seit der Anzeige geändert hat
+        'erwartete_summe': erwarteteSumme.toStringAsFixed(2),
       },
     ),
   );
@@ -131,6 +134,11 @@ class ShopApi {
   Future<Produkt> produktSpeichern(String id, ProduktEingabe eingabe) async =>
       Produkt.fromJson(await _client.put('/produkte/$id', daten: eingabe.toJson()));
 
+  /// Nimmt ein Produkt aus dem Shop oder stellt es wieder ein - ändert sonst nichts.
+  Future<Produkt> sichtbarkeitSetzen(String id, bool aktiv) async => Produkt.fromJson(
+    await _client.patch('/produkte/$id/sichtbarkeit', daten: {'produkt_aktiv': aktiv}),
+  );
+
   /// Lädt ein Produktbild hoch und gibt den Dateinamen für `bildpfad` zurück.
   Future<String> bildHochladen(Uint8List bytes, String dateiname, String mimeTyp) async {
     final antwort = await _client.hochladen(
@@ -143,8 +151,11 @@ class ShopApi {
     return antwort['bildpfad'] as String;
   }
 
-  Future<List<Bestellung>> alleBestellungen() async =>
-      _liste(await _client.get('/bestellungen'), Bestellung.fromJson);
+  /// Die neuesten [limit] Bestellungen aller Kunden.
+  Future<List<Bestellung>> alleBestellungen({required int limit}) async => _liste(
+    await _client.get('/bestellungen', parameter: {'limit': limit}),
+    Bestellung.fromJson,
+  );
 
   Future<Bestellung> statusAendern(String id, String status) async => Bestellung.fromJson(
     await _client.patch('/bestellungen/$id/status', daten: {'status': status}),

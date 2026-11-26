@@ -26,6 +26,12 @@ const _bildtypen = {
 /// Liest eine Zahl mit Komma oder Punkt als Dezimaltrennzeichen.
 double? _zahl(String text) => double.tryParse(text.trim().replaceAll(',', '.'));
 
+/// 12.5 -> "12,5", 20.0 -> "20" - ohne zu runden, damit Speichern nichts verändert.
+String _prozentText(double wert) => wert
+    .toStringAsFixed(2)
+    .replaceFirst(RegExp(r'\.?0+$'), '')
+    .replaceAll('.', ',');
+
 class ProduktDialog extends StatefulWidget {
   const ProduktDialog({super.key, this.produkt});
 
@@ -45,9 +51,7 @@ class _ProduktDialogState extends State<ProduktDialog> {
     text: _p?.preis.toStringAsFixed(2).replaceAll('.', ','),
   );
   late final _rabatt = TextEditingController(
-    text: _p == null || _p.produktRabatt == 0
-        ? ''
-        : _p.produktRabatt.toStringAsFixed(0),
+    text: _p == null || _p.produktRabatt == 0 ? '' : _prozentText(_p.produktRabatt),
   );
   late final _bestand = TextEditingController(text: '${_p?.lagerbestand ?? 1}');
   late String? _kategorieId = _p?.kategorieId;
@@ -102,12 +106,14 @@ class _ProduktDialogState extends State<ProduktDialog> {
 
   Future<void> _speichern() async {
     if (!_formular.currentState!.validate()) return;
+    final bestand = int.parse(_bestand.text.trim());
     final eingabe = ProduktEingabe(
       bezeichnung: _bezeichnung.text.trim(),
       produktInfo: _info.text.trim(),
       preis: _zahl(_preis.text)!,
       produktRabatt: _rabatt.text.trim().isEmpty ? 0 : _zahl(_rabatt.text)!,
-      lagerbestand: int.parse(_bestand.text.trim()),
+      // Beim Bearbeiten nur senden, wenn das Feld geändert wurde (siehe ProduktEingabe)
+      lagerbestand: _p != null && bestand == _p.lagerbestand ? null : bestand,
       zustandId: _zustandId!,
       kategorieId: _kategorieId!,
       bildpfad: _bildpfad,

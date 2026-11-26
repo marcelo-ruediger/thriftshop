@@ -42,6 +42,11 @@ class BenutzerDAO:
             "SELECT COUNT(*) FROM bestellung WHERE benutzer_id = ?", (benutzer_id,)
         ).fetchone()[0]
 
+    def anzahl_administratoren(self) -> int:
+        return self.db.execute(
+            "SELECT COUNT(*) FROM benutzer WHERE rolle = 'Administrator'"
+        ).fetchone()[0]
+
     # Schreiben
     def erstellen(self, benutzer: Benutzer) -> None:
         """Legt einen neuen Benutzer an."""
@@ -113,7 +118,7 @@ class BenutzerDAO:
         self.db.commit()
 
     def anonymisieren(self, benutzer_id: UUID) -> None:
-        """Entfernt alle personenbezogenen Daten, behält aber den Datensatz.
+        """Entfernt die personenbezogenen Daten des Kontos, behält aber den Datensatz.
 
         Wird statt des Löschens verwendet, wenn Bestellungen existieren, die aus
         buchhalterischen Gründen erhalten bleiben müssen (DSGVO Art. 17 Abs. 3).
@@ -123,7 +128,7 @@ class BenutzerDAO:
             UPDATE benutzer SET
                 vorname = 'Gelöschter', nachname = 'Benutzer',
                 email = ?, telefon = NULL, passwort_hash = '', rolle = 'Kunde',
-                letzte_aenderung = ?
+                letzter_login = NULL, letzte_aenderung = ?
             WHERE benutzer_id = ?
             """,
             (f"geloescht-{benutzer_id}@thriftshop.invalid", jetzt(), benutzer_id),
