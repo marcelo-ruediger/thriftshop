@@ -131,6 +131,14 @@ class _AdminBestellungenScreenState extends State<AdminBestellungenScreen> {
             ),
           ),
           const SizedBox(height: Abstand.md),
+          if (alle.length >= AdminProvider.bestellLimit)
+            Padding(
+              padding: const EdgeInsets.only(bottom: Abstand.md),
+              child: Text(
+                'Angezeigt werden die neuesten ${AdminProvider.bestellLimit} Bestellungen.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
           if (gefiltert.isEmpty)
             Hinweisflaeche(
               icon: Icons.inbox_outlined,

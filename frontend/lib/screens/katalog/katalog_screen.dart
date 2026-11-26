@@ -19,9 +19,15 @@ class KatalogScreen extends StatefulWidget {
 }
 
 class _KatalogScreenState extends State<KatalogScreen> {
-  late final TextEditingController _suche = TextEditingController(
-    text: context.read<KatalogProvider>().suche,
-  );
+  late final TextEditingController _suche;
+
+  @override
+  void initState() {
+    super.initState();
+    // Hier und nicht als lazy Feld: sonst liefe die Initialisierung erst in dispose(),
+    // wenn die Seite verlassen wird, bevor der Katalog geladen ist.
+    _suche = TextEditingController(text: context.read<KatalogProvider>().suche);
+  }
 
   @override
   void dispose() {

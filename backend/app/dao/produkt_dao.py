@@ -102,10 +102,11 @@ class ProduktDAO:
             ),
         )
 
-    def deaktivieren(self, produkt_id: UUID) -> bool:
-        """Deaktiviert ein Produkt (Soft-Delete) - bestehende Bestellungen bleiben intakt."""
+    def sichtbarkeit_setzen(self, produkt_id: UUID, aktiv: bool) -> bool:
+        """Nimmt ein Produkt aus dem Shop (Soft-Delete) oder stellt es wieder ein.
+        Bestehende Bestellungen bleiben intakt."""
         cursor = self.db.execute(
-            "UPDATE produkt SET produkt_aktiv = 0 WHERE produkt_id = ?", (produkt_id,)
+            "UPDATE produkt SET produkt_aktiv = ? WHERE produkt_id = ?", (aktiv, produkt_id)
         )
         return cursor.rowcount > 0
 

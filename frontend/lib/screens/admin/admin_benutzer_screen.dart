@@ -22,6 +22,10 @@ class AdminBenutzerScreen extends StatefulWidget {
 }
 
 class _AdminBenutzerScreenState extends State<AdminBenutzerScreen> {
+  /// Wird bei jeder abgelehnten Änderung erhöht, damit die Auswahlfelder neu
+  /// aufgebaut werden und wieder die tatsächliche Rolle zeigen.
+  int _abgelehnt = 0;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +39,9 @@ class _AdminBenutzerScreenState extends State<AdminBenutzerScreen> {
       await context.read<AdminProvider>().rolleAendern(benutzer.benutzerId, rolle);
       if (mounted) meldung(context, '${benutzer.name} hat jetzt die Rolle „$rolle“.');
     } on ApiFehler catch (fehler) {
-      if (mounted) meldung(context, fehler.nachricht, fehler: true);
+      if (!mounted) return;
+      setState(() => _abgelehnt++);
+      meldung(context, fehler.nachricht, fehler: true);
     }
   }
 
@@ -103,8 +109,9 @@ class _AdminBenutzerScreenState extends State<AdminBenutzerScreen> {
                         SizedBox(
                           width: 170,
                           child: DropdownButtonFormField<String>(
-                            // Der Schlüssel übernimmt den Wert vom Server, falls die Änderung scheitert
-                            key: ValueKey('${b.benutzerId}-${b.rolle}'),
+                            // Neuer Schlüssel = neues Feld mit dem Wert vom Server: nach einer
+                            // gespeicherten und auch nach einer abgelehnten Änderung
+                            key: ValueKey('${b.benutzerId}-${b.rolle}-$_abgelehnt'),
                             initialValue: b.rolle,
                             isDense: true,
                             decoration: const InputDecoration(

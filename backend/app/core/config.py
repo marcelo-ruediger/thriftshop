@@ -49,6 +49,11 @@ class Einstellungen:
         # Zusätzliche erlaubte Origins (kommagetrennt); localhost ist immer erlaubt
         self.cors_origins = _liste("CORS_ORIGINS")
 
+        # Erster Administrator für einen Betrieb ohne Demo-Daten: wird beim Start angelegt,
+        # solange es noch keinen Administrator gibt
+        self.admin_email = os.getenv("ADMIN_EMAIL", "").strip().lower()
+        self.admin_passwort = os.getenv("ADMIN_PASSWORT", "")
+
         # Demo-Daten (Katalog + Demo-Konten) beim ersten Start einspielen
         self.demo_daten = _bool("SEED_DEMO_DATA", True)
         # Im Demo-Modus sind die Demo-Konten vor Passwort-/E-Mail-Änderung und Löschung geschützt

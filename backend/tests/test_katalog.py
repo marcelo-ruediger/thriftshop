@@ -111,6 +111,50 @@ def test_deaktiviertes_produkt_verschwindet_aus_dem_katalog(client, admin, produ
     assert produkt["produkt_id"] in verwaltung
 
 
+def test_bearbeiten_und_ausblenden_ueberschreiben_keinen_verkauften_bestand(
+    client, admin, kunde, stammdaten, produkt_anlegen
+):
+    """Die Verwaltung arbeitet mit einem älteren Stand der Produktliste. Wird in der
+    Zwischenzeit etwas verkauft, darf das Speichern den Bestand nicht zurücksetzen."""
+    produkt = produkt_anlegen(lagerbestand=1)
+    pid = produkt["produkt_id"]
+    kauf = client.post(
+        "/api/bestellungen", headers=kunde, json={"positionen": [{"produkt_id": pid, "menge": 1}]}
+    )
+    assert kauf.status_code == 201
+
+    # Beschreibung ändern, ohne den Bestand mitzusenden
+    geaendert = client.put(
+        f"/api/produkte/{pid}",
+        headers=admin,
+        json={
+            "bezeichnung": produkt["bezeichnung"],
+            "produkt_info": "Tippfehler korrigiert",
+            "preis": "20.00",
+            **stammdaten,
+        },
+    )
+    assert geaendert.json()["lagerbestand"] == 0
+
+    # Aus dem Shop nehmen und wieder einstellen
+    aus = client.patch(
+        f"/api/produkte/{pid}/sichtbarkeit", headers=admin, json={"produkt_aktiv": False}
+    )
+    assert aus.json()["produkt_aktiv"] is False
+    assert client.get(f"/api/produkte/{pid}").status_code == 404
+    an = client.patch(
+        f"/api/produkte/{pid}/sichtbarkeit", headers=admin, json={"produkt_aktiv": True}
+    )
+    assert an.json()["produkt_aktiv"] is True
+    assert an.json()["lagerbestand"] == 0
+    assert an.json()["produkt_info"] == "Tippfehler korrigiert"
+
+    unbekannt = client.patch(
+        f"/api/produkte/{uuid.uuid4()}/sichtbarkeit", headers=admin, json={"produkt_aktiv": True}
+    )
+    assert unbekannt.status_code == 404
+
+
 def test_bild_hochladen(client, admin):
     antwort = client.post(
         "/api/produkte/bild", headers=admin, files={"datei": ("foto.png", PNG, "image/png")}
@@ -141,6 +185,7 @@ def test_verwaltung_erfordert_anmeldung_und_rolle(client, kunde, stammdaten):
         ("POST", "/api/produkte", neues_produkt),
         ("PUT", f"/api/produkte/{produkt['produkt_id']}", neues_produkt),
         ("DELETE", f"/api/produkte/{produkt['produkt_id']}", None),
+        ("PATCH", f"/api/produkte/{produkt['produkt_id']}/sichtbarkeit", {"produkt_aktiv": False}),
         ("POST", "/api/kategorien", {"bezeichnung": "X"}),
         ("DELETE", f"/api/kategorien/{stammdaten['kategorie_id']}", None),
         ("POST", "/api/zustaende", {"bezeichnung": "X", "beschreibung": "x"}),

@@ -127,14 +127,18 @@ Interactive API documentation is available at `/api/docs` while the backend is r
   include VAT, and the contained VAT is shown separately.
 - **Stock is booked atomically.** Placing an order reduces stock in the same transaction and fails
   with a clear message if an item has just sold out. Cancelling or refunding puts items back —
-  exactly once.
+  exactly once, even when two requests arrive at the same time. Editing a product in the admin
+  area never overwrites stock that orders have changed in the meantime.
+- **No silent price changes.** Checkout sends the total the customer saw; if a price changed in
+  between, the order is rejected and the cart updates instead of booking a different amount.
 - **Order lifecycle:** `Offen → In Bearbeitung → Abgeschlossen`, with `Storniert` and `Erstattet`
   as exits. Customers can cancel only while an order is still `Offen`.
 - **Access control:** passwords are hashed with bcrypt, sessions are JWTs, and every admin route
   checks the role stored in the database. A new account is always a customer; only an
   administrator can assign other roles.
-- **Account deletion:** an account without orders is deleted; one with orders is anonymised so the
-  order records stay consistent.
+- **Account deletion:** an account without orders is deleted. One with orders is anonymised so the
+  order records stay consistent: open orders are cancelled, order notes removed, and its login
+  tokens stop working immediately.
 
 ## Tests
 
@@ -142,10 +146,11 @@ Interactive API documentation is available at `/api/docs` while the backend is r
 make test
 ```
 
-- **Backend:** 58 pytest tests run the real API against a temporary SQLite database — sign-up and
-  login, role checks on every admin route, pricing, stock booking, order status transitions,
-  image upload.
-- **Frontend:** unit tests for the cart and the catalogue filter, plus static analysis.
+- **Backend:** 72 pytest tests run the real API against a temporary SQLite database — sign-up and
+  login, role checks on every admin route, pricing, stock booking, order status transitions
+  (including two requests racing each other), image upload, demo-mode masking, seeding.
+- **Frontend:** unit tests for the cart, the catalogue filter and the order state, plus static
+  analysis.
 
 Both run in GitHub Actions on every push (`.github/workflows/ci.yml`).
 
@@ -161,7 +166,8 @@ change the defaults:
 | `UPLOAD_DIR`     | `uploads/` next to the database | Where uploaded product photos are stored                             |
 | `CORS_ORIGINS`   | *(empty)*                    | Extra allowed browser origins, comma-separated (localhost is always allowed) |
 | `SEED_DEMO_DATA` | `true`                       | Fill an empty database with the demo catalogue and accounts             |
-| `DEMO_MODUS`     | `true`                       | Protect the demo accounts from password, e-mail and role changes        |
+| `DEMO_MODUS`     | `true`                       | Protect the demo accounts from changes and hide other visitors' contact data from them |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORT` | *(empty)*     | Creates this administrator on start while no administrator exists — the way in when running without demo data |
 
 The frontend finds the API on its own (same origin in production, `localhost:8001` in
 development). To point it elsewhere: `flutter build web --dart-define=API_URL=https://api.example.com`.
@@ -183,9 +189,11 @@ Any host that runs a Docker container works the same way; the container listens 
 
 - By design there is no online payment and no shipping: customers pay on pick-up or by invoice.
   No e-mails are sent; the confirmation page describes the next steps instead.
-- The demo accounts have public passwords. `DEMO_MODUS` keeps them usable for every visitor, but
-  anyone can sign in as administrator and edit products — set your own accounts and
-  `DEMO_MODUS=false` for anything beyond a demo.
+- The demo accounts have public passwords, so anyone can sign in as administrator and edit
+  products and orders. `DEMO_MODUS` keeps those accounts usable for every visitor and shows
+  them other visitors' names, e-mail addresses and order notes only in masked form. For anything
+  beyond a demo, set `SEED_DEMO_DATA=false`, `DEMO_MODUS=false` and `ADMIN_EMAIL`/`ADMIN_PASSWORT`.
+- The admin order list shows the newest 200 orders; product and user lists are not paginated.
 - The two typefaces (Inter, Fraunces) are loaded from Google Fonts at runtime. For a real German
   shop they should be bundled with the app instead.
 - `docs/` holds the original planning documents of the project (in German: requirements, UML,

@@ -17,6 +17,7 @@ import '../../widgets/bestell_widgets.dart';
 import '../../widgets/meldungen.dart';
 import '../../widgets/seiten_inhalt.dart';
 import '../../widgets/zustands_anzeigen.dart';
+import '../auth/auth_rahmen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -29,6 +30,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _anmerkung = TextEditingController();
   String _zahlungsart = Zahlungsarten.abholung;
   bool _sendet = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Aktuelle Preise und Bestände holen - der Warenkorb gleicht sich danach selbst ab.
+    // So stimmt die angezeigte Summe auch nach langer Pause im offenen Tab.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<KatalogProvider>().laden(still: true);
+    });
+  }
 
   @override
   void dispose() {
@@ -46,6 +57,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final bestellung = await context.read<BestellProvider>().bestellen(
         warenkorb.items,
         zahlungsart: _zahlungsart,
+        erwarteteSumme: warenkorb.summe,
         anmerkung: _anmerkung.text.trim().isEmpty ? null : _anmerkung.text.trim(),
       );
       // Erst weiterleiten, dann leeren - sonst blitzt kurz „Warenkorb ist leer“ auf
@@ -201,12 +213,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: Abstand.lg),
           FilledButton(
             onPressed: _sendet ? null : _bestellen,
-            child: _sendet
-                ? const SizedBox.square(
-                    dimension: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2.5),
-                  )
-                : const Text('Zahlungspflichtig bestellen'),
+            child: SendeText('Zahlungspflichtig bestellen', sendet: _sendet),
           ),
           const SizedBox(height: Abstand.sm + 4),
           Text(

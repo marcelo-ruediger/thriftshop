@@ -218,7 +218,9 @@ def test_erstattung_nach_storno_bucht_nicht_doppelt_zurueck(
     assert _bestand(client, admin, produkt["produkt_id"]) == 1
 
 
-def test_bestellverwaltung_listet_und_filtert(client, kunde, mitarbeiter, produkt_anlegen):
+def test_bestellverwaltung_listet_und_filtert(
+    client, kunde, mitarbeiter, produkt_anlegen, ohne_demo_modus
+):
     produkt = produkt_anlegen()
     bestellung = _bestellen(client, kunde, (produkt["produkt_id"], 1)).json()
 
@@ -242,6 +244,72 @@ def test_statistik(client, kunde, admin, produkt_anlegen):
     assert nachher["bestellungen_gesamt"] == vorher["bestellungen_gesamt"] + 1
     assert nachher["bestellungen_je_status"]["Offen"] == vorher["bestellungen_je_status"]["Offen"] + 1
     assert nachher["produkte_ausverkauft"] == vorher["produkte_ausverkauft"] + 1
+
+
+def test_bestellverwaltung_liefert_seitenweise(client, kunde, mitarbeiter, produkt_anlegen):
+    produkt = produkt_anlegen(lagerbestand=3)
+    for _ in range(3):
+        _bestellen(client, kunde, (produkt["produkt_id"], 1))
+
+    erste = client.get("/api/bestellungen?limit=2", headers=mitarbeiter).json()
+    zweite = client.get("/api/bestellungen?limit=2&offset=2", headers=mitarbeiter).json()
+    assert len(erste) == 2 and len(zweite) >= 1
+    nummern = [b["bestellnr"] for b in erste + zweite]
+    assert nummern == sorted(nummern, reverse=True)  # neueste zuerst, ohne Überschneidung
+    assert len(set(nummern)) == len(nummern)
+    assert client.get("/api/bestellungen?limit=0", headers=mitarbeiter).status_code == 422
+
+
+def test_gleichzeitiges_stornieren_bucht_die_ware_nur_einmal_zurueck(
+    client, kunde, admin, produkt_anlegen
+):
+    """Zwei Anfragen lesen denselben Stand „Offen“ - nur die erste darf wirken."""
+    from app.core.datenbank import verbinden
+    from app.dao.bestellung_dao import BestellungDAO
+    from app.services.bestellservice import Bestellservice, Statuskonflikt
+
+    produkt = produkt_anlegen(lagerbestand=1)
+    bestellung_id = _bestellen(client, kunde, (produkt["produkt_id"], 1)).json()["bestellung_id"]
+
+    erste, zweite = verbinden(), verbinden()
+    try:
+        stand_a = BestellungDAO(erste).get_nach_id(bestellung_id)
+        stand_b = BestellungDAO(zweite).get_nach_id(bestellung_id)
+        Bestellservice(erste).status_aendern(stand_a, "Storniert")
+        with pytest.raises(Statuskonflikt):
+            Bestellservice(zweite).status_aendern(stand_b, "Storniert")
+        # ... und ein Storno kann eine inzwischen begonnene Bearbeitung nicht überschreiben
+        with pytest.raises(Statuskonflikt):
+            Bestellservice(zweite).status_aendern(stand_b, "In Bearbeitung")
+    finally:
+        erste.close()
+        zweite.close()
+
+    assert _bestand(client, admin, produkt["produkt_id"]) == 1
+
+
+def test_bestellung_wird_abgelehnt_wenn_der_angezeigte_preis_nicht_mehr_stimmt(
+    client, kunde, admin, stammdaten, produkt_anlegen
+):
+    produkt = produkt_anlegen(preis="20.00", lagerbestand=2)
+    client.put(
+        f"/api/produkte/{produkt['produkt_id']}",
+        headers=admin,
+        json={
+            "bezeichnung": produkt["bezeichnung"],
+            "produkt_info": "teurer",
+            "preis": "25.00",
+            **stammdaten,
+        },
+    )
+
+    veraltet = _bestellen(client, kunde, (produkt["produkt_id"], 1), erwartete_summe="20.00")
+    assert veraltet.status_code == 409
+    assert _bestand(client, admin, produkt["produkt_id"]) == 2  # nichts ausgebucht
+
+    aktuell = _bestellen(client, kunde, (produkt["produkt_id"], 1), erwartete_summe="25.00")
+    assert aktuell.status_code == 201
+    assert aktuell.json()["gesamtpreis"] == 25
 
 
 def test_frontend_fallback_liefert_kein_html_fuer_unbekannte_api_pfade(client):

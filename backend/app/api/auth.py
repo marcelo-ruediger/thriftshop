@@ -7,9 +7,9 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from app.api.fehler import konflikt
-from app.core.config import einstellungen
 from app.core.datenbank import get_db
 from app.core.sicherheit import (
+    ROLLE_ADMIN,
     ROLLE_KUNDE,
     aktueller_benutzer,
     passwort_hashen,
@@ -17,6 +17,7 @@ from app.core.sicherheit import (
     token_erstellen,
 )
 from app.dao.benutzer_dao import BenutzerDAO
+from app.dao.bestellung_dao import BestellungDAO
 from app.models import Benutzer
 from app.schemas import (
     BenutzerAusgabe,
@@ -26,7 +27,8 @@ from app.schemas import (
     RegistrierungAnfrage,
     TokenAusgabe,
 )
-from app.seed import DEMO_EMAILS
+from app.services import demo
+from app.services.bestellservice import Bestellservice
 
 router = APIRouter(prefix="/auth", tags=["Authentifizierung"])
 
@@ -38,12 +40,11 @@ def _token_antwort(benutzer: Benutzer) -> TokenAusgabe:
 
 def _demo_konto_schuetzen(benutzer: Benutzer) -> None:
     """Die öffentlichen Demo-Konten sollen für alle Besucher nutzbar bleiben."""
-    if einstellungen.demo_modus and benutzer.email.lower() in DEMO_EMAILS:
-        raise HTTPException(
-            status.HTTP_403_FORBIDDEN,
-            detail="Das ist ein Demo-Konto – E-Mail, Passwort und Löschung sind hier gesperrt. "
-            "Registriere ein eigenes Konto, um diese Funktion auszuprobieren.",
-        )
+    demo.demo_konto_schuetzen(
+        benutzer,
+        "Das ist ein Demo-Konto – E-Mail, Passwort und Löschung sind hier gesperrt. "
+        "Registriere ein eigenes Konto, um diese Funktion auszuprobieren.",
+    )
 
 
 @router.post("/registrieren", response_model=TokenAusgabe, status_code=201)
@@ -53,7 +54,7 @@ def registrieren(anfrage: RegistrierungAnfrage, db=Depends(get_db)):
     Die Rolle ist immer „Kunde“ - höhere Rollen vergibt nur ein Administrator.
     """
     dao = BenutzerDAO(db)
-    if dao.get_nach_email(anfrage.email):
+    if dao.get_nach_email(anfrage.email.lower()):
         raise konflikt("Diese E-Mail-Adresse ist bereits registriert")
 
     benutzer = Benutzer(
@@ -73,7 +74,8 @@ def registrieren(anfrage: RegistrierungAnfrage, db=Depends(get_db)):
 def login(anfrage: LoginAnfrage, db=Depends(get_db)):
     """Prüft E-Mail und Passwort, gibt bei Erfolg einen JWT zurück."""
     dao = BenutzerDAO(db)
-    benutzer = dao.get_nach_email(anfrage.email)
+    # E-Mails werden kleingeschrieben gespeichert (auch Umlaute, die SQLite nicht angleicht)
+    benutzer = dao.get_nach_email(anfrage.email.lower())
     if not benutzer or not passwort_pruefen(anfrage.passwort, benutzer.passwort_hash):
         raise HTTPException(
             status.HTTP_401_UNAUTHORIZED, detail="E-Mail oder Passwort ist falsch"
@@ -132,13 +134,27 @@ def passwort_aendern(
 def profil_loeschen(benutzer: Benutzer = Depends(aktueller_benutzer), db=Depends(get_db)):
     """Löscht das eigene Konto (DSGVO - Recht auf Vergessenwerden).
 
-    Gibt es Bestellungen, werden die personenbezogenen Daten entfernt und der
-    Datensatz anonymisiert, damit die Buchhaltung konsistent bleibt.
+    Gibt es Bestellungen, werden noch laufende storniert (die Ware geht zurück in den
+    Shop), Anmerkungen und persönliche Daten entfernt und der Datensatz anonymisiert,
+    damit die Buchhaltung konsistent bleibt.
     """
     _demo_konto_schuetzen(benutzer)
     dao = BenutzerDAO(db)
-    if dao.anzahl_bestellungen(benutzer.benutzer_id):
-        dao.anonymisieren(benutzer.benutzer_id)
-    else:
+    if benutzer.rolle == ROLLE_ADMIN and dao.anzahl_administratoren() <= 1:
+        raise konflikt(
+            "Du bist der einzige Administrator. Vergib die Rolle zuerst an ein anderes Konto."
+        )
+
+    bestell_dao = BestellungDAO(db)
+    bestellungen = bestell_dao.get_nach_benutzer(benutzer.benutzer_id)
+    if not bestellungen:
         dao.loeschen(benutzer.benutzer_id)
+        return Response(status_code=204)
+
+    service = Bestellservice(db)
+    for bestellung in bestellungen:
+        if bestellung.status in ("Offen", "In Bearbeitung"):
+            service.status_aendern(bestellung, "Storniert")
+    bestell_dao.anmerkungen_entfernen(benutzer.benutzer_id)
+    dao.anonymisieren(benutzer.benutzer_id)  # schließt die Transaktion ab
     return Response(status_code=204)

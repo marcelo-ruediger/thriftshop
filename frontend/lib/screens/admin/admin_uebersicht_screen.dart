@@ -34,7 +34,7 @@ class _AdminUebersichtScreenState extends State<AdminUebersichtScreen> {
   Widget build(BuildContext context) {
     final admin = context.watch<AdminProvider>();
     final statistik = admin.statistik;
-    final bestellungen = admin.bestellungen;
+    final bestellungen = admin.neuesteBestellungen;
 
     return AdminRahmen(
       pfad: '/admin',
@@ -102,7 +102,7 @@ class _AdminUebersichtScreenState extends State<AdminUebersichtScreen> {
           LayoutBuilder(
             builder: (context, constraints) {
               final status = _NachStatus(statistik);
-              final neueste = _Neueste(bestellungen.take(5).toList());
+              final neueste = _Neueste(bestellungen);
               return constraints.maxWidth >= 820
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

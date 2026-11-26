@@ -7,13 +7,13 @@ Kunden sehen und stornieren nur ihre eigenen Bestellungen. Die Bestellverwaltung
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.api.fehler import konflikt, nicht_gefunden
 from app.core.datenbank import get_db
 from app.core.sicherheit import PERSONAL, aktueller_benutzer, erfordert_personal
 from app.dao.bestellung_dao import BestellungDAO
-from app.models import Benutzer
+from app.models import Benutzer, Bestellung
 from app.schemas import (
     BestellungAnfrage,
     BestellungAusgabe,
@@ -21,9 +21,23 @@ from app.schemas import (
     StatistikAusgabe,
     StatusAnfrage,
 )
-from app.services.bestellservice import Bestellfehler, Bestellservice
+from app.services import demo
+from app.services.bestellservice import Bestellfehler, Bestellservice, Statuskonflikt
 
 router = APIRouter(prefix="/bestellungen", tags=["Bestellungen"])
+
+
+def _ausgabe(bestellung: Bestellung, betrachter: Benutzer) -> BestellungAusgabe:
+    """Im Demo-Modus sieht das öffentliche Personal-Konto fremde Kundendaten nur maskiert."""
+    ausgabe = BestellungAusgabe.model_validate(bestellung)
+    if bestellung.benutzer_id != betrachter.benutzer_id and demo.verbirgt_daten(
+        betrachter, bestellung.kunde_email
+    ):
+        ausgabe.kunde_name = demo.name_kuerzen(bestellung.kunde_name or "")
+        ausgabe.kunde_email = demo.email_maskieren(bestellung.kunde_email or "")
+        if ausgabe.anmerkung:
+            ausgabe.anmerkung = demo.AUSGEBLENDET
+    return ausgabe
 
 
 @router.post("", response_model=BestellungAusgabe, status_code=201)
@@ -58,11 +72,14 @@ def statistik(_personal=Depends(erfordert_personal), db=Depends(get_db)):
 @router.get("", response_model=list[BestellungAusgabe])
 def alle_bestellungen_abrufen(
     status: Bestellstatus | None = None,
-    _personal=Depends(erfordert_personal),
+    limit: int = Query(200, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+    personal: Benutzer = Depends(erfordert_personal),
     db=Depends(get_db),
 ):
-    """Gibt alle Bestellungen zurück - optional nach Status gefiltert."""
-    return BestellungDAO(db).get_alle(status)
+    """Gibt Bestellungen seitenweise zurück (neueste zuerst) - optional nach Status gefiltert."""
+    bestellungen = BestellungDAO(db).get_alle(status, limit=limit, offset=offset)
+    return [_ausgabe(bestellung, personal) for bestellung in bestellungen]
 
 
 @router.get("/{bestellung_id}", response_model=BestellungAusgabe)
@@ -78,7 +95,7 @@ def bestellung_abrufen(
         bestellung.benutzer_id != benutzer.benutzer_id and benutzer.rolle not in PERSONAL
     ):
         raise nicht_gefunden("Bestellung")
-    return bestellung
+    return _ausgabe(bestellung, benutzer)
 
 
 @router.patch("/{bestellung_id}/stornieren", response_model=BestellungAusgabe)
@@ -95,14 +112,17 @@ def bestellung_stornieren(
         raise konflikt(
             f"Eine Bestellung mit Status „{bestellung.status}“ kann nicht mehr storniert werden"
         )
-    return Bestellservice(db).status_aendern(bestellung, "Storniert")
+    try:
+        return Bestellservice(db).status_aendern(bestellung, "Storniert")
+    except Bestellfehler as fehler:
+        raise konflikt(str(fehler)) from fehler
 
 
 @router.patch("/{bestellung_id}/status", response_model=BestellungAusgabe)
 def status_aktualisieren(
     bestellung_id: UUID,
     anfrage: StatusAnfrage,
-    _personal=Depends(erfordert_personal),
+    personal: Benutzer = Depends(erfordert_personal),
     db=Depends(get_db),
 ):
     """Ändert den Status einer Bestellung entlang der erlaubten Übergänge."""
@@ -110,6 +130,8 @@ def status_aktualisieren(
     if not bestellung:
         raise nicht_gefunden("Bestellung")
     try:
-        return Bestellservice(db).status_aendern(bestellung, anfrage.status)
+        return _ausgabe(Bestellservice(db).status_aendern(bestellung, anfrage.status), personal)
+    except Statuskonflikt as fehler:
+        raise konflikt(str(fehler)) from fehler
     except Bestellfehler as fehler:
         raise HTTPException(422, detail=str(fehler)) from fehler

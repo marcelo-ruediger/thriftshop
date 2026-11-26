@@ -100,10 +100,10 @@ class ProduktEingabe {
     required this.produktInfo,
     required this.preis,
     required this.produktRabatt,
-    required this.lagerbestand,
     required this.zustandId,
     required this.kategorieId,
     required this.produktAktiv,
+    this.lagerbestand,
     this.bildpfad,
   });
 
@@ -111,23 +111,15 @@ class ProduktEingabe {
   final String produktInfo;
   final double preis;
   final double produktRabatt;
-  final int lagerbestand;
+
+  /// `null` lässt den Bestand unverändert. Beim Bearbeiten wird er nur gesendet,
+  /// wenn er im Formular geändert wurde - sonst würde ein veralteter Wert einen
+  /// Bestand überschreiben, den Bestellungen inzwischen verringert haben.
+  final int? lagerbestand;
   final String zustandId;
   final String kategorieId;
   final String? bildpfad;
   final bool produktAktiv;
-
-  factory ProduktEingabe.von(Produkt p, {bool? produktAktiv}) => ProduktEingabe(
-    bezeichnung: p.bezeichnung,
-    produktInfo: p.produktInfo,
-    preis: p.preis,
-    produktRabatt: p.produktRabatt,
-    lagerbestand: p.lagerbestand,
-    zustandId: p.zustandId,
-    kategorieId: p.kategorieId,
-    bildpfad: p.bildpfad,
-    produktAktiv: produktAktiv ?? p.produktAktiv,
-  );
 
   Map<String, dynamic> toJson() => {
     'bezeichnung': bezeichnung,
@@ -135,7 +127,7 @@ class ProduktEingabe {
     // Als Text mit zwei Nachkommastellen - das Backend rechnet mit Decimal
     'preis': preis.toStringAsFixed(2),
     'produkt_rabatt': produktRabatt.toStringAsFixed(2),
-    'lagerbestand': lagerbestand,
+    'lagerbestand': ?lagerbestand,
     'zustand_id': zustandId,
     'kategorie_id': kategorieId,
     'bildpfad': bildpfad,

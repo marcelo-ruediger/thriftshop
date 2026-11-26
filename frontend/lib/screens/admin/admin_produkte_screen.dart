@@ -68,10 +68,9 @@ class _AdminProdukteScreenState extends State<AdminProdukteScreen> {
 
   Future<void> _sichtbarkeit(Produkt produkt, bool aktiv) async {
     try {
-      await context.read<AdminProvider>().produktSpeichern(
-        produkt.produktId,
-        ProduktEingabe.von(produkt, produktAktiv: aktiv),
-      );
+      // Eigener Endpunkt, der nur die Sichtbarkeit ändert - die übrigen Felder der
+      // (möglicherweise veralteten) Zeile werden nicht zurückgeschrieben.
+      await context.read<AdminProvider>().sichtbarkeitAendern(produkt.produktId, aktiv);
       if (!mounted) return;
       meldung(
         context,
