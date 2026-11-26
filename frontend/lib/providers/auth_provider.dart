@@ -1,151 +1,100 @@
-/// AuthProvider für Authentifizierungs-Management
-/// Verwaltet Benutzer-Session und Login-Status
+/// Verwaltet die Sitzung: wer ist angemeldet und mit welcher Rolle.
 library;
 
 import 'package:flutter/foundation.dart';
 
+import '../core/network/api_client.dart';
 import '../models/benutzer.dart';
-import '../services/auth_service.dart';
+import '../services/shop_api.dart';
 
-class AuthProvider with ChangeNotifier {
+class AuthProvider extends ChangeNotifier {
+  AuthProvider(this._api, this._tokens);
+
+  final ShopApi _api;
+  final TokenSpeicher _tokens;
+
   Benutzer? _benutzer;
-  bool _isLoading = false;
-  String? _errorMessage;
-  bool _isAuthenticated = false;
+  bool _bereit = false;
 
   Benutzer? get benutzer => _benutzer;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  bool get isAuthenticated => _isAuthenticated;
 
-  final AuthService _authService = AuthService();
+  /// `false`, solange beim Start noch geprüft wird, ob ein gespeichertes Token gültig ist.
+  bool get bereit => _bereit;
+  bool get angemeldet => _benutzer != null;
+  bool get istPersonal => _benutzer?.istPersonal ?? false;
+  bool get istAdmin => _benutzer?.istAdmin ?? false;
 
-  /// Startet die App: prueft ob ein Token in SharedPreferences existiert
-  Future<void> initialize() async {
-    _isAuthenticated = _authService.isAuthenticated;
-    _benutzer = _authService.benutzer;
-    notifyListeners();
-  }
-
-  Future<void> login(String email, String password) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    try {
-      await _authService.login(email: email, password: password);
-      if (_authService.isAuthenticated) {
-        _benutzer = _authService.benutzer;
-        _isAuthenticated = true;
-      } else {
-        _errorMessage = 'Login fehlgeschlagen';
+  /// Stellt beim App-Start die Sitzung aus dem gespeicherten Token wieder her.
+  Future<void> initialisieren() async {
+    if (_tokens.token != null) {
+      try {
+        _benutzer = await _api.ich();
+      } on ApiFehler catch (fehler) {
+        // Nur ein abgelehntes Token verwerfen - bei Netzwerkfehlern bleibt es erhalten
+        if (fehler.status == 401) await _tokens.loeschen();
       }
-    } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Login: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
+    _bereit = true;
+    notifyListeners();
   }
 
-  Future<void> register(String email, String password, String name) async {
-    _isLoading = true;
-    _errorMessage = null;
+  Future<void> anmelden(String email, String passwort) async =>
+      _uebernehmen(await _api.anmelden(email, passwort));
+
+  Future<void> registrieren({
+    required String vorname,
+    required String nachname,
+    required String email,
+    required String passwort,
+    String? telefon,
+  }) async => _uebernehmen(
+    await _api.registrieren(
+      vorname: vorname,
+      nachname: nachname,
+      email: email,
+      passwort: passwort,
+      telefon: telefon,
+    ),
+  );
+
+  Future<void> _uebernehmen(Anmeldung anmeldung) async {
+    await _tokens.speichern(anmeldung.token);
+    _benutzer = anmeldung.benutzer;
     notifyListeners();
-
-    try {
-      // name wird in vorname/nachname aufgeteilt
-      final parts = name.split(' ');
-      final vorname = parts.isNotEmpty ? parts[0] : '';
-      final nachname = parts.length > 1
-          ? name.substring(name.indexOf(' ') + 1)
-          : '';
-
-      await _authService.register(
-        vorname: vorname,
-        nachname: nachname,
-        email: email,
-        telefonnummer: '',
-        password: password,
-      );
-
-      if (_authService.isAuthenticated) {
-        _benutzer = _authService.benutzer;
-        _isAuthenticated = true;
-      } else {
-        _errorMessage = 'Registration fehlgeschlagen';
-      }
-    } on Exception catch (e) {
-      _errorMessage = 'Fehler bei Registration: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
 
-  Future<void> logout() async {
-    _isLoading = true;
+  Future<void> profilSpeichern({
+    required String vorname,
+    required String nachname,
+    required String email,
+    String? telefon,
+  }) async {
+    _benutzer = await _api.profilSpeichern(
+      vorname: vorname,
+      nachname: nachname,
+      email: email,
+      telefon: telefon,
+    );
     notifyListeners();
-
-    try {
-      await _authService.logout();
-      _benutzer = null;
-      _isAuthenticated = false;
-    } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Logout: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
 
-  Future<void> updateProfile(Benutzer benutzer) async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+  Future<void> passwortAendern(String aktuell, String neu) =>
+      _api.passwortAendern(aktuell, neu);
 
-    try {
-      await _authService.updateProfile(benutzer);
-      _benutzer = _authService.benutzer;
-    } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Update: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+  Future<void> kontoLoeschen() async {
+    await _api.kontoLoeschen();
+    await abmelden();
   }
 
-  Future<void> deleteAccount() async {
-    _isLoading = true;
-    _errorMessage = null;
+  Future<void> abmelden() async {
+    await _tokens.loeschen();
+    _benutzer = null;
     notifyListeners();
-
-    try {
-      await _authService.deleteAccount();
-      _benutzer = null;
-      _isAuthenticated = false;
-    } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Löschen: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
 
-  Future<void> refreshUser() async {
-    if (!_isAuthenticated || _benutzer == null) return;
-
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      await _authService.getCurrentUser();
-      _benutzer = _authService.benutzer;
-    } on Exception catch (e) {
-      _errorMessage = 'Fehler beim Aktualisieren: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+  /// Vom [ApiClient] aufgerufen, wenn der Server das Token nicht mehr akzeptiert.
+  void sitzungAbgelaufen() {
+    if (_benutzer == null) return;
+    abmelden();
   }
 }

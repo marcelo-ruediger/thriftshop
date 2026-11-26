@@ -1,169 +1,101 @@
 """
-Gemeinsame pytest-Fixtures für alle Integrationstests.
+Gemeinsame pytest-Fixtures.
 
-Fixtures mit scope="session" werden einmal pro Testlauf erstellt
-und am Ende automatisch wieder gelöscht (Teardown via yield).
+Die Tests laufen gegen eine frische SQLite-Datenbank in einem temporären Verzeichnis,
+die beim Start mit den Demo-Daten gefüllt wird. Die Umgebungsvariablen müssen gesetzt
+sein, bevor die App importiert wird.
 """
 
+import os
+import tempfile
 import uuid
-from collections.abc import Iterator
-import pytest
-from fastapi.testclient import TestClient
-from app.main import app
+from pathlib import Path
 
-client = TestClient(app, raise_server_exceptions=False)
+_TMP = Path(tempfile.mkdtemp(prefix="thriftshop-tests-"))
+os.environ["DATABASE_PATH"] = str(_TMP / "test.db")
+os.environ["UPLOAD_DIR"] = str(_TMP / "uploads")
+os.environ["JWT_SECRET"] = "nur-fuer-tests"
+os.environ["SEED_DEMO_DATA"] = "true"
+os.environ["DEMO_MODUS"] = "true"
 
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
 
-@pytest.fixture(scope="session")
-def zustand_id() -> Iterator[str]:
-    """Legt einen Testzustand an und gibt dessen UUID zurück.
-    Wird am Ende des Testlaufs wieder gelöscht."""
-    eindeutige_id = str(uuid.uuid4())
-    daten = {
-        "zustand_id": eindeutige_id,
-        "bezeichnung": f"Testzustand {eindeutige_id[:8]}",
-        "beschreibung": "Automatisch angelegter Zustand für Tests.",
-    }
-    antwort = client.post("/zustaende/", json=daten)
-    assert antwort.status_code == 201, (
-        f"Zustand konnte nicht angelegt werden: {antwort.text}"
-    )
-
-    yield eindeutige_id
-
-    # Teardown: Zustand nach dem Testlauf löschen
-    client.delete(f"/zustaende/{eindeutige_id}")
+from app.main import app  # noqa: E402
 
 
 @pytest.fixture(scope="session")
-def kategorie_id() -> Iterator[str]:
-    """Legt eine Testkategorie an und gibt deren UUID zurück.
-    Wird am Ende des Testlaufs wieder gelöscht."""
-    eindeutige_id = str(uuid.uuid4())
-    daten = {
-        "kategorie_id": eindeutige_id,
-        "bezeichnung": f"Testkategorie {eindeutige_id[:8]}",
-        "slug": f"testkategorie-{eindeutige_id[:8]}",
-        "kategorie_rabatt": "0.00",
-        "steuersatz": "19.00",
-    }
-    antwort = client.post("/kategorien/", json=daten)
-    assert antwort.status_code == 201, (
-        f"Kategorie konnte nicht angelegt werden: {antwort.text}"
-    )
+def client():
+    # Der Kontextmanager führt den Lifespan aus (Schema + Demo-Daten)
+    with TestClient(app) as test_client:
+        yield test_client
 
-    yield eindeutige_id
 
-    # Teardown: Kategorie nach dem Testlauf löschen
-    client.delete(f"/kategorien/{eindeutige_id}")
+def _anmelden(client: TestClient, email: str, passwort: str) -> dict[str, str]:
+    antwort = client.post("/api/auth/login", json={"email": email, "passwort": passwort})
+    assert antwort.status_code == 200, antwort.text
+    return {"Authorization": f"Bearer {antwort.json()['access_token']}"}
 
 
 @pytest.fixture(scope="session")
-def benutzer_id() -> Iterator[str]:
-    """Legt einen Testbenutzer an und gibt dessen UUID zurück.
-    Wird am Ende des Testlaufs wieder gelöscht."""
-    eindeutige_id = str(uuid.uuid4())
+def admin(client) -> dict[str, str]:
+    """Authorization-Header des Demo-Administrators."""
+    return _anmelden(client, "admin@example.com", "admin1234")
+
+
+@pytest.fixture(scope="session")
+def mitarbeiter(client) -> dict[str, str]:
+    """Authorization-Header der Demo-Mitarbeiterin."""
+    return _anmelden(client, "team@example.com", "team1234")
+
+
+@pytest.fixture
+def neuer_kunde(client):
+    """Registriert einen frischen Kunden und gibt (Header, Benutzerdaten, Passwort) zurück."""
+    kennung = uuid.uuid4().hex[:10]
     daten = {
-        "benutzer_id": eindeutige_id,
         "vorname": "Test",
-        "nachname": "Benutzer",
-        "email": f"test_{eindeutige_id[:8]}@test.de",
-        "telefon": f"0{eindeutige_id[:10].replace('-', '')}",
-        "passwort_hash": "testPasswort123",
-        "rolle": "Kunde",
+        "nachname": "Kundin",
+        "email": f"test-{kennung}@example.com",
+        "telefon": "0221 123456",
+        "passwort": "geheim1234",
     }
-    antwort = client.post("/auth/registrieren", json=daten)
-    assert antwort.status_code == 201, (
-        f"Benutzer konnte nicht angelegt werden: {antwort.text}"
-    )
-
-    yield eindeutige_id
-
-    # Teardown: Benutzer nach dem Testlauf löschen
-    client.delete(f"/benutzer/{eindeutige_id}")
+    antwort = client.post("/api/auth/registrieren", json=daten)
+    assert antwort.status_code == 201, antwort.text
+    inhalt = antwort.json()
+    return {"Authorization": f"Bearer {inhalt['access_token']}"}, inhalt["benutzer"], daten["passwort"]
 
 
-@pytest.fixture(scope="session")
-def produkt_id(zustand_id: str, kategorie_id: str) -> Iterator[str]:
-    """Legt ein Testprodukt an und gibt dessen UUID zurück.
-    Stellt sicher, dass zustand_id und kategorie_id im Testlauf referenziert sind,
-    damit die 'loeschen_schlaegt_fehl'-Tests korrekt mit HTTP 500 scheitern.
-    Wird am Ende des Testlaufs deaktiviert (Soft-Delete)."""
-    eindeutige_id = str(uuid.uuid4())
-    daten = {
-        "produkt_id": eindeutige_id,
-        "laufende_nr": uuid.uuid4().int % 100000,
-        "bezeichnung": f"Testprodukt {eindeutige_id[:8]}",
-        "slug": f"testprodukt-{eindeutige_id[:8]}",
-        "produkt_info": "Automatisch angelegtes Produkt für Fixture-Tests.",
-        "preis": "9.99",
-        "produkt_rabatt": "0.00",
-        "lagerbestand": 5,
-        "zustand_id": zustand_id,
-        "kategorie_id": kategorie_id,
-        "produkt_aktiv": True,
+@pytest.fixture
+def kunde(neuer_kunde) -> dict[str, str]:
+    """Authorization-Header eines frisch registrierten Kunden."""
+    return neuer_kunde[0]
+
+
+@pytest.fixture
+def stammdaten(client) -> dict[str, str]:
+    """IDs einer vorhandenen Kategorie und eines vorhandenen Zustands."""
+    return {
+        "kategorie_id": client.get("/api/kategorien").json()[0]["kategorie_id"],
+        "zustand_id": client.get("/api/zustaende").json()[0]["zustand_id"],
     }
-    antwort = client.post("/produkte", json=daten)
-    assert antwort.status_code == 201, (
-        f"Produkt konnte nicht angelegt werden: {antwort.text}"
-    )
-
-    yield eindeutige_id
-
-    # Teardown: Produkt deaktivieren (Soft-Delete, Zeile bleibt für FK-Integrität)
-    client.delete(f"/produkte/{eindeutige_id}")
 
 
-@pytest.fixture(scope="session")
-def auth_token(benutzer_id: str) -> Iterator[str]:
-    """Loggt den Testbenutzer ein und gibt den JWT-Token zurück.
-    Hängt von der benutzer_id-Fixture ab."""
-    # E-Mail aus der benutzer_id-Fixture rekonstruieren ist nicht möglich,
-    # daher legen wir einen eigenen Login-Benutzer an.
-    eindeutige_id = str(uuid.uuid4())
-    email = f"login_{eindeutige_id[:8]}@test.de"
-    passwort = "testPasswort123"
-    daten = {
-        "benutzer_id": eindeutige_id,
-        "vorname": "Login",
-        "nachname": "Benutzer",
-        "email": email,
-        "telefon": f"0{eindeutige_id[:10].replace('-', '')}",
-        "passwort_hash": passwort,
-        "rolle": "Kunde",
-    }
-    client.post("/auth/registrieren", json=daten)
+@pytest.fixture
+def produkt_anlegen(client, admin, stammdaten):
+    """Fabrik: legt ein Produkt mit eindeutigem Namen an und gibt es zurück."""
 
-    antwort = client.post("/auth/login", params={"email": email, "passwort": passwort})
-    assert antwort.status_code == 200, f"Login fehlgeschlagen: {antwort.text}"
+    def _anlegen(**felder) -> dict:
+        daten = {
+            "bezeichnung": f"Testartikel {uuid.uuid4().hex[:8]}",
+            "produkt_info": "Automatisch angelegt für einen Test.",
+            "preis": "20.00",
+            "lagerbestand": 3,
+            **stammdaten,
+            **felder,
+        }
+        antwort = client.post("/api/produkte", json=daten, headers=admin)
+        assert antwort.status_code == 201, antwort.text
+        return antwort.json()
 
-    yield antwort.json()["access_token"]
-
-    # Teardown: Login-Benutzer nach dem Testlauf löschen
-    client.delete(f"/benutzer/{eindeutige_id}")
-
-
-@pytest.fixture(scope="session")
-def admin_token() -> Iterator[str]:
-    """Legt einen Test-Administrator an, loggt ihn ein und gibt den JWT-Token zurück."""
-    eindeutige_id = str(uuid.uuid4())
-    email = f"admin_{eindeutige_id[:8]}@test.de"
-    passwort = "adminPasswort123"
-    daten = {
-        "benutzer_id": eindeutige_id,
-        "vorname": "Admin",
-        "nachname": "Test",
-        "email": email,
-        "telefon": f"0{eindeutige_id[:10].replace('-', '')}",
-        "passwort_hash": passwort,
-        "rolle": "Administrator",
-    }
-    client.post("/auth/registrieren", json=daten)
-
-    antwort = client.post("/auth/login", params={"email": email, "passwort": passwort})
-    assert antwort.status_code == 200, f"Admin-Login fehlgeschlagen: {antwort.text}"
-
-    yield antwort.json()["access_token"]
-
-    # Teardown: Admin-Benutzer nach dem Testlauf löschen
-    client.delete(f"/benutzer/{eindeutige_id}")
+    return _anlegen

@@ -1,119 +1,144 @@
-/// Das Produkt-Modell für den Thriftshop
-/// Entspricht dem Python-Produkt-Modell aus dem Backend
+/// Produkt - entspricht `ProduktAusgabe` im Backend.
 library;
 
-import 'dart:convert';
+import '../core/config.dart';
 
-/// Ein Produkt im Thriftshop
 class Produkt {
-  /// Die eindeutige ID des Produkts
-  final String produktId;
-
-  /// Die laufende Nummer des Produkts
-  final int laufendeNr;
-
-  /// Die Bezeichnung des Produkts
-  final String bezeichnung;
-
-  /// Der URL-slug des Produkts
-  final String slug;
-
-  /// Die Produktinformationen
-  final String produktInfo;
-
-  /// Der Preis des Produkts
-  final double preis;
-
-  /// Der Rabatt für dieses Produkt in Prozent
-  final double produktRabatt;
-
-  /// Der aktuelle Lagerbestand
-  final int lagerbestand;
-
-  /// Die ID des Zustands des Produkts
-  final String zustandId;
-
-  /// Die ID der Kategorie des Produkts
-  final String kategorieId;
-
-  /// Der Pfad zum Produktbild (Dateiname, z.B. "001_gel1.png")
-  final String? bildpfad;
-
-  /// Gibt an, ob das Produkt aktiv ist
-  final bool produktAktiv;
-
-  /// Das Erstellungsdatum des Produkts
-  final DateTime? erstellungsdatum;
-
-  /// Die Produktnummer (kommt vom Backend als String)
-  final String produktnr;
-
-  /// Konstruktor für Produkt
-  Produkt({
+  const Produkt({
     required this.produktId,
-    required this.laufendeNr,
+    required this.produktnr,
     required this.bezeichnung,
     required this.slug,
+    required this.produktInfo,
+    required this.preis,
+    required this.produktRabatt,
+    required this.rabattProzent,
+    required this.endpreis,
+    required this.steuersatz,
+    required this.lagerbestand,
+    required this.zustandId,
+    required this.kategorieId,
+    required this.produktAktiv,
+    required this.erstellungsdatum,
+    this.bildpfad,
+  });
+
+  final String produktId;
+  final String produktnr;
+  final String bezeichnung;
+  final String slug;
+  final String produktInfo;
+
+  /// Listenpreis (brutto) ohne Rabatt.
+  final double preis;
+
+  /// Am Produkt hinterlegter Rabatt in Prozent.
+  final double produktRabatt;
+
+  /// Wirksamer Rabatt in Prozent (der höhere von Produkt- und Kategorierabatt).
+  final double rabattProzent;
+
+  /// Preis, den der Kunde bezahlt.
+  final double endpreis;
+  final double steuersatz;
+  final int lagerbestand;
+  final String zustandId;
+  final String kategorieId;
+  final String? bildpfad;
+  final bool produktAktiv;
+  final DateTime erstellungsdatum;
+
+  bool get reduziert => rabattProzent > 0;
+  bool get ausverkauft => lagerbestand <= 0;
+  bool get einzelstueck => lagerbestand == 1;
+  String? get bildUrl => bildpfad == null ? null : AppConfig.bildUrl(bildpfad!);
+
+  factory Produkt.fromJson(Map<String, dynamic> json) => Produkt(
+    produktId: json['produkt_id'] as String,
+    produktnr: json['produktnr'] as String,
+    bezeichnung: json['bezeichnung'] as String,
+    slug: json['slug'] as String,
+    produktInfo: json['produkt_info'] as String,
+    preis: (json['preis'] as num).toDouble(),
+    produktRabatt: (json['produkt_rabatt'] as num).toDouble(),
+    rabattProzent: (json['rabatt_prozent'] as num).toDouble(),
+    endpreis: (json['endpreis'] as num).toDouble(),
+    steuersatz: (json['steuersatz'] as num).toDouble(),
+    lagerbestand: (json['lagerbestand'] as num).toInt(),
+    zustandId: json['zustand_id'] as String,
+    kategorieId: json['kategorie_id'] as String,
+    bildpfad: json['bildpfad'] as String?,
+    produktAktiv: json['produkt_aktiv'] as bool,
+    erstellungsdatum: DateTime.parse(json['erstellungsdatum'] as String),
+  );
+
+  /// Für den im Browser gespeicherten Warenkorb.
+  Map<String, dynamic> toJson() => {
+    'produkt_id': produktId,
+    'produktnr': produktnr,
+    'bezeichnung': bezeichnung,
+    'slug': slug,
+    'produkt_info': produktInfo,
+    'preis': preis,
+    'produkt_rabatt': produktRabatt,
+    'rabatt_prozent': rabattProzent,
+    'endpreis': endpreis,
+    'steuersatz': steuersatz,
+    'lagerbestand': lagerbestand,
+    'zustand_id': zustandId,
+    'kategorie_id': kategorieId,
+    'bildpfad': bildpfad,
+    'produkt_aktiv': produktAktiv,
+    'erstellungsdatum': erstellungsdatum.toIso8601String(),
+  };
+}
+
+/// Eingabedaten zum Anlegen oder Bearbeiten eines Produkts (`ProduktAnfrage`).
+class ProduktEingabe {
+  const ProduktEingabe({
+    required this.bezeichnung,
     required this.produktInfo,
     required this.preis,
     required this.produktRabatt,
     required this.lagerbestand,
     required this.zustandId,
     required this.kategorieId,
+    required this.produktAktiv,
     this.bildpfad,
-    this.produktAktiv = true,
-    required this.produktnr,
-    DateTime? erstellungsdatum,
-  }) : erstellungsdatum = erstellungsdatum ?? DateTime.now();
+  });
 
-  /// Erstellt ein Produkt-Objekt aus JSON
-  factory Produkt.fromJson(Map<String, dynamic> json) {
-    return Produkt(
-      produktId: json['produkt_id'] as String,
-      laufendeNr: (json['laufende_nr'] as num).toInt(),
-      bezeichnung: json['bezeichnung'] as String,
-      slug: json['slug'] as String,
-      produktInfo: json['produkt_info'] as String,
-      preis: (json['preis'] as num).toDouble(),
-      produktRabatt: (json['produkt_rabatt'] as num).toDouble(),
-      lagerbestand: (json['lagerbestand'] as num).toInt(),
-      zustandId: json['zustand_id'] as String,
-      kategorieId: json['kategorie_id'] as String,
-      bildpfad: json['bildpfad'] as String?,
-      produktAktiv: json['produkt_aktiv'] == true || json['produkt_aktiv'] == 1
-          ? true
-          : false,
-      erstellungsdatum: json['erstellungsdatum'] == null
-          ? null
-          : DateTime.parse(json['erstellungsdatum'] as String),
-      produktnr: json['produktnr'] as String? ?? 'P00000',
-    );
-  }
+  final String bezeichnung;
+  final String produktInfo;
+  final double preis;
+  final double produktRabatt;
+  final int lagerbestand;
+  final String zustandId;
+  final String kategorieId;
+  final String? bildpfad;
+  final bool produktAktiv;
 
-  /// Konvertiert das Produkt-Objekt in JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'produkt_id': produktId,
-      'laufende_nr': laufendeNr,
-      'bezeichnung': bezeichnung,
-      'slug': slug,
-      'produkt_info': produktInfo,
-      'preis': preis,
-      'produkt_rabatt': produktRabatt,
-      'lagerbestand': lagerbestand,
-      'zustand_id': zustandId,
-      'kategorie_id': kategorieId,
-      'bildpfad': bildpfad,
-      'produkt_aktiv': produktAktiv,
-      'erstellungsdatum': erstellungsdatum?.toIso8601String(),
-      'produktnr': produktnr,
-    };
-  }
+  factory ProduktEingabe.von(Produkt p, {bool? produktAktiv}) => ProduktEingabe(
+    bezeichnung: p.bezeichnung,
+    produktInfo: p.produktInfo,
+    preis: p.preis,
+    produktRabatt: p.produktRabatt,
+    lagerbestand: p.lagerbestand,
+    zustandId: p.zustandId,
+    kategorieId: p.kategorieId,
+    bildpfad: p.bildpfad,
+    produktAktiv: produktAktiv ?? p.produktAktiv,
+  );
 
-  /// Konvertiert das Produkt in einen JSON-String
-  String toJsonString() => json.encode(toJson());
-
-  /// Erstellt ein Produkt-Objekt aus einem JSON-String
-  factory Produkt.fromJsonString(String jsonString) =>
-      Produkt.fromJson(json.decode(jsonString) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => {
+    'bezeichnung': bezeichnung,
+    'produkt_info': produktInfo,
+    // Als Text mit zwei Nachkommastellen - das Backend rechnet mit Decimal
+    'preis': preis.toStringAsFixed(2),
+    'produkt_rabatt': produktRabatt.toStringAsFixed(2),
+    'lagerbestand': lagerbestand,
+    'zustand_id': zustandId,
+    'kategorie_id': kategorieId,
+    'bildpfad': bildpfad,
+    'produkt_aktiv': produktAktiv,
+  };
 }

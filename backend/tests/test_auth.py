@@ -1,95 +1,165 @@
-"""
-Automatisierte Integrationstests für /auth-Endpunkte.
-
-Voraussetzungen:
-    pip install pytest httpx
-    Ausführen aus backend/: pytest tests/test_auth.py -v
-
-Hinweis: Diese Tests verwenden einen TestClient der die FastAPI-App direkt
-aufruft - kein laufender Server nötig. Die Datenbank muss jedoch erreichbar sein.
-"""
+"""Integrationstests - Registrierung, Login und Profilverwaltung."""
 
 import uuid
-from fastapi.testclient import TestClient
-from app.main import app
-
-# raise_server_exceptions=False: Server-Fehler (500) werden als Response
-# zurückgegeben statt als Exception – ermöglicht assert auf status_code
-client = TestClient(app, raise_server_exceptions=False)
 
 
-def _neue_testdaten() -> dict:
-    """Erzeugt Testdaten mit eindeutiger UUID und E-Mail für jeden Testlauf.
-    Verhindert 'Duplicate entry'-Fehler bei wiederholtem Ausführen der Tests.
-    """
-    eindeutige_id = str(uuid.uuid4())
+def _registrierung(**felder) -> dict:
     return {
-        "benutzer_id": eindeutige_id,
-        "vorname": "Test",
-        "nachname": "Benutzer",
-        "email": f"test_{eindeutige_id[:8]}@test.de",  # eindeutige E-Mail
-        "telefon": f"0{eindeutige_id[:10].replace('-', '')}",  # eindeutige Telefonnummer
-        "passwort_hash": "testPasswort123",  # Klartext – Route hasht automatisch
-        "rolle": "Kunde",
-        "erstellt_am": "2026-04-19T08:58:38.148Z",
-        "letzte_aenderung": "2026-04-19T08:58:38.148Z",
-        "letzter_login": "2026-04-19T08:58:38.148Z",
+        "vorname": "Ada",
+        "nachname": "Lovelace",
+        "email": f"ada-{uuid.uuid4().hex[:10]}@example.com",
+        "passwort": "geheim1234",
+        **felder,
     }
 
 
-class TestRegistrieren:
-    """Tests für POST /auth/registrieren"""
-
-    def test_registrieren_erfolgreich(self):
-        """Neuer Benutzer wird angelegt - erwartet HTTP 201."""
-        antwort = client.post("/auth/registrieren", json=_neue_testdaten())
-        assert antwort.status_code == 201
-        assert antwort.json() == {"nachricht": "Benutzer erfolgreich registriert"}
-
-    def test_registrieren_ungueltige_rolle(self):
-        """Ungültige Rolle schlägt mit HTTP 500 fehl (DB CHECK-Constraint)."""
-        daten = {**_neue_testdaten(), "rolle": "Gast"}  # "Gast" ist nicht erlaubt
-        antwort = client.post("/auth/registrieren", json=daten)
-        assert antwort.status_code == 500
+def test_registrierung_meldet_direkt_an(client):
+    antwort = client.post("/api/auth/registrieren", json=_registrierung())
+    assert antwort.status_code == 201
+    inhalt = antwort.json()
+    assert inhalt["token_type"] == "bearer"
+    assert inhalt["benutzer"]["rolle"] == "Kunde"
+    assert "passwort_hash" not in inhalt["benutzer"]
 
 
-class TestLogin:
-    """Tests für POST /auth/login.
-    Jeder Test registriert zuerst einen frischen Benutzer, damit das
-    Passwort garantiert korrekt gehasht in der DB liegt.
-    """
+def test_rolle_kann_bei_der_registrierung_nicht_gewaehlt_werden(client):
+    antwort = client.post(
+        "/api/auth/registrieren", json=_registrierung(rolle="Administrator")
+    )
+    assert antwort.status_code == 201
+    assert antwort.json()["benutzer"]["rolle"] == "Kunde"
 
-    def test_login_erfolgreich(self):
-        """Korrekte E-Mail und Passwort - erwartet HTTP 200 mit JWT."""
-        # Zuerst frischen Benutzer anlegen
-        daten = _neue_testdaten()
-        client.post("/auth/registrieren", json=daten)
 
-        # Dann mit Klartext-Passwort einloggen
-        antwort = client.post(
-            "/auth/login",
-            params={"email": daten["email"], "passwort": daten["passwort_hash"]},
-        )
-        assert antwort.status_code == 200
-        ergebnis = antwort.json()
-        assert "access_token" in ergebnis
-        assert ergebnis["token_type"] == "bearer"
+def test_doppelte_email_wird_abgelehnt(client, neuer_kunde):
+    _, benutzer, _ = neuer_kunde
+    antwort = client.post(
+        "/api/auth/registrieren", json=_registrierung(email=benutzer["email"].upper())
+    )
+    assert antwort.status_code == 409
 
-    def test_login_falsches_passwort(self):
-        """Falsches Passwort - erwartet HTTP 401."""
-        daten = _neue_testdaten()
-        client.post("/auth/registrieren", json=daten)
 
-        antwort = client.post(
-            "/auth/login",
-            params={"email": daten["email"], "passwort": "falschesPasswort"},
-        )
-        assert antwort.status_code == 401
+def test_zu_kurzes_passwort_wird_abgelehnt(client):
+    antwort = client.post("/api/auth/registrieren", json=_registrierung(passwort="kurz"))
+    assert antwort.status_code == 422
 
-    def test_login_unbekannte_email(self):
-        """Nicht registrierte E-Mail - erwartet HTTP 401."""
-        antwort = client.post(
-            "/auth/login",
-            params={"email": "nichtvorhanden@test.de", "passwort": "egal"},
-        )
-        assert antwort.status_code == 401
+
+def test_login_mit_falschem_passwort(client):
+    antwort = client.post(
+        "/api/auth/login", json={"email": "kunde@example.com", "passwort": "falsch"}
+    )
+    assert antwort.status_code == 401
+
+
+def test_login_mit_unbekannter_email(client):
+    antwort = client.post(
+        "/api/auth/login", json={"email": "niemand@example.com", "passwort": "geheim1234"}
+    )
+    assert antwort.status_code == 401
+
+
+def test_me_liefert_den_eingeloggten_benutzer(client, neuer_kunde):
+    header, benutzer, _ = neuer_kunde
+    antwort = client.get("/api/auth/me", headers=header)
+    assert antwort.status_code == 200
+    assert antwort.json()["email"] == benutzer["email"]
+
+
+def test_me_ohne_oder_mit_ungueltigem_token(client):
+    assert client.get("/api/auth/me").status_code == 401
+    assert (
+        client.get("/api/auth/me", headers={"Authorization": "Bearer kaputt"}).status_code
+        == 401
+    )
+
+
+def test_profil_bearbeiten(client, neuer_kunde):
+    header, benutzer, _ = neuer_kunde
+    antwort = client.put(
+        "/api/auth/profil",
+        headers=header,
+        json={"vorname": "Grace", "nachname": "Hopper", "email": benutzer["email"], "telefon": ""},
+    )
+    assert antwort.status_code == 200
+    assert antwort.json()["vorname"] == "Grace"
+    assert antwort.json()["telefon"] is None
+
+
+def test_profil_email_darf_nicht_vergeben_sein(client, neuer_kunde):
+    header, _, _ = neuer_kunde
+    antwort = client.put(
+        "/api/auth/profil",
+        headers=header,
+        json={"vorname": "A", "nachname": "B", "email": "kunde@example.com"},
+    )
+    assert antwort.status_code == 409
+
+
+def test_passwort_aendern(client, neuer_kunde):
+    header, benutzer, passwort = neuer_kunde
+    falsch = client.put(
+        "/api/auth/passwort",
+        headers=header,
+        json={"aktuelles_passwort": "falsch", "neues_passwort": "nochgeheimer1"},
+    )
+    assert falsch.status_code == 400
+
+    antwort = client.put(
+        "/api/auth/passwort",
+        headers=header,
+        json={"aktuelles_passwort": passwort, "neues_passwort": "nochgeheimer1"},
+    )
+    assert antwort.status_code == 204
+    login = client.post(
+        "/api/auth/login", json={"email": benutzer["email"], "passwort": "nochgeheimer1"}
+    )
+    assert login.status_code == 200
+
+
+def test_konto_ohne_bestellungen_wird_geloescht(client, neuer_kunde):
+    header, benutzer, passwort = neuer_kunde
+    assert client.delete("/api/auth/profil", headers=header).status_code == 204
+    assert client.get("/api/auth/me", headers=header).status_code == 401
+    login = client.post(
+        "/api/auth/login", json={"email": benutzer["email"], "passwort": passwort}
+    )
+    assert login.status_code == 401
+
+
+def test_konto_mit_bestellungen_wird_anonymisiert(client, neuer_kunde, admin, produkt_anlegen):
+    header, benutzer, passwort = neuer_kunde
+    produkt = produkt_anlegen()
+    bestellung = client.post(
+        "/api/bestellungen",
+        headers=header,
+        json={"positionen": [{"produkt_id": produkt["produkt_id"], "menge": 1}]},
+    ).json()
+
+    assert client.delete("/api/auth/profil", headers=header).status_code == 204
+
+    # Kein Login mehr möglich, die Bestellung bleibt aber ohne Personenbezug erhalten
+    login = client.post(
+        "/api/auth/login", json={"email": benutzer["email"], "passwort": passwort}
+    )
+    assert login.status_code == 401
+    erhalten = client.get(f"/api/bestellungen/{bestellung['bestellung_id']}", headers=admin)
+    assert erhalten.status_code == 200
+    assert benutzer["email"] not in erhalten.text
+    assert erhalten.json()["kunde_name"] == "Gelöschter Benutzer"
+
+
+def test_demo_konten_sind_geschuetzt(client, admin):
+    assert client.delete("/api/auth/profil", headers=admin).status_code == 403
+    antwort = client.put(
+        "/api/auth/passwort",
+        headers=admin,
+        json={"aktuelles_passwort": "admin1234", "neues_passwort": "uebernommen1"},
+    )
+    assert antwort.status_code == 403
+
+
+def test_rollen_der_demo_konten_sind_fest(client, admin):
+    team = next(b for b in client.get("/api/benutzer", headers=admin).json() if b["email"] == "team@example.com")
+    antwort = client.patch(
+        f"/api/benutzer/{team['benutzer_id']}/rolle", headers=admin, json={"rolle": "Kunde"}
+    )
+    assert antwort.status_code == 403

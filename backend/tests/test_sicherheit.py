@@ -1,9 +1,9 @@
-"""
-Unit-Tests für app/core/sicherheit.py - Passwort-Hashing und JWT-Tokenverwaltung.
-Kein Server und keine Datenbank nötig - reine Funktionsaufrufe.
+"""Unit-Tests für das Sicherheitsmodul und die Preislogik (ohne Datenbank)."""
 
-Ausführen aus Backend/: pytest tests/test_sicherheit.py -v
-"""
+from decimal import Decimal
+
+import pytest
+from jose import JWTError
 
 from app.core.sicherheit import (
     passwort_hashen,
@@ -11,46 +11,56 @@ from app.core.sicherheit import (
     token_erstellen,
     token_lesen,
 )
+from app.services import preise
+from app.services.slug import slug_erzeugen
 
 
-class TestPasswortHashing:
-    """Tests für passwort_hashen() und passwort_pruefen()"""
-
-    def test_hash_wird_erzeugt(self):
-        """Gehashtes Passwort ist nicht identisch mit dem Klartext."""
-        klartext = "geheimesPasswort"
-        ergebnis = passwort_hashen(klartext)
-        assert ergebnis != klartext
-
-    def test_korrektes_passwort_wird_akzeptiert(self):
-        """Richtiges Passwort besteht die Prüfung."""
-        h = passwort_hashen("geheim123")
-        assert passwort_pruefen("geheim123", h) is True
-
-    def test_falsches_passwort_wird_abgelehnt(self):
-        """Falsches Passwort besteht die Prüfung nicht."""
-        h = passwort_hashen("geheim123")
-        assert passwort_pruefen("anderes", h) is False
-
-    def test_zwei_hashes_sind_unterschiedlich(self):
-        """Dasselbe Passwort erzeugt zwei verschiedene Hashes (Salt)."""
-        h1 = passwort_hashen("gleichesPasswort")
-        h2 = passwort_hashen("gleichesPasswort")
-        assert h1 != h2  # bcrypt verwendet zufälliges Salt
+def test_passwort_wird_nicht_im_klartext_gespeichert():
+    hash_ = passwort_hashen("geheim1234")
+    assert hash_ != "geheim1234"
+    assert hash_.startswith("$2")  # bcrypt
 
 
-class TestToken:
-    """Tests für token_erstellen() und token_lesen()"""
+def test_gleiches_passwort_ergibt_verschiedene_hashes():
+    assert passwort_hashen("geheim1234") != passwort_hashen("geheim1234")  # Salt
 
-    def test_token_wird_erzeugt(self):
-        """token_erstellen() gibt einen nicht-leeren String zurück."""
-        token = token_erstellen({"sub": "test-uuid", "rolle": "Kunde"})
-        assert isinstance(token, str)
-        assert len(token) > 0
 
-    def test_token_inhalt_korrekt(self):
-        """Dekodierter Token enthält die ursprünglichen Daten."""
-        token = token_erstellen({"sub": "abc-123", "rolle": "Administrator"})
-        daten = token_lesen(token)
-        assert daten["sub"] == "abc-123"
-        assert daten["rolle"] == "Administrator"
+def test_passwort_pruefen():
+    hash_ = passwort_hashen("geheim1234")
+    assert passwort_pruefen("geheim1234", hash_)
+    assert not passwort_pruefen("falsch", hash_)
+    assert not passwort_pruefen("egal", "")  # anonymisiertes Konto ohne Hash
+
+
+def test_token_enthaelt_die_daten():
+    payload = token_lesen(token_erstellen({"sub": "abc", "rolle": "Kunde"}))
+    assert payload["sub"] == "abc"
+    assert payload["rolle"] == "Kunde"
+    assert "exp" in payload
+
+
+def test_manipulierter_token_wird_abgelehnt():
+    token = token_erstellen({"sub": "abc"})
+    with pytest.raises(JWTError):
+        token_lesen(token[:-2] + "xx")
+
+
+def test_es_gilt_der_hoehere_rabatt():
+    assert preise.rabatt_prozent(Decimal("15"), Decimal("10")) == Decimal("15")
+    assert preise.rabatt_prozent(Decimal("0"), Decimal("10")) == Decimal("10")
+
+
+def test_rabatt_wird_kaufmaennisch_gerundet():
+    assert preise.rabatt_betrag(Decimal("33.33"), Decimal("15")) == Decimal("5.00")
+    assert preise.rabatt_betrag(Decimal("0.25"), Decimal("10")) == Decimal("0.03")
+
+
+def test_enthaltene_mehrwertsteuer():
+    assert preise.enthaltene_mwst(Decimal("119.00"), Decimal("19")) == Decimal("19.00")
+    assert preise.enthaltene_mwst(Decimal("107.00"), Decimal("7")) == Decimal("7.00")
+
+
+def test_slug():
+    assert slug_erzeugen("Möbel & Wohnen") == "moebel-wohnen"
+    assert slug_erzeugen("  Größe  XL!  ") == "groesse-xl"
+    assert slug_erzeugen("???") == "artikel"

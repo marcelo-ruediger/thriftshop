@@ -1,12 +1,12 @@
 {
-    "name": "frontend",
-    "short_name": "frontend",
+    "name": "Thriftshop Köln",
+    "short_name": "Thriftshop",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#FAF7F2",
+    "theme_color": "#2F6F5E",
+    "description": "Second-Hand-Webshop mit Abholung im Laden – Portfolio-Projekt mit Flutter und FastAPI.",
+    "lang": "de",
     "prefer_related_applications": false,
     "icons": [
         {

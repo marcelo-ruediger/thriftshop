@@ -1,0 +1,12 @@
+# Blueprint für Render (https://render.com): baut das Dockerfile und startet den Shop.
+# Im kostenlosen Tarif schläft der Dienst nach Inaktivität ein und die Datenbank
+# wird bei jedem Neustart frisch mit den Demo-Daten gefüllt - für eine Demo genau richtig.
+services:
+  - type: web
+    name: thriftshop-koeln
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
