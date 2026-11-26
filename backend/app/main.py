@@ -86,6 +86,9 @@ def health():
 app.include_router(api)
 
 _BILDNAME = re.compile(r"^[\w-]+\.(webp|png|jpe?g)$")
+# Der Typ wird hier festgelegt statt aus der MIME-Tabelle des Systems gelesen: Im schlanken
+# Docker-Image fehlt diese Tabelle, und .webp ginge sonst als "application/octet-stream" raus.
+_BILDTYPEN = {".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}
 
 
 @app.get("/bilder/{dateiname}", include_in_schema=False)
@@ -107,7 +110,9 @@ def produktbild(dateiname: str, request: Request):
                 }
                 if request.headers.get("if-none-match") == kopf["ETag"]:
                     return Response(status_code=304, headers=kopf)
-                return FileResponse(pfad, headers=kopf, stat_result=stand)
+                return FileResponse(
+                    pfad, headers=kopf, stat_result=stand, media_type=_BILDTYPEN[pfad.suffix]
+                )
     raise HTTPException(status_code=404, detail="Bild nicht gefunden")
 
 
