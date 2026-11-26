@@ -57,6 +57,15 @@ def test_produktbilder_werden_ausgeliefert(client):
     assert client.get("/bilder/..%2Fapp%2Fmain.py").status_code == 404
 
 
+def test_produktbilder_haben_den_bildtyp_auch_ohne_mime_tabelle(client, monkeypatch):
+    """Im schlanken Docker-Image kennt das System keine Dateitypen. Das Bild muss trotzdem
+    als Bild ausgeliefert werden, nicht als beliebige Binärdatei."""
+    monkeypatch.setattr("starlette.responses.guess_type", lambda *_a, **_k: (None, None))
+    produkt = next(p for p in client.get("/api/produkte").json() if p["bildpfad"])
+    antwort = client.get(f"/bilder/{produkt['bildpfad']}")
+    assert antwort.headers["content-type"] == "image/webp"
+
+
 def test_produktbilder_werden_beim_server_nachgefragt(client):
     """Ein unter gleichem Namen ausgetauschtes Foto muss sofort sichtbar sein: Der Browser
     fragt jedes Mal nach und bekommt für ein unverändertes Bild nur eine leere 304-Antwort."""
