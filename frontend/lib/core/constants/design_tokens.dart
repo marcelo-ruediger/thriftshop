@@ -40,7 +40,7 @@ class Breakpoints {
   static const double schmalMax = 720;
 }
 
-/// Farbpalette: warmes Papier, dunkles Grün und das Holzbraun des Logos.
+/// Farbpalette: warmes Papier, dunkles Grün und das Terrakotta des Logos.
 class AppFarben {
   AppFarben._();
 
