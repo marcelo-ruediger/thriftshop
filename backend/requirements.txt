@@ -1,0 +1,9 @@
+# Laufzeit-Abhängigkeiten des Backends (alle Open Source)
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30
+pydantic>=2.7,<3
+email-validator>=2.1
+python-multipart>=0.0.9
+python-dotenv>=1.0
+python-jose[cryptography]>=3.4
+bcrypt>=4.0

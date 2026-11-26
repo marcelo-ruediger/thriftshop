@@ -1,0 +1,16 @@
+# Startet den kompletten Shop (Frontend + API) unter http://localhost:8000
+#   docker compose up --build
+services:
+  thriftshop:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Für mehr als einen lokalen Test ein eigenes Geheimnis setzen
+      JWT_SECRET: ${JWT_SECRET:-nur-fuer-lokale-tests}
+    volumes:
+      # Datenbank und hochgeladene Bilder überleben einen Neustart
+      - thriftshop-daten:/app/data
+
+volumes:
+  thriftshop-daten:

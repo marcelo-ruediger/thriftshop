@@ -1,47 +1,43 @@
 .DS_Store
-# Python =======================================================================
+
+# Python ----------------------------------------------------------------------
 __pycache__/
 *.pyc
-
-# Virtuelle Umgebung ===========================================================
 /.venv/
-
-# Umgebungsvariablen & Secrets =================================================
-.env
-.env.*
-*.db
-
-# Test-Tools ===================================================================
 .pytest_cache/
 .mypy_cache/
 
-# Projektspezifische Dateien ===================================================
-*.pdf
-*.html
+# Umgebungsvariablen & Secrets --------------------------------------------------
+.env
+.env.*
+
+# Laufzeitdaten des Backends (SQLite-Datei, hochgeladene Bilder) ----------------
+/backend/data/
+*.db
+# Gebautes Frontend, das das Backend mit ausliefert (entsteht durch `make build`)
+/backend/static/web/
+
+# Flutter -----------------------------------------------------------------------
+/frontend/.dart_tool/
+/frontend/build/
+/frontend/.flutter-plugins-dependencies
+/frontend/.metadata
+/frontend/*.iml
+/frontend/macos/Flutter/Flutter-Debug.xcconfig
+/frontend/macos/Flutter/Flutter-Release.xcconfig
+/frontend/ios/Flutter/Debug.xcconfig
+/frontend/ios/Flutter/Release.xcconfig
+/frontend/ios/Pods/
+/frontend/ios/flutter_export_environment.sh
+/frontend/ios/Runner/GeneratedPluginRegistrant.h
+/frontend/ios/Runner/GeneratedPluginRegistrant.m
+Podfile
+
+# Editor ------------------------------------------------------------------------
+.vscode
+.idea
+
+# Projektspezifisch -------------------------------------------------------------
 *.bak
 thriftshop_projektantrag.md
 openapi.json
-
-# MacOS Dateien
-.DS_Store
-Podfile
-frontend/macos/Flutter/Flutter-Debug.xcconfig
-frontend/macos/Flutter/Flutter-Release.xcconfig
-
-# iOS
-frontend/ios/Flutter/Debug.xcconfig
-frontend/ios/Flutter/Release.xcconfig
-frontend/ios/Pods/
-frontend/ios/flutter_export_environment.sh
-frontend/ios/Runner/GeneratedPluginRegistrant.h
-frontend/ios/Runner/GeneratedPluginRegistrant.m
-
-# VS Code Config
-.vscode
-
-<<<<<<< HEAD
-
-=======
-# Flutter
->>>>>>> 675f2e6 (Update .gitignore, remove unused files, and adjust layout in ProduktlisteScreen)
-frontend/.metadata

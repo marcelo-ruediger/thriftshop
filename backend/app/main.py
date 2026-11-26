@@ -1,50 +1,116 @@
 """
-Startpunkt der FastAPI-Anwendung - registriert alle Router.
+Startpunkt der FastAPI-Anwendung.
+
+- Die REST-API liegt unter /api (interaktive Dokumentation: /api/docs).
+- Produktbilder werden unter /bilder ausgeliefert.
+- Liegt ein gebautes Flutter-Web-Frontend vor, wird es unter / mit ausgeliefert,
+  sodass Shop und API als ein einziger Dienst laufen.
 """
 
-import os
-import sys
-from pathlib import Path
+import logging
+import re
+import sqlite3
+from contextlib import asynccontextmanager
 
-# Add parent directory to path for imports to work
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import produkte
-from app.api import benutzer
-from app.api import bestellungen
-from app.api import bestellposition
-from app.api import kategorien
-from app.api import zustaende
-from app.api import auth
-from dotenv import load_dotenv
+from fastapi.responses import FileResponse, JSONResponse
 
-# Load environment variables from .env file in the same directory
-load_dotenv(Path(__file__).parent / ".env")
+from app.api import auth, benutzer, bestellungen, kategorien, produkte, zustaende
+from app.core.config import einstellungen
+from app.core.datenbank import schema_erstellen, verbinden
+from app.seed import demo_daten_einspielen, ist_leer
 
-app = FastAPI(title="Thriftshop Köln API")
+log = logging.getLogger("uvicorn.error")
 
-# CORS-Konfiguration für Flutter-Frontend (localhost mit beliebigem Port)
+
+@asynccontextmanager
+async def lebenszyklus(_app: FastAPI):
+    """Beim Start: Tabellen anlegen und eine leere Datenbank mit Demo-Daten füllen."""
+    schema_erstellen()
+    if einstellungen.demo_daten:
+        verbindung = verbinden()
+        try:
+            if ist_leer(verbindung):
+                demo_daten_einspielen(verbindung)
+                log.info("Demo-Daten eingespielt (%s)", einstellungen.datenbank_pfad)
+        finally:
+            verbindung.close()
+    yield
+
+
+app = FastAPI(
+    title="Thriftshop Köln API",
+    description="REST-API für den Second-Hand-Webshop Thriftshop Köln.",
+    version="1.0.0",
+    lifespan=lebenszyklus,
+    docs_url="/api/docs",
+    redoc_url=None,
+    openapi_url="/api/openapi.json",
+)
+
+# Das Flutter-Frontend läuft in der Entwicklung auf einem eigenen Port (localhost:xxxx)
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://localhost(:\d+)?",
-    allow_credentials=True,
+    allow_origins=einstellungen.cors_origins,
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(produkte.router)
-app.include_router(benutzer.router)
-app.include_router(bestellungen.router)
-app.include_router(bestellposition.router)
-app.include_router(kategorien.router)
-app.include_router(zustaende.router)
-app.include_router(auth.router)
 
-if __name__ == "__main__":
-    import uvicorn
+@app.exception_handler(sqlite3.IntegrityError)
+async def integritaetsfehler(_request: Request, fehler: sqlite3.IntegrityError):
+    """Verletzte UNIQUE- oder Fremdschlüsselregeln werden zu HTTP 409 statt 500."""
+    if "FOREIGN KEY" in str(fehler):
+        nachricht = "Der Datensatz wird noch verwendet und kann nicht gelöscht werden"
+    elif "UNIQUE" in str(fehler):
+        nachricht = "Ein Datensatz mit dieser Bezeichnung existiert bereits"
+    else:
+        nachricht = "Die Daten verletzen eine Regel der Datenbank"
+    return JSONResponse(status_code=409, content={"detail": nachricht})
 
-    host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", "8001"))
-    uvicorn.run("main:app", host=host, port=port, reload=True)
+
+api = APIRouter(prefix="/api")
+for modul in (auth, produkte, kategorien, zustaende, bestellungen, benutzer):
+    api.include_router(modul.router)
+
+
+@api.get("/health", tags=["System"])
+def health():
+    """Einfache Erreichbarkeitsprüfung (z.B. für den Hosting-Anbieter)."""
+    return {"status": "ok"}
+
+
+app.include_router(api)
+
+_BILDNAME = re.compile(r"^[\w-]+\.(webp|png|jpe?g)$")
+
+
+@app.get("/bilder/{dateiname}", include_in_schema=False)
+def produktbild(dateiname: str):
+    """Liefert ein Produktbild - erst aus den Uploads, dann aus den mitgelieferten Bildern."""
+    if _BILDNAME.fullmatch(dateiname):
+        for verzeichnis in (einstellungen.upload_verzeichnis, einstellungen.bilder_verzeichnis):
+            pfad = verzeichnis / dateiname
+            if pfad.is_file():
+                return FileResponse(pfad, headers={"Cache-Control": "public, max-age=604800"})
+    raise HTTPException(status_code=404, detail="Bild nicht gefunden")
+
+
+@app.get("/{pfad:path}", include_in_schema=False)
+def web_frontend(pfad: str):
+    """Liefert das gebaute Flutter-Web-Frontend aus (falls vorhanden).
+
+    Unbekannte Pfade erhalten die index.html, damit Deep-Links wie /produkt/xyz
+    vom Router im Browser aufgelöst werden können.
+    """
+    web = einstellungen.web_verzeichnis.resolve()
+    # API- und Bildpfade gehören nie zum Frontend - dort ist 404 die richtige Antwort
+    if pfad.startswith(("api/", "bilder/")) or not (web / "index.html").is_file():
+        raise HTTPException(status_code=404, detail="Nicht gefunden")
+    datei = (web / pfad).resolve()
+    if pfad and datei.is_file() and datei.is_relative_to(web):
+        return FileResponse(datei)
+    # index.html nie cachen, damit neue Versionen sofort ankommen
+    return FileResponse(web / "index.html", headers={"Cache-Control": "no-cache"})

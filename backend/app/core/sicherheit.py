@@ -1,19 +1,27 @@
 """
-Sicherheitsmodul - Passwort-Hashing (bcrypt) und JWT-Tokenverwaltung.
+Sicherheitsmodul - Passwort-Hashing (bcrypt), JWT-Tokenverwaltung und Rollenprüfung.
 """
 
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
+
 import bcrypt
-from jose import jwt, JWTError
-from app.core.datenbank import get_notwendige_env
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError, jwt
+
+from app.core.config import einstellungen
 from app.core.datenbank import get_db
-from dao.benutzer_dao import BenutzerDAO
+from app.dao.benutzer_dao import BenutzerDAO
+from app.models import Benutzer
 
 ALGORITHMUS = "HS256"
-TOKEN_ABLAUF_MINUTEN = 60 * 24  # 24 Stunden
+
+ROLLE_ADMIN = "Administrator"
+ROLLE_MITARBEITER = "Mitarbeiter"
+ROLLE_KUNDE = "Kunde"
+ROLLEN = (ROLLE_ADMIN, ROLLE_MITARBEITER, ROLLE_KUNDE)
+PERSONAL = (ROLLE_ADMIN, ROLLE_MITARBEITER)
 
 
 def passwort_hashen(klartext: str) -> str:
@@ -23,49 +31,65 @@ def passwort_hashen(klartext: str) -> str:
 
 def passwort_pruefen(klartext: str, passwort_hash: str) -> bool:
     """Vergleicht ein Klartextpasswort mit einem gespeicherten Hash."""
-    return bcrypt.checkpw(klartext.encode(), passwort_hash.encode())
+    try:
+        return bcrypt.checkpw(klartext.encode(), passwort_hash.encode())
+    except ValueError:
+        return False
 
 
 def token_erstellen(daten: dict) -> str:
     """Erstellt einen signierten JWT mit Ablaufzeit."""
-    ablauf = datetime.now(timezone.utc) + timedelta(minutes=TOKEN_ABLAUF_MINUTEN)
-    payload = {**daten, "exp": ablauf}
-    geheimnis = get_notwendige_env("JWT_SECRET")
-    return jwt.encode(payload, geheimnis, algorithm=ALGORITHMUS)
+    ablauf = datetime.now(timezone.utc) + timedelta(
+        minutes=einstellungen.token_ablauf_minuten
+    )
+    return jwt.encode(
+        {**daten, "exp": ablauf}, einstellungen.jwt_secret, algorithm=ALGORITHMUS
+    )
 
 
 def token_lesen(token: str) -> dict:
     """Dekodiert und validiert einen JWT. Wirft JWTError bei ungültigem Token."""
-    geheimnis = get_notwendige_env("JWT_SECRET")
-    return jwt.decode(token, geheimnis, algorithms=[ALGORITHMUS])
+    return jwt.decode(token, einstellungen.jwt_secret, algorithms=[ALGORITHMUS])
 
 
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="/auth/login")
+bearer_schema = HTTPBearer(auto_error=False)
 
 
-def aktueller_benutzer(token: str = Depends(oauth2_schema), db=Depends(get_db)):
+def aktueller_benutzer(
+    zugang: HTTPAuthorizationCredentials | None = Depends(bearer_schema),
+    db=Depends(get_db),
+) -> Benutzer:
     """Liest den JWT aus dem Authorization-Header und gibt den Benutzer zurück."""
+    fehler = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Nicht angemeldet oder Sitzung abgelaufen",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    if zugang is None:
+        raise fehler
     try:
-        payload = token_lesen(token)
-        benutzer_id: str | None = payload.get("sub")
-        if benutzer_id is None:
-            raise HTTPException(status_code=401, detail="Ungültiger Token")
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Ungültiger Token")
+        benutzer_id = UUID(token_lesen(zugang.credentials).get("sub", ""))
+    except (JWTError, ValueError):
+        raise fehler from None
 
-    dao = BenutzerDAO(db)
-    benutzer = dao.get_nach_id(UUID(benutzer_id))
+    benutzer = BenutzerDAO(db).get_nach_id(benutzer_id)
     if benutzer is None:
-        raise HTTPException(status_code=401, detail="Benutzer nicht gefunden")
+        raise fehler
     return benutzer
 
 
 def erfordert_rolle(*rollen: str):
-    """Gibt eine Depends-Funktion zurück, die eine bestimmte Rolle voraussetzt."""
+    """Gibt eine Dependency zurück, die eine der angegebenen Rollen voraussetzt."""
 
-    def pruefe_role(benutzer=Depends(aktueller_benutzer)):
+    def pruefe_rolle(benutzer: Benutzer = Depends(aktueller_benutzer)) -> Benutzer:
         if benutzer.rolle not in rollen:
-            raise HTTPException(status_code=403, detail="Keine Berechtigung")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Keine Berechtigung"
+            )
         return benutzer
 
-    return pruefe_role
+    return pruefe_rolle
+
+
+erfordert_personal = erfordert_rolle(*PERSONAL)
+erfordert_admin = erfordert_rolle(ROLLE_ADMIN)

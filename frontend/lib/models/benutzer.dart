@@ -1,97 +1,58 @@
-/// Das Benutzer-Modell für den Thriftshop
-/// Entspricht dem Python-Benutzer-Modell aus dem Backend
+/// Benutzerkonto - entspricht `BenutzerAusgabe` im Backend (ohne Passwort-Hash).
 library;
 
-import 'dart:convert';
+class Rollen {
+  Rollen._();
+  static const String administrator = 'Administrator';
+  static const String mitarbeiter = 'Mitarbeiter';
+  static const String kunde = 'Kunde';
+  static const List<String> alle = [kunde, mitarbeiter, administrator];
+}
 
-/// Benutzer des Thriftshop-Systems
 class Benutzer {
-  /// Die eindeutige ID des Benutzers
-  final String benutzerId;
-
-  /// Der Vorname des Benutzers
-  final String vorname;
-
-  /// Der Nachname des Benutzers
-  final String nachname;
-
-  /// Die E-Mail-Adresse des Benutzers
-  final String email;
-
-  /// Die Telefonnummer des Benutzers
-  final String telefonnummer;
-
-  /// Der Hash des Passworts (nicht das Passwort selbst)
-  final String passwortHash;
-
-  /// Die Rolle des Benutzers (z.B. kunde, mitarbeiter, admin)
-  final String rolle;
-
-  /// Das Erstellungsdatum des Benutzerkontos
-  final DateTime? erstelltAm;
-
-  /// Das Datum der letzten Änderung des Benutzerkontos
-  final DateTime? letzteAenderung;
-
-  /// Das Datum des letzten Logins
-  final DateTime? letzterLogin;
-
-  /// Konstruktor für Benutzer
-  Benutzer({
+  const Benutzer({
     required this.benutzerId,
     required this.vorname,
     required this.nachname,
     required this.email,
-    required this.telefonnummer,
-    required this.passwortHash,
     required this.rolle,
+    this.telefon,
     this.erstelltAm,
-    this.letzteAenderung,
     this.letzterLogin,
   });
 
-  /// Erstellt ein Benutzer-Objekt aus JSON
-  factory Benutzer.fromJson(Map<String, dynamic> json) {
-    return Benutzer(
-      benutzerId: json['benutzer_id'] as String,
-      vorname: json['vorname'] as String,
-      nachname: json['nachname'] as String,
-      email: json['email'] as String,
-      telefonnummer: json['telefonnummer'] as String,
-      passwortHash: json['passwort_hash'] as String,
-      rolle: json['rolle'] as String,
-      erstelltAm: json['erstellt_am'] == null
-          ? null
-          : DateTime.parse(json['erstellt_am'] as String),
-      letzteAenderung: json['letzte_aenderung'] == null
-          ? null
-          : DateTime.parse(json['letzte_aenderung'] as String),
-      letzterLogin: json['letzter_login'] == null
-          ? null
-          : DateTime.parse(json['letzter_login'] as String),
-    );
+  final String benutzerId;
+  final String vorname;
+  final String nachname;
+  final String email;
+  final String? telefon;
+  final String rolle;
+  final DateTime? erstelltAm;
+  final DateTime? letzterLogin;
+
+  String get name => '$vorname $nachname'.trim();
+
+  String get initialen {
+    final v = vorname.isNotEmpty ? vorname[0] : '';
+    final n = nachname.isNotEmpty ? nachname[0] : '';
+    return (v + n).toUpperCase();
   }
 
-  /// Konvertiert das Benutzer-Objekt in JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'benutzer_id': benutzerId,
-      'vorname': vorname,
-      'nachname': nachname,
-      'email': email,
-      'telefonnummer': telefonnummer,
-      'passwort_hash': passwortHash,
-      'rolle': rolle,
-      'erstellt_am': erstelltAm?.toIso8601String(),
-      'letzte_aenderung': letzteAenderung?.toIso8601String(),
-      'letzter_login': letzterLogin?.toIso8601String(),
-    };
-  }
+  bool get istAdmin => rolle == Rollen.administrator;
 
-  /// Konvertiert das Benutzer in einen JSON-String
-  String toJsonString() => json.encode(toJson());
+  /// Mitarbeiter und Administratoren dürfen in die Verwaltung.
+  bool get istPersonal => istAdmin || rolle == Rollen.mitarbeiter;
 
-  /// Erstellt ein Benutzer-Objekt aus einem JSON-String
-  factory Benutzer.fromJsonString(String jsonString) =>
-      Benutzer.fromJson(json.decode(jsonString) as Map<String, dynamic>);
+  factory Benutzer.fromJson(Map<String, dynamic> json) => Benutzer(
+    benutzerId: json['benutzer_id'] as String,
+    vorname: json['vorname'] as String,
+    nachname: json['nachname'] as String,
+    email: json['email'] as String,
+    telefon: json['telefon'] as String?,
+    rolle: json['rolle'] as String,
+    erstelltAm: _zeit(json['erstellt_am']),
+    letzterLogin: _zeit(json['letzter_login']),
+  );
 }
+
+DateTime? _zeit(dynamic wert) => wert == null ? null : DateTime.parse(wert as String);
