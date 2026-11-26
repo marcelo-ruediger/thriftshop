@@ -1,3 +1,5 @@
+<img src="frontend/web/favicon.svg" width="72" alt="Thriftshop Köln logo: a price tag with the spires of Cologne Cathedral">
+
 # Thriftshop Köln
 
 A second-hand web shop with click-and-collect: customers browse the catalogue, order, and pick up

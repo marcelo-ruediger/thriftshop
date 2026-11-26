@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Thriftshop Köln">
+  <!-- Bildmarke: schräg hängendes Preisschild mit den Türmen des Kölner Doms.
+       Dieselbe Form zeichnet frontend/lib/widgets/logo.dart. -->
+  <style>
+    .kordel { stroke: #1E2420; }
+    @media (prefers-color-scheme: dark) { .kordel { stroke: #FAF7F2; } }
+  </style>
+  <g transform="rotate(-14 32 32) translate(3.5 5) scale(0.88)">
+    <path fill="#C2572F" fill-rule="evenodd" d="M22 4h20l12 13v37a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6V17zM35.6 14a3.6 3.6 0 1 0-7.2 0 3.6 3.6 0 0 0 7.2 0z"/>
+    <path fill="#FAF7F2" fill-rule="evenodd" d="M17 52V37l5.5-15L28 37v6h8v-6l5.5-15L47 37v15zM29.8 52h4.4v-3.4a2.2 2.2 0 0 0-4.4 0z"/>
+    <path class="kordel" fill="none" stroke-width="2.2" stroke-linecap="round" d="M32 14C30 6 36 1 44 3"/>
+  </g>
+</svg>
