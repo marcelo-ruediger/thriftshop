@@ -8,6 +8,10 @@ in store; staff manage products and orders in a built-in admin area.
 **Flutter (web) frontend · Python FastAPI backend · SQLite** — everything runs on free, open-source
 technology and starts with a single command.
 
+**▶ Live demo: <https://thriftshop-k18d.onrender.com>** — runs on a free host that sleeps when
+idle, so the first load can take about a minute. The login page has one-click demo accounts, and
+the shop resets to its demo data on every restart.
+
 ![Shop home page](docs/screenshots/shop.jpg)
 
 > The shop's interface, the API field names and the code comments are in German — it is a shop
@@ -15,8 +19,9 @@ technology and starts with a single command.
 
 ## Try it
 
-Start the shop ([Quick start](#quick-start)) and sign in with one of the demo accounts. The login
-page also has one-click buttons for them.
+Open the [live demo](https://thriftshop-k18d.onrender.com) or start the shop yourself
+([Quick start](#quick-start)), then sign in with one of the demo accounts. The login page also has
+one-click buttons for them.
 
 | Role          | E-mail              | Password    | Can do                                             |
 |---------------|---------------------|-------------|----------------------------------------------------|
