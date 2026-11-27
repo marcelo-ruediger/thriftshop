@@ -2,7 +2,8 @@
 # das Backend liefert das gebaute Flutter-Web-Frontend mit aus.
 
 # --- Stufe 1: Flutter-Web-Frontend bauen --------------------------------------
-FROM ghcr.io/cirruslabs/flutter:stable AS frontend
+# Feste Flutter-Version (dieselbe wie in .github/workflows/ci.yml), damit der Bau reproduzierbar bleibt
+FROM ghcr.io/cirruslabs/flutter:3.41.9 AS frontend
 WORKDIR /src
 COPY frontend/pubspec.yaml frontend/pubspec.lock ./
 RUN flutter pub get
