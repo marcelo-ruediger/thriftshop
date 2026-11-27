@@ -13,8 +13,8 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -29,9 +29,12 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
+          # Feste Version: dieselbe wie im Dockerfile. Eine neuere Flutter-Version kann neue
+          # Analyse-Hinweise bringen und den Lauf scheitern lassen, ohne dass sich der Code ändert.
+          flutter-version: 3.41.9
           channel: stable
           cache: true
       - run: flutter pub get
